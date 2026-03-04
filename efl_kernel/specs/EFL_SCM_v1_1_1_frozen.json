@@ -1,0 +1,39 @@
+{
+  "specID": "EFL-SCM",
+  "version": "1.1.1",
+  "moduleID": "SESSION",
+  "violationRegistry": {
+    "registryVersion": "1.1.1",
+    "registryHash": "e23fcaaf222a1a39dcb4905850954e458f89200288db0d2912e5ef1d0329710d",
+    "violations": [
+      {
+        "code": "SCM.MAXDAILYLOAD",
+        "moduleID": "SESSION",
+        "severity": "HARDFAIL",
+        "overridePossible": true,
+        "allowedOverrideReasonCodes": [
+          "OR-001"
+        ],
+        "violationCap": 2,
+        "reviewOverrideThreshold28D": 1,
+        "clampBehavior": {
+          "action": "NONE"
+        }
+      },
+      {
+        "code": "SCM.MINREST",
+        "moduleID": "SESSION",
+        "severity": "HARDFAIL",
+        "overridePossible": true,
+        "allowedOverrideReasonCodes": [
+          "OR-001"
+        ],
+        "violationCap": 2,
+        "reviewOverrideThreshold28D": 1,
+        "clampBehavior": {
+          "action": "NONE"
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "specID": "EFL-CL",
+  "version": "1.2.1",
+  "moduleID": "SESSION",
+  "CLVIOLATIONREGISTRY": [
+    {
+      "code": "CL.CLEARANCEMISSING",
+      "moduleID": "SESSION",
+      "severity": "HARDFAIL",
+      "overridePossible": false,
+      "allowedOverrideReasonCodes": [],
+      "violationCap": null,
+      "reviewOverrideThreshold28D": 0,
+      "clampBehavior": {
+        "action": "NONE"
+      }
+    }
+  ]
+}
