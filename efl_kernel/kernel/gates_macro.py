@@ -14,7 +14,4 @@ def run_macro_gates(raw_input: dict, dep_provider) -> list[dict]:
     if competition_weeks > 0 and (gpp_weeks <= 0 or (competition_weeks / gpp_weeks) > 2.0):
         violations.append({"code": "MACRO.PHASEMISMATCH", "moduleID": "MACRO", "overrideUsed": False})
 
-    for v in raw_input.get("gateViolations", []):
-        if v.get("moduleID") == "MACRO":
-            violations.append(dict(v))
     return violations

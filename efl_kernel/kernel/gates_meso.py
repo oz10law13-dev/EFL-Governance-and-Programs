@@ -18,7 +18,4 @@ def run_meso_gates(raw_input: dict, dep_provider) -> list[dict]:
             if average > 0 and max(daily) > average * 2.0:
                 violations.append({"code": "MESO.LOADIMBALANCE", "moduleID": "MESO", "overrideUsed": False})
 
-    for v in raw_input.get("gateViolations", []):
-        if v.get("moduleID") == "MESO":
-            violations.append(dict(v))
     return violations

@@ -204,3 +204,53 @@ def test_unknown_exercise_id_is_ignored_by_cl_gate():
     kdo = KernelRunner(provider).evaluate(raw, "SESSION")
 
     assert kdo.violations == []
+
+
+def test_meso_gate_fires_on_load_imbalance():
+    raw = _base_meso_input()
+    provider = InMemoryDependencyProvider(
+        window_totals={("ath-functional", "ROLLING28DAYS"): {"totalContactLoad": 0.0, "dailyContactLoads": [10, 10, 10, 10, 10, 200]}}
+    )
+    kdo = KernelRunner(provider).evaluate(raw, "MESO")
+    codes = [v["code"] for v in kdo.violations]
+    assert "MESO.LOADIMBALANCE" in codes
+
+
+def test_meso_gate_silent_when_load_balanced():
+    raw = _base_meso_input()
+    provider = InMemoryDependencyProvider(
+        window_totals={("ath-functional", "ROLLING28DAYS"): {"totalContactLoad": 0.0, "dailyContactLoads": [100, 90, 110, 95, 105, 100]}}
+    )
+    kdo = KernelRunner(provider).evaluate(raw, "MESO")
+    codes = [v["code"] for v in kdo.violations]
+    assert "MESO.LOADIMBALANCE" not in codes
+
+
+def test_macro_gate_fires_when_phase_ratio_exceeded():
+    raw = _base_macro_input()
+    provider = InMemoryDependencyProvider(
+        season_phases={("ath-functional", "season-functional-1"): {"competitionWeeks": 10, "gppWeeks": 2}}
+    )
+    kdo = KernelRunner(provider).evaluate(raw, "MACRO")
+    codes = [v["code"] for v in kdo.violations]
+    assert "MACRO.PHASEMISMATCH" in codes
+
+
+def test_macro_gate_silent_when_ratio_valid():
+    raw = _base_macro_input()
+    provider = InMemoryDependencyProvider(
+        season_phases={("ath-functional", "season-functional-1"): {"competitionWeeks": 4, "gppWeeks": 4}}
+    )
+    kdo = KernelRunner(provider).evaluate(raw, "MACRO")
+    codes = [v["code"] for v in kdo.violations]
+    assert "MACRO.PHASEMISMATCH" not in codes
+
+
+def test_macro_gate_fires_when_gpp_weeks_zero():
+    raw = _base_macro_input()
+    provider = InMemoryDependencyProvider(
+        season_phases={("ath-functional", "season-functional-1"): {"competitionWeeks": 1, "gppWeeks": 0}}
+    )
+    kdo = KernelRunner(provider).evaluate(raw, "MACRO")
+    codes = [v["code"] for v in kdo.violations]
+    assert "MACRO.PHASEMISMATCH" in codes

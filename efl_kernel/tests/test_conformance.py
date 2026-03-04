@@ -46,7 +46,6 @@ def _meso_input() -> dict:
         "windowContext": [
             {"windowType": "MESOCYCLE", "anchorDate": "2026-01-01", "startDate": "2025-12-05", "endDate": "2026-01-01", "timezone": "UTC"},
         ],
-        "gateViolations": [{"code": "MESO.LOADIMBALANCE", "moduleID": "MESO"}],
     }
 
 
@@ -60,7 +59,6 @@ def _macro_input() -> dict:
         "windowContext": [
             {"windowType": "SEASON", "anchorDate": "2026-01-01", "startDate": "2025-01-01", "endDate": "2026-01-01", "timezone": "UTC"},
         ],
-        "gateViolations": [{"code": "MACRO.PHASEMISMATCH", "moduleID": "MACRO"}],
     }
 
 
@@ -179,9 +177,16 @@ def test_step8_module_id_mismatch_adds_synthetic():
 
 
 def test_meso_and_macro_dispatch_paths_execute():
-    meso_kdo = _runner().evaluate(_meso_input(), "MESO")
-    macro_kdo = _runner().evaluate(_macro_input(), "MACRO")
+    meso_dep = InMemoryDependencyProvider(
+        window_totals={("a1", "ROLLING28DAYS"): {"totalContactLoad": 0.0, "dailyContactLoads": [10, 10, 10, 10, 10, 200]}}
+    )
+    meso_kdo = KernelRunner(meso_dep).evaluate(_meso_input(), "MESO")
     assert meso_kdo.violations[0]["code"] == "MESO.LOADIMBALANCE"
+
+    macro_dep = InMemoryDependencyProvider(
+        season_phases={("a1", "season-1"): {"competitionWeeks": 10, "gppWeeks": 2}}
+    )
+    macro_kdo = KernelRunner(macro_dep).evaluate(_macro_input(), "MACRO")
     assert macro_kdo.violations[0]["code"] == "MACRO.PHASEMISMATCH"
 
 
