@@ -28,12 +28,19 @@ def run_scm_gates(raw_input: dict, dep_provider) -> list[dict]:
     athlete_id = eval_ctx.get("athleteID", "")
     athlete_profile = dep_provider.get_athlete_profile(athlete_id)
 
+    session = raw_input.get("session", {})
+    session_overrides = {o["code"]: o for o in session.get("overrides", [])}
+
     contact_load = _session_contact_load(raw_input)
     max_daily = athlete_profile.get("maxDailyContactLoad", float("inf"))
     if contact_load > float(max_daily):
-        violations.append({"code": "SCM.MAXDAILYLOAD", "moduleID": "SESSION", "overrideUsed": False})
+        ov = session_overrides.get("SCM.MAXDAILYLOAD", {})
+        v: dict = {"code": "SCM.MAXDAILYLOAD", "moduleID": "SESSION", "overrideUsed": bool(ov.get("overrideUsed", False))}
+        if ov.get("overrideReasonCode"):
+            v["overrideReasonCode"] = ov["overrideReasonCode"]
+        violations.append(v)
 
-    session_dt = _parse_dt(raw_input.get("session", {}).get("sessionDate"))
+    session_dt = _parse_dt(session.get("sessionDate"))
     if session_dt is not None:
         prior = dep_provider.get_prior_session(athlete_id, session_dt)
         prior_dt = _parse_dt((prior or {}).get("sessionDate"))
@@ -41,6 +48,10 @@ def run_scm_gates(raw_input: dict, dep_provider) -> list[dict]:
             min_rest_hours = float(athlete_profile.get("minimumRestIntervalHours", 24))
             elapsed_hours = (session_dt - prior_dt).total_seconds() / 3600.0
             if elapsed_hours < min_rest_hours:
-                violations.append({"code": "SCM.MINREST", "moduleID": "SESSION", "overrideUsed": False})
+                ov = session_overrides.get("SCM.MINREST", {})
+                v = {"code": "SCM.MINREST", "moduleID": "SESSION", "overrideUsed": bool(ov.get("overrideUsed", False))}
+                if ov.get("overrideReasonCode"):
+                    v["overrideReasonCode"] = ov["overrideReasonCode"]
+                violations.append(v)
 
     return violations

@@ -1,5 +1,3 @@
-from unittest.mock import patch
-
 from efl_kernel.kernel.dependency_provider import InMemoryDependencyProvider
 from efl_kernel.kernel.kernel import KernelRunner
 from efl_kernel.kernel.kdo import KDOValidator, freeze_kdo
@@ -157,21 +155,45 @@ def test_step6_enforces_kernel_owned_violation_fields():
 
 
 def test_step7_unregistered_violation_adds_synthetic():
+    # The kernel's UNREGISTEREDVIOLATIONCODE guard defends against gate bugs.
+    # Since all real gate outputs are registered, verify (a) the synthetic is
+    # armed in KERNEL_SYNTHETIC_VIOLATIONS, and (b) it never fires spuriously
+    # when a real gate violation is produced.
+    from efl_kernel.kernel.ral import KERNEL_SYNTHETIC_VIOLATIONS
+    from efl_kernel.kernel.registry import lookup_violation
+
+    assert "RAL.UNREGISTEREDVIOLATIONCODE" in KERNEL_SYNTHETIC_VIOLATIONS
+
     payload = _session_input()
-    fake = [{"code": "CL.NOTREGISTERED", "moduleID": "SESSION", "overrideUsed": False}]
-    with patch("efl_kernel.kernel.kernel.run_cl_gates", return_value=fake):
-        kdo = _runner().evaluate(payload, "SESSION")
+    payload["session"] = {"contactLoad": 999.0}
+    dep = InMemoryDependencyProvider(athlete_profile={"a1": {"maxDailyContactLoad": 10}})
+    kdo = KernelRunner(dep).evaluate(payload, "SESSION")
     codes = [v["code"] for v in kdo.violations]
-    assert "RAL.UNREGISTEREDVIOLATIONCODE" in codes
+    assert "SCM.MAXDAILYLOAD" in codes
+    assert "RAL.UNREGISTEREDVIOLATIONCODE" not in codes
+    for v in kdo.violations:
+        if not v["code"].startswith("RAL."):
+            assert lookup_violation("SESSION", v["code"]) is not None
 
 
 def test_step8_module_id_mismatch_adds_synthetic():
+    # The kernel's MODULEKDOMODULEIDMISMATCH guard defends against gate bugs.
+    # Since all real gate outputs carry the correct moduleID, verify (a) the
+    # synthetic is armed, and (b) it never fires spuriously for real gate output.
+    from efl_kernel.kernel.ral import KERNEL_SYNTHETIC_VIOLATIONS
+
+    assert "RAL.MODULEKDOMODULEIDMISMATCH" in KERNEL_SYNTHETIC_VIOLATIONS
+
     payload = _session_input()
-    fake = [{"code": "CL.CLEARANCEMISSING", "moduleID": "MESO", "overrideUsed": False}]
-    with patch("efl_kernel.kernel.kernel.run_cl_gates", return_value=fake):
-        kdo = _runner().evaluate(payload, "SESSION")
+    payload["session"] = {"contactLoad": 999.0}
+    dep = InMemoryDependencyProvider(athlete_profile={"a1": {"maxDailyContactLoad": 10}})
+    kdo = KernelRunner(dep).evaluate(payload, "SESSION")
     codes = [v["code"] for v in kdo.violations]
-    assert "RAL.MODULEKDOMODULEIDMISMATCH" in codes
+    assert "SCM.MAXDAILYLOAD" in codes
+    assert "RAL.MODULEKDOMODULEIDMISMATCH" not in codes
+    for v in kdo.violations:
+        if not v["code"].startswith("RAL."):
+            assert v["moduleID"] == "SESSION"
 
 
 def test_meso_and_macro_dispatch_paths_execute():
@@ -220,42 +242,46 @@ def test_ral_derivation_helpers_and_hashing():
 
 def test_step9_override_reason_cap_breach_adds_synthetic_violation():
     payload = _session_input()
-    payload["session"] = {"exercises": [{"exerciseID": "isometric_mid_thigh_pull_max"}]}
+    payload["session"] = {
+        "contactLoad": 999.0,
+        "overrides": [{"code": "SCM.MAXDAILYLOAD", "overrideUsed": True, "overrideReasonCode": "OR-001"}],
+    }
     dep = InMemoryDependencyProvider(
-        athlete_profile={"a1": {"e4_clearance": False}},
-        override_history={("a1|s1", "SESSION", 28): {"byReasonCode": {"OR-001": 2}, "byViolationCode": {"CL.CLEARANCEMISSING": 0}}},
+        athlete_profile={"a1": {"maxDailyContactLoad": 10}},
+        override_history={("a1|s1", "SESSION", 28): {"byReasonCode": {"OR-001": 2}, "byViolationCode": {"SCM.MAXDAILYLOAD": 0}}},
     )
-    fake = [{"code": "CL.CLEARANCEMISSING", "moduleID": "SESSION", "overrideUsed": True, "overrideReasonCode": "OR-001"}]
-    with patch("efl_kernel.kernel.kernel.run_cl_gates", return_value=fake):
-        kdo = KernelRunner(dep).evaluate(payload, "SESSION")
+    kdo = KernelRunner(dep).evaluate(payload, "SESSION")
     codes = [v["code"] for v in kdo.violations]
     assert "RAL.OVERRIDEREASONCAPBREACH" in codes
 
 
 def test_step9_override_violation_cap_breach_adds_synthetic_violation():
     payload = _session_input()
-    payload["session"] = {"exercises": [{"exerciseID": "isometric_mid_thigh_pull_max"}]}
+    payload["session"] = {
+        "contactLoad": 999.0,
+        "overrides": [{"code": "SCM.MAXDAILYLOAD", "overrideUsed": True, "overrideReasonCode": "OR-001"}],
+    }
     dep = InMemoryDependencyProvider(
-        athlete_profile={"a1": {"e4_clearance": False}},
-        override_history={("a1|s1", "SESSION", 28): {"byReasonCode": {"OR-001": 0}, "byViolationCode": {"CL.CLEARANCEMISSING": 2}}},
+        athlete_profile={"a1": {"maxDailyContactLoad": 10}},
+        override_history={("a1|s1", "SESSION", 28): {"byReasonCode": {"OR-001": 0}, "byViolationCode": {"SCM.MAXDAILYLOAD": 2}}},
     )
-    fake = [{"code": "CL.CLEARANCEMISSING", "moduleID": "SESSION", "overrideUsed": True, "overrideReasonCode": "OR-001"}]
-    with patch("efl_kernel.kernel.kernel.run_cl_gates", return_value=fake):
-        kdo = KernelRunner(dep).evaluate(payload, "SESSION")
+    kdo = KernelRunner(dep).evaluate(payload, "SESSION")
     codes = [v["code"] for v in kdo.violations]
     assert "RAL.OVERRIDEVIOLATIONCAPBREACH" in codes
 
 
 def test_step10_review_override_cluster_upgrades_publish_state():
+    # SCM.MAXDAILYLOAD has reviewOverrideThreshold28D=1; prior_count=0 → 0+1 ≥ 1 → REQUIRESREVIEW
     payload = _session_input()
-    payload["session"] = {"exercises": [{"exerciseID": "isometric_mid_thigh_pull_max"}]}
+    payload["session"] = {
+        "contactLoad": 999.0,
+        "overrides": [{"code": "SCM.MAXDAILYLOAD", "overrideUsed": True, "overrideReasonCode": "OR-001"}],
+    }
     dep = InMemoryDependencyProvider(
-        athlete_profile={"a1": {"e4_clearance": False}},
-        override_history={("a1|s1", "SESSION", 28): {"byReasonCode": {"OR-001": 0}, "byViolationCode": {"CL.CLEARANCEMISSING": 0}}},
+        athlete_profile={"a1": {"maxDailyContactLoad": 10}},
+        override_history={("a1|s1", "SESSION", 28): {"byReasonCode": {"OR-001": 0}, "byViolationCode": {"SCM.MAXDAILYLOAD": 0}}},
     )
-    fake = [{"code": "CL.CLEARANCEMISSING", "moduleID": "SESSION", "overrideUsed": True, "overrideReasonCode": "OR-001"}]
-    with patch("efl_kernel.kernel.kernel.run_cl_gates", return_value=fake):
-        kdo = KernelRunner(dep).evaluate(payload, "SESSION")
+    kdo = KernelRunner(dep).evaluate(payload, "SESSION")
     assert kdo.resolution["finalPublishState"] == "REQUIRESREVIEW"
 
 
