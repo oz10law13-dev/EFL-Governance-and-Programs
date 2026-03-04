@@ -1,0 +1,5088 @@
+[
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "hip_cars_controlled_articular_rotations",
+    "name": "Hip CARs (Controlled Articular Rotations)",
+    "aliases": [
+      "hip cars",
+      "controlled articular rotations"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E0",
+    "band": 1,
+    "block_eligibility": [
+      "PRIME"
+    ],
+    "population_tags": [
+      "adult",
+      "youth_13_17"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 0,
+    "eccentric_s": 0.0,
+    "default_reps": 6,
+    "default_sets": 1,
+    "capability_tags": [
+      "mobility"
+    ],
+    "intent_tags": [
+      "warmup",
+      "mobility"
+    ],
+    "movement_pattern": "mobility",
+    "day_role_preference": [
+      "ANY"
+    ],
+    "intensity_profile": "LOW",
+    "surface_requirements": [
+      "any"
+    ],
+    "equipment_required": [
+      "none"
+    ],
+    "space_requirement": "SMALL",
+    "coaching_complexity": "LOW",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": null
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "ankle_rocker_dorsiflexion_mobilization",
+    "name": "Ankle Rocker (Dorsiflexion Mobilization)",
+    "aliases": [
+      "ankle rocker",
+      "dorsiflexion rocker"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E0",
+    "band": 1,
+    "block_eligibility": [
+      "PRIME"
+    ],
+    "population_tags": [
+      "adult",
+      "youth_13_17"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 0,
+    "eccentric_s": 0.0,
+    "default_reps": 6,
+    "default_sets": 1,
+    "capability_tags": [
+      "mobility"
+    ],
+    "intent_tags": [
+      "warmup",
+      "mobility"
+    ],
+    "movement_pattern": "mobility",
+    "day_role_preference": [
+      "ANY"
+    ],
+    "intensity_profile": "LOW",
+    "surface_requirements": [
+      "any"
+    ],
+    "equipment_required": [
+      "none"
+    ],
+    "space_requirement": "SMALL",
+    "coaching_complexity": "LOW",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": null
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "90_90_hip_switch",
+    "name": "90/90 Hip Switch",
+    "aliases": [
+      "90 90",
+      "hip switch"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E0",
+    "band": 1,
+    "block_eligibility": [
+      "PRIME"
+    ],
+    "population_tags": [
+      "adult",
+      "youth_13_17"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 0,
+    "eccentric_s": 0.0,
+    "default_reps": 6,
+    "default_sets": 1,
+    "capability_tags": [
+      "mobility"
+    ],
+    "intent_tags": [
+      "warmup",
+      "mobility"
+    ],
+    "movement_pattern": "mobility",
+    "day_role_preference": [
+      "ANY"
+    ],
+    "intensity_profile": "LOW",
+    "surface_requirements": [
+      "any"
+    ],
+    "equipment_required": [
+      "none"
+    ],
+    "space_requirement": "SMALL",
+    "coaching_complexity": "LOW",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": null
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "world_s_greatest_stretch",
+    "name": "World's Greatest Stretch",
+    "aliases": [
+      "wgs",
+      "worlds greatest stretch"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E0",
+    "band": 1,
+    "block_eligibility": [
+      "PRIME"
+    ],
+    "population_tags": [
+      "adult",
+      "youth_13_17"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 0,
+    "eccentric_s": 0.0,
+    "default_reps": 1,
+    "default_sets": 1,
+    "capability_tags": [
+      "mobility"
+    ],
+    "intent_tags": [
+      "warmup",
+      "mobility"
+    ],
+    "movement_pattern": "mobility",
+    "day_role_preference": [
+      "ANY"
+    ],
+    "intensity_profile": "LOW",
+    "surface_requirements": [
+      "any"
+    ],
+    "equipment_required": [
+      "none"
+    ],
+    "space_requirement": "SMALL",
+    "coaching_complexity": "LOW",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": null
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "quadruped_t_spine_rotation",
+    "name": "Quadruped T-Spine Rotation",
+    "aliases": [
+      "thread the needle",
+      "t spine rotation"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E0",
+    "band": 1,
+    "block_eligibility": [
+      "PRIME"
+    ],
+    "population_tags": [
+      "adult",
+      "youth_13_17"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 0,
+    "eccentric_s": 0.0,
+    "default_reps": 6,
+    "default_sets": 1,
+    "capability_tags": [
+      "mobility"
+    ],
+    "intent_tags": [
+      "warmup",
+      "mobility"
+    ],
+    "movement_pattern": "mobility",
+    "day_role_preference": [
+      "ANY"
+    ],
+    "intensity_profile": "LOW",
+    "surface_requirements": [
+      "any"
+    ],
+    "equipment_required": [
+      "none"
+    ],
+    "space_requirement": "SMALL",
+    "coaching_complexity": "LOW",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": null
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "cat_camel",
+    "name": "Cat-Camel",
+    "aliases": [
+      "cat camel"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E0",
+    "band": 1,
+    "block_eligibility": [
+      "PRIME"
+    ],
+    "population_tags": [
+      "adult",
+      "youth_13_17"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 0,
+    "eccentric_s": 0.0,
+    "default_reps": 6,
+    "default_sets": 1,
+    "capability_tags": [
+      "mobility"
+    ],
+    "intent_tags": [
+      "warmup",
+      "mobility"
+    ],
+    "movement_pattern": "mobility",
+    "day_role_preference": [
+      "ANY"
+    ],
+    "intensity_profile": "LOW",
+    "surface_requirements": [
+      "any"
+    ],
+    "equipment_required": [
+      "none"
+    ],
+    "space_requirement": "SMALL",
+    "coaching_complexity": "LOW",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": null
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "adductor_rock_back",
+    "name": "Adductor Rock Back",
+    "aliases": [
+      "rock back",
+      "adductor rockback"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E0",
+    "band": 1,
+    "block_eligibility": [
+      "PRIME"
+    ],
+    "population_tags": [
+      "adult",
+      "youth_13_17"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 0,
+    "eccentric_s": 0.0,
+    "default_reps": 6,
+    "default_sets": 1,
+    "capability_tags": [
+      "mobility"
+    ],
+    "intent_tags": [
+      "warmup",
+      "mobility"
+    ],
+    "movement_pattern": "mobility",
+    "day_role_preference": [
+      "ANY"
+    ],
+    "intensity_profile": "LOW",
+    "surface_requirements": [
+      "any"
+    ],
+    "equipment_required": [
+      "none"
+    ],
+    "space_requirement": "SMALL",
+    "coaching_complexity": "LOW",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": null
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "calf_foam_roll",
+    "name": "Calf Foam Roll",
+    "aliases": [
+      "foam roll calf"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E0",
+    "band": 1,
+    "block_eligibility": [
+      "PRIME"
+    ],
+    "population_tags": [
+      "adult",
+      "youth_13_17"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 0,
+    "eccentric_s": 0.0,
+    "default_reps": 1,
+    "default_sets": 1,
+    "capability_tags": [
+      "mobility"
+    ],
+    "intent_tags": [
+      "warmup",
+      "mobility"
+    ],
+    "movement_pattern": "mobility",
+    "day_role_preference": [
+      "ANY"
+    ],
+    "intensity_profile": "LOW",
+    "surface_requirements": [
+      "any"
+    ],
+    "equipment_required": [
+      "none"
+    ],
+    "space_requirement": "SMALL",
+    "coaching_complexity": "LOW",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": null
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "glute_foam_roll",
+    "name": "Glute Foam Roll",
+    "aliases": [
+      "foam roll glutes"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E0",
+    "band": 1,
+    "block_eligibility": [
+      "PRIME"
+    ],
+    "population_tags": [
+      "adult",
+      "youth_13_17"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 0,
+    "eccentric_s": 0.0,
+    "default_reps": 1,
+    "default_sets": 1,
+    "capability_tags": [
+      "mobility"
+    ],
+    "intent_tags": [
+      "warmup",
+      "mobility"
+    ],
+    "movement_pattern": "mobility",
+    "day_role_preference": [
+      "ANY"
+    ],
+    "intensity_profile": "LOW",
+    "surface_requirements": [
+      "any"
+    ],
+    "equipment_required": [
+      "none"
+    ],
+    "space_requirement": "SMALL",
+    "coaching_complexity": "LOW",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": null
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "hamstring_sweep",
+    "name": "Hamstring Sweep",
+    "aliases": [
+      "hamstring sweep"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E0",
+    "band": 1,
+    "block_eligibility": [
+      "PRIME"
+    ],
+    "population_tags": [
+      "adult",
+      "youth_13_17"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 0,
+    "eccentric_s": 0.0,
+    "default_reps": 6,
+    "default_sets": 1,
+    "capability_tags": [
+      "mobility"
+    ],
+    "intent_tags": [
+      "warmup",
+      "mobility"
+    ],
+    "movement_pattern": "mobility",
+    "day_role_preference": [
+      "ANY"
+    ],
+    "intensity_profile": "LOW",
+    "surface_requirements": [
+      "any"
+    ],
+    "equipment_required": [
+      "none"
+    ],
+    "space_requirement": "SMALL",
+    "coaching_complexity": "LOW",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": null
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "hip_flexor_half_kneeling_stretch",
+    "name": "Hip Flexor Half-Kneeling Stretch",
+    "aliases": [
+      "hip flexor stretch",
+      "half kneeling hip flexor"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E0",
+    "band": 1,
+    "block_eligibility": [
+      "PRIME"
+    ],
+    "population_tags": [
+      "adult",
+      "youth_13_17"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 0,
+    "eccentric_s": 0.0,
+    "default_reps": 1,
+    "default_sets": 1,
+    "capability_tags": [
+      "mobility"
+    ],
+    "intent_tags": [
+      "warmup",
+      "mobility"
+    ],
+    "movement_pattern": "mobility",
+    "day_role_preference": [
+      "ANY"
+    ],
+    "intensity_profile": "LOW",
+    "surface_requirements": [
+      "any"
+    ],
+    "equipment_required": [
+      "none"
+    ],
+    "space_requirement": "SMALL",
+    "coaching_complexity": "LOW",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": null
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "glute_bridge",
+    "name": "Glute Bridge",
+    "aliases": [
+      "bridge"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E1",
+    "band": 1,
+    "block_eligibility": [
+      "PRIME",
+      "PREP"
+    ],
+    "population_tags": [
+      "adult",
+      "youth_13_17"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 0,
+    "eccentric_s": 0.0,
+    "default_reps": 10,
+    "default_sets": 2,
+    "capability_tags": [
+      "bilateral"
+    ],
+    "intent_tags": [
+      "mobility"
+    ],
+    "movement_pattern": "other",
+    "day_role_preference": [
+      "ANY"
+    ],
+    "intensity_profile": "LOW",
+    "surface_requirements": [
+      "any"
+    ],
+    "equipment_required": [
+      "none"
+    ],
+    "space_requirement": "SMALL",
+    "coaching_complexity": "LOW",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": null
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "single_leg_glute_bridge",
+    "name": "Single-Leg Glute Bridge",
+    "aliases": [
+      "sl glute bridge"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E1",
+    "band": 1,
+    "block_eligibility": [
+      "PRIME",
+      "PREP"
+    ],
+    "population_tags": [
+      "adult",
+      "youth_13_17"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 0,
+    "eccentric_s": 0.0,
+    "default_reps": 10,
+    "default_sets": 2,
+    "capability_tags": [
+      "unilateral"
+    ],
+    "intent_tags": [
+      "mobility"
+    ],
+    "movement_pattern": "other",
+    "day_role_preference": [
+      "ANY"
+    ],
+    "intensity_profile": "LOW",
+    "surface_requirements": [
+      "any"
+    ],
+    "equipment_required": [
+      "none"
+    ],
+    "space_requirement": "SMALL",
+    "coaching_complexity": "LOW",
+    "bilateral": false,
+    "execution_style": "standard",
+    "notes": null
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "dead_bug",
+    "name": "Dead Bug",
+    "aliases": [
+      "deadbug"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E1",
+    "band": 1,
+    "block_eligibility": [
+      "PRIME",
+      "PREP"
+    ],
+    "population_tags": [
+      "adult",
+      "youth_13_17"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 0,
+    "eccentric_s": 0.0,
+    "default_reps": 10,
+    "default_sets": 2,
+    "capability_tags": [
+      "bilateral"
+    ],
+    "intent_tags": [
+      "mobility"
+    ],
+    "movement_pattern": "other",
+    "day_role_preference": [
+      "ANY"
+    ],
+    "intensity_profile": "LOW",
+    "surface_requirements": [
+      "any"
+    ],
+    "equipment_required": [
+      "none"
+    ],
+    "space_requirement": "SMALL",
+    "coaching_complexity": "LOW",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": null
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "bird_dog",
+    "name": "Bird Dog",
+    "aliases": [
+      "birddog"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E1",
+    "band": 1,
+    "block_eligibility": [
+      "PRIME",
+      "PREP"
+    ],
+    "population_tags": [
+      "adult",
+      "youth_13_17"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 0,
+    "eccentric_s": 0.0,
+    "default_reps": 10,
+    "default_sets": 2,
+    "capability_tags": [
+      "bilateral"
+    ],
+    "intent_tags": [
+      "mobility"
+    ],
+    "movement_pattern": "other",
+    "day_role_preference": [
+      "ANY"
+    ],
+    "intensity_profile": "LOW",
+    "surface_requirements": [
+      "any"
+    ],
+    "equipment_required": [
+      "none"
+    ],
+    "space_requirement": "SMALL",
+    "coaching_complexity": "LOW",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": null
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "side_plank",
+    "name": "Side Plank",
+    "aliases": [
+      "side plank hold"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E1",
+    "band": 1,
+    "block_eligibility": [
+      "PREP",
+      "CLEAR"
+    ],
+    "population_tags": [
+      "adult",
+      "youth_13_17"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 0,
+    "eccentric_s": 0.0,
+    "default_reps": 1,
+    "default_sets": 2,
+    "capability_tags": [
+      "bilateral"
+    ],
+    "intent_tags": [
+      "mobility"
+    ],
+    "movement_pattern": "isometric",
+    "day_role_preference": [
+      "ANY"
+    ],
+    "intensity_profile": "LOW",
+    "surface_requirements": [
+      "any"
+    ],
+    "equipment_required": [
+      "none"
+    ],
+    "space_requirement": "SMALL",
+    "coaching_complexity": "LOW",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": null
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "front_plank",
+    "name": "Front Plank",
+    "aliases": [
+      "plank"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E1",
+    "band": 1,
+    "block_eligibility": [
+      "PREP",
+      "CLEAR"
+    ],
+    "population_tags": [
+      "adult",
+      "youth_13_17"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 0,
+    "eccentric_s": 0.0,
+    "default_reps": 1,
+    "default_sets": 2,
+    "capability_tags": [
+      "bilateral"
+    ],
+    "intent_tags": [
+      "mobility"
+    ],
+    "movement_pattern": "isometric",
+    "day_role_preference": [
+      "ANY"
+    ],
+    "intensity_profile": "LOW",
+    "surface_requirements": [
+      "any"
+    ],
+    "equipment_required": [
+      "none"
+    ],
+    "space_requirement": "SMALL",
+    "coaching_complexity": "LOW",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": null
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "pallof_press_band",
+    "name": "Pallof Press (Band)",
+    "aliases": [
+      "pallof press"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E1",
+    "band": 1,
+    "block_eligibility": [
+      "PRIME",
+      "PREP"
+    ],
+    "population_tags": [
+      "adult",
+      "youth_13_17"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 0,
+    "eccentric_s": 0.0,
+    "default_reps": 10,
+    "default_sets": 2,
+    "capability_tags": [
+      "bilateral"
+    ],
+    "intent_tags": [
+      "mobility"
+    ],
+    "movement_pattern": "other",
+    "day_role_preference": [
+      "ANY"
+    ],
+    "intensity_profile": "LOW",
+    "surface_requirements": [
+      "any"
+    ],
+    "equipment_required": [
+      "resistance_band"
+    ],
+    "space_requirement": "SMALL",
+    "coaching_complexity": "LOW",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": null
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "band_lateral_walk",
+    "name": "Band Lateral Walk",
+    "aliases": [
+      "monster walk",
+      "band walk"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E1",
+    "band": 1,
+    "block_eligibility": [
+      "PRIME",
+      "PREP"
+    ],
+    "population_tags": [
+      "adult",
+      "youth_13_17"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 0,
+    "eccentric_s": 0.0,
+    "default_reps": 10,
+    "default_sets": 2,
+    "capability_tags": [
+      "bilateral"
+    ],
+    "intent_tags": [
+      "mobility"
+    ],
+    "movement_pattern": "other",
+    "day_role_preference": [
+      "ANY"
+    ],
+    "intensity_profile": "LOW",
+    "surface_requirements": [
+      "any"
+    ],
+    "equipment_required": [
+      "resistance_band"
+    ],
+    "space_requirement": "SMALL",
+    "coaching_complexity": "LOW",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": null
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "mini_band_glute_bridge",
+    "name": "Mini Band Glute Bridge",
+    "aliases": [
+      "banded glute bridge"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E1",
+    "band": 1,
+    "block_eligibility": [
+      "PRIME",
+      "PREP"
+    ],
+    "population_tags": [
+      "adult",
+      "youth_13_17"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 0,
+    "eccentric_s": 0.0,
+    "default_reps": 10,
+    "default_sets": 2,
+    "capability_tags": [
+      "bilateral"
+    ],
+    "intent_tags": [
+      "mobility"
+    ],
+    "movement_pattern": "other",
+    "day_role_preference": [
+      "ANY"
+    ],
+    "intensity_profile": "LOW",
+    "surface_requirements": [
+      "any"
+    ],
+    "equipment_required": [
+      "resistance_band"
+    ],
+    "space_requirement": "SMALL",
+    "coaching_complexity": "LOW",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": null
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "scap_push_up",
+    "name": "Scap Push-Up",
+    "aliases": [
+      "scap pushup"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E1",
+    "band": 1,
+    "block_eligibility": [
+      "PRIME",
+      "PREP"
+    ],
+    "population_tags": [
+      "adult",
+      "youth_13_17"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 0,
+    "eccentric_s": 0.0,
+    "default_reps": 10,
+    "default_sets": 2,
+    "capability_tags": [
+      "bilateral"
+    ],
+    "intent_tags": [
+      "mobility"
+    ],
+    "movement_pattern": "other",
+    "day_role_preference": [
+      "ANY"
+    ],
+    "intensity_profile": "LOW",
+    "surface_requirements": [
+      "any"
+    ],
+    "equipment_required": [
+      "none"
+    ],
+    "space_requirement": "SMALL",
+    "coaching_complexity": "LOW",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": null
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "wall_slide",
+    "name": "Wall Slide",
+    "aliases": [
+      "wall slides"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E1",
+    "band": 1,
+    "block_eligibility": [
+      "PRIME",
+      "PREP"
+    ],
+    "population_tags": [
+      "adult",
+      "youth_13_17"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 0,
+    "eccentric_s": 0.0,
+    "default_reps": 10,
+    "default_sets": 2,
+    "capability_tags": [
+      "bilateral"
+    ],
+    "intent_tags": [
+      "mobility"
+    ],
+    "movement_pattern": "other",
+    "day_role_preference": [
+      "ANY"
+    ],
+    "intensity_profile": "LOW",
+    "surface_requirements": [
+      "any"
+    ],
+    "equipment_required": [
+      "none"
+    ],
+    "space_requirement": "SMALL",
+    "coaching_complexity": "LOW",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": null
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "band_face_pull",
+    "name": "Band Face Pull",
+    "aliases": [
+      "face pull"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E1",
+    "band": 1,
+    "block_eligibility": [
+      "PRIME",
+      "PREP"
+    ],
+    "population_tags": [
+      "adult",
+      "youth_13_17"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 0,
+    "eccentric_s": 0.0,
+    "default_reps": 10,
+    "default_sets": 2,
+    "capability_tags": [
+      "bilateral"
+    ],
+    "intent_tags": [
+      "mobility"
+    ],
+    "movement_pattern": "other",
+    "day_role_preference": [
+      "ANY"
+    ],
+    "intensity_profile": "LOW",
+    "surface_requirements": [
+      "any"
+    ],
+    "equipment_required": [
+      "resistance_band"
+    ],
+    "space_requirement": "SMALL",
+    "coaching_complexity": "LOW",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": null
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "couch_stretch",
+    "name": "Couch Stretch",
+    "aliases": [
+      "couch stretch"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E1",
+    "band": 1,
+    "block_eligibility": [
+      "CLEAR"
+    ],
+    "population_tags": [
+      "adult",
+      "youth_13_17"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 0,
+    "eccentric_s": 0.0,
+    "default_reps": 1,
+    "default_sets": 2,
+    "capability_tags": [
+      "bilateral"
+    ],
+    "intent_tags": [
+      "warmup",
+      "mobility"
+    ],
+    "movement_pattern": "mobility",
+    "day_role_preference": [
+      "ANY"
+    ],
+    "intensity_profile": "LOW",
+    "surface_requirements": [
+      "any"
+    ],
+    "equipment_required": [
+      "none"
+    ],
+    "space_requirement": "SMALL",
+    "coaching_complexity": "LOW",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": null
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "sleeper_stretch",
+    "name": "Sleeper Stretch",
+    "aliases": [
+      "sleeper stretch"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E1",
+    "band": 1,
+    "block_eligibility": [
+      "CLEAR"
+    ],
+    "population_tags": [
+      "adult",
+      "youth_13_17"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 0,
+    "eccentric_s": 0.0,
+    "default_reps": 1,
+    "default_sets": 2,
+    "capability_tags": [
+      "bilateral"
+    ],
+    "intent_tags": [
+      "warmup",
+      "mobility"
+    ],
+    "movement_pattern": "mobility",
+    "day_role_preference": [
+      "ANY"
+    ],
+    "intensity_profile": "LOW",
+    "surface_requirements": [
+      "any"
+    ],
+    "equipment_required": [
+      "none"
+    ],
+    "space_requirement": "SMALL",
+    "coaching_complexity": "LOW",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": null
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "thoracic_extension_on_foam_roller",
+    "name": "Thoracic Extension on Foam Roller",
+    "aliases": [
+      "t spine extension"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E1",
+    "band": 1,
+    "block_eligibility": [
+      "CLEAR"
+    ],
+    "population_tags": [
+      "adult",
+      "youth_13_17"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 0,
+    "eccentric_s": 0.0,
+    "default_reps": 1,
+    "default_sets": 2,
+    "capability_tags": [
+      "bilateral"
+    ],
+    "intent_tags": [
+      "warmup",
+      "mobility"
+    ],
+    "movement_pattern": "mobility",
+    "day_role_preference": [
+      "ANY"
+    ],
+    "intensity_profile": "LOW",
+    "surface_requirements": [
+      "any"
+    ],
+    "equipment_required": [
+      "none"
+    ],
+    "space_requirement": "SMALL",
+    "coaching_complexity": "LOW",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": null
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "farmer_carry_dumbbells",
+    "name": "Farmer Carry (Dumbbells)",
+    "aliases": [
+      "farmer carry"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E1",
+    "band": 1,
+    "block_eligibility": [
+      "WORK",
+      "CLEAR"
+    ],
+    "population_tags": [
+      "adult",
+      "youth_13_17"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 0,
+    "eccentric_s": 0.0,
+    "default_reps": 10,
+    "default_sets": 2,
+    "capability_tags": [
+      "bilateral"
+    ],
+    "intent_tags": [
+      "mobility"
+    ],
+    "movement_pattern": "carry",
+    "day_role_preference": [
+      "ANY"
+    ],
+    "intensity_profile": "LOW",
+    "surface_requirements": [
+      "any"
+    ],
+    "equipment_required": [
+      "dumbbell"
+    ],
+    "space_requirement": "MEDIUM",
+    "coaching_complexity": "MED",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": null
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "suitcase_carry_dumbbell",
+    "name": "Suitcase Carry (Dumbbell)",
+    "aliases": [
+      "suitcase carry"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E1",
+    "band": 1,
+    "block_eligibility": [
+      "WORK",
+      "CLEAR"
+    ],
+    "population_tags": [
+      "adult",
+      "youth_13_17"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 0,
+    "eccentric_s": 0.0,
+    "default_reps": 10,
+    "default_sets": 2,
+    "capability_tags": [
+      "bilateral"
+    ],
+    "intent_tags": [
+      "mobility"
+    ],
+    "movement_pattern": "carry",
+    "day_role_preference": [
+      "ANY"
+    ],
+    "intensity_profile": "LOW",
+    "surface_requirements": [
+      "any"
+    ],
+    "equipment_required": [
+      "dumbbell"
+    ],
+    "space_requirement": "MEDIUM",
+    "coaching_complexity": "MED",
+    "bilateral": false,
+    "execution_style": "standard",
+    "notes": null
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "marching_a_skip_in_place",
+    "name": "Marching A-Skip (In Place)",
+    "aliases": [
+      "march skip"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E1",
+    "band": 1,
+    "block_eligibility": [
+      "PRIME",
+      "PREP"
+    ],
+    "population_tags": [
+      "adult",
+      "youth_13_17"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 1,
+    "eccentric_s": 0.0,
+    "default_reps": 20,
+    "default_sets": 2,
+    "capability_tags": [
+      "bilateral"
+    ],
+    "intent_tags": [
+      "warmup"
+    ],
+    "movement_pattern": "sprint_drill",
+    "day_role_preference": [
+      "ANY"
+    ],
+    "intensity_profile": "LOW",
+    "surface_requirements": [
+      "any"
+    ],
+    "equipment_required": [
+      "none"
+    ],
+    "space_requirement": "SMALL",
+    "coaching_complexity": "LOW",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": null
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "a_skip",
+    "name": "A-Skip",
+    "aliases": [
+      "a skip"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E2",
+    "band": 2,
+    "block_eligibility": [
+      "WORK"
+    ],
+    "population_tags": [
+      "adult",
+      "youth_13_17"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 1,
+    "eccentric_s": 0.0,
+    "default_reps": 20,
+    "default_sets": 2,
+    "capability_tags": [
+      "bilateral",
+      "unilateral"
+    ],
+    "intent_tags": [
+      "acceleration",
+      "horizontal_force"
+    ],
+    "movement_pattern": "sprint_drill",
+    "day_role_preference": [
+      "ANY"
+    ],
+    "intensity_profile": "HIGH",
+    "surface_requirements": [
+      "turf",
+      "grass",
+      "any"
+    ],
+    "equipment_required": [
+      "none"
+    ],
+    "space_requirement": "LARGE",
+    "coaching_complexity": "MED",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": null
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "b_skip",
+    "name": "B-Skip",
+    "aliases": [
+      "b skip"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E2",
+    "band": 2,
+    "block_eligibility": [
+      "WORK"
+    ],
+    "population_tags": [
+      "adult",
+      "youth_13_17"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 1,
+    "eccentric_s": 0.0,
+    "default_reps": 20,
+    "default_sets": 2,
+    "capability_tags": [
+      "bilateral",
+      "unilateral"
+    ],
+    "intent_tags": [
+      "acceleration",
+      "horizontal_force"
+    ],
+    "movement_pattern": "sprint_drill",
+    "day_role_preference": [
+      "ANY"
+    ],
+    "intensity_profile": "HIGH",
+    "surface_requirements": [
+      "turf",
+      "grass",
+      "any"
+    ],
+    "equipment_required": [
+      "none"
+    ],
+    "space_requirement": "LARGE",
+    "coaching_complexity": "MED",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": null
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "high_knees",
+    "name": "High Knees",
+    "aliases": [
+      "high knees"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E2",
+    "band": 2,
+    "block_eligibility": [
+      "WORK"
+    ],
+    "population_tags": [
+      "adult",
+      "youth_13_17"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 1,
+    "eccentric_s": 0.0,
+    "default_reps": 20,
+    "default_sets": 2,
+    "capability_tags": [
+      "bilateral",
+      "unilateral"
+    ],
+    "intent_tags": [
+      "acceleration",
+      "horizontal_force"
+    ],
+    "movement_pattern": "sprint_drill",
+    "day_role_preference": [
+      "ANY"
+    ],
+    "intensity_profile": "HIGH",
+    "surface_requirements": [
+      "turf",
+      "grass",
+      "any"
+    ],
+    "equipment_required": [
+      "none"
+    ],
+    "space_requirement": "LARGE",
+    "coaching_complexity": "MED",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": null
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "butt_kicks",
+    "name": "Butt Kicks",
+    "aliases": [
+      "butt kicks"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E2",
+    "band": 2,
+    "block_eligibility": [
+      "WORK"
+    ],
+    "population_tags": [
+      "adult",
+      "youth_13_17"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 1,
+    "eccentric_s": 0.0,
+    "default_reps": 20,
+    "default_sets": 2,
+    "capability_tags": [
+      "bilateral",
+      "unilateral"
+    ],
+    "intent_tags": [
+      "acceleration",
+      "horizontal_force"
+    ],
+    "movement_pattern": "sprint_drill",
+    "day_role_preference": [
+      "ANY"
+    ],
+    "intensity_profile": "HIGH",
+    "surface_requirements": [
+      "turf",
+      "grass",
+      "any"
+    ],
+    "equipment_required": [
+      "none"
+    ],
+    "space_requirement": "LARGE",
+    "coaching_complexity": "MED",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": null
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "wall_drill_a_march",
+    "name": "Wall Drill (A-March)",
+    "aliases": [
+      "wall drill",
+      "a march"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E2",
+    "band": 2,
+    "block_eligibility": [
+      "PREP",
+      "WORK"
+    ],
+    "population_tags": [
+      "adult",
+      "youth_13_17"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 1,
+    "eccentric_s": 0.0,
+    "default_reps": 20,
+    "default_sets": 2,
+    "capability_tags": [
+      "bilateral"
+    ],
+    "intent_tags": [
+      "acceleration",
+      "horizontal_force",
+      "warmup"
+    ],
+    "movement_pattern": "sprint_drill",
+    "day_role_preference": [
+      "ANY"
+    ],
+    "intensity_profile": "MODERATE",
+    "surface_requirements": [
+      "turf",
+      "grass",
+      "any"
+    ],
+    "equipment_required": [
+      "none"
+    ],
+    "space_requirement": "LARGE",
+    "coaching_complexity": "MED",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": null
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "wall_drill_a_skip",
+    "name": "Wall Drill (A-Skip)",
+    "aliases": [
+      "wall drill a skip"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E2",
+    "band": 2,
+    "block_eligibility": [
+      "PREP",
+      "WORK"
+    ],
+    "population_tags": [
+      "adult",
+      "youth_13_17"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 1,
+    "eccentric_s": 0.0,
+    "default_reps": 20,
+    "default_sets": 2,
+    "capability_tags": [
+      "bilateral",
+      "unilateral"
+    ],
+    "intent_tags": [
+      "acceleration",
+      "horizontal_force",
+      "warmup"
+    ],
+    "movement_pattern": "sprint_drill",
+    "day_role_preference": [
+      "ANY"
+    ],
+    "intensity_profile": "MODERATE",
+    "surface_requirements": [
+      "turf",
+      "grass",
+      "any"
+    ],
+    "equipment_required": [
+      "none"
+    ],
+    "space_requirement": "LARGE",
+    "coaching_complexity": "MED",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": null
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "falling_start_10yd",
+    "name": "Falling Start (10yd)",
+    "aliases": [
+      "falling start"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E2",
+    "band": 2,
+    "block_eligibility": [
+      "WORK"
+    ],
+    "population_tags": [
+      "adult",
+      "youth_13_17"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 1,
+    "eccentric_s": 0.0,
+    "default_reps": 1,
+    "default_sets": 6,
+    "capability_tags": [
+      "bilateral"
+    ],
+    "intent_tags": [
+      "acceleration",
+      "horizontal_force"
+    ],
+    "movement_pattern": "sprint_drill",
+    "day_role_preference": [
+      "ANY"
+    ],
+    "intensity_profile": "HIGH",
+    "surface_requirements": [
+      "turf",
+      "grass",
+      "any"
+    ],
+    "equipment_required": [
+      "none"
+    ],
+    "space_requirement": "LARGE",
+    "coaching_complexity": "MED",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": null
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "build_up_sprint_20yd",
+    "name": "Build-Up Sprint (20yd)",
+    "aliases": [
+      "build up"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E2",
+    "band": 2,
+    "block_eligibility": [
+      "WORK"
+    ],
+    "population_tags": [
+      "adult",
+      "youth_13_17"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 1,
+    "eccentric_s": 0.0,
+    "default_reps": 1,
+    "default_sets": 6,
+    "capability_tags": [
+      "bilateral"
+    ],
+    "intent_tags": [
+      "acceleration",
+      "horizontal_force"
+    ],
+    "movement_pattern": "sprint_drill",
+    "day_role_preference": [
+      "ANY"
+    ],
+    "intensity_profile": "MODERATE",
+    "surface_requirements": [
+      "turf",
+      "grass",
+      "any"
+    ],
+    "equipment_required": [
+      "none"
+    ],
+    "space_requirement": "LARGE",
+    "coaching_complexity": "MED",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": null
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "flying_10_sprint",
+    "name": "Flying 10 Sprint",
+    "aliases": [
+      "flying 10",
+      "fly 10"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E2",
+    "band": 2,
+    "block_eligibility": [
+      "WORK"
+    ],
+    "population_tags": [
+      "adult",
+      "youth_13_17"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 1,
+    "eccentric_s": 0.0,
+    "default_reps": 1,
+    "default_sets": 6,
+    "capability_tags": [
+      "bilateral"
+    ],
+    "intent_tags": [
+      "acceleration",
+      "horizontal_force"
+    ],
+    "movement_pattern": "sprint_drill",
+    "day_role_preference": [
+      "ANY"
+    ],
+    "intensity_profile": "HIGH",
+    "surface_requirements": [
+      "turf",
+      "grass",
+      "any"
+    ],
+    "equipment_required": [
+      "none"
+    ],
+    "space_requirement": "LARGE",
+    "coaching_complexity": "MED",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": null
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "resisted_acceleration_band_10yd",
+    "name": "Resisted Acceleration (Band) 10yd",
+    "aliases": [
+      "band accel",
+      "resisted sprint"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E2",
+    "band": 2,
+    "block_eligibility": [
+      "WORK"
+    ],
+    "population_tags": [
+      "adult",
+      "youth_13_17"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 1,
+    "eccentric_s": 0.0,
+    "default_reps": 1,
+    "default_sets": 6,
+    "capability_tags": [
+      "bilateral"
+    ],
+    "intent_tags": [
+      "acceleration",
+      "horizontal_force"
+    ],
+    "movement_pattern": "sprint_drill",
+    "day_role_preference": [
+      "ANY"
+    ],
+    "intensity_profile": "HIGH",
+    "surface_requirements": [
+      "turf",
+      "grass",
+      "any"
+    ],
+    "equipment_required": [
+      "resistance_band"
+    ],
+    "space_requirement": "LARGE",
+    "coaching_complexity": "MED",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": null
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "lateral_shuffle_to_stick",
+    "name": "Lateral Shuffle to Stick",
+    "aliases": [
+      "shuffle stick"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E2",
+    "band": 2,
+    "block_eligibility": [
+      "PREP",
+      "WORK"
+    ],
+    "population_tags": [
+      "adult",
+      "youth_13_17"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 2,
+    "eccentric_s": 0.0,
+    "default_reps": 4,
+    "default_sets": 2,
+    "capability_tags": [
+      "bilateral"
+    ],
+    "intent_tags": [
+      "change_of_direction",
+      "deceleration"
+    ],
+    "movement_pattern": "shuffle",
+    "day_role_preference": [
+      "ANY"
+    ],
+    "intensity_profile": "MODERATE",
+    "surface_requirements": [
+      "hardcourt",
+      "turf",
+      "any"
+    ],
+    "equipment_required": [
+      "none"
+    ],
+    "space_requirement": "MEDIUM",
+    "coaching_complexity": "MED",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": null
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "shuffle_to_45_cut_stick",
+    "name": "Shuffle to 45\u00b0 Cut (Stick)",
+    "aliases": [
+      "45 cut"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E2",
+    "band": 2,
+    "block_eligibility": [
+      "PREP",
+      "WORK"
+    ],
+    "population_tags": [
+      "adult",
+      "youth_13_17"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 2,
+    "eccentric_s": 0.0,
+    "default_reps": 4,
+    "default_sets": 2,
+    "capability_tags": [
+      "bilateral"
+    ],
+    "intent_tags": [
+      "change_of_direction",
+      "deceleration"
+    ],
+    "movement_pattern": "shuffle",
+    "day_role_preference": [
+      "ANY"
+    ],
+    "intensity_profile": "MODERATE",
+    "surface_requirements": [
+      "hardcourt",
+      "turf",
+      "any"
+    ],
+    "equipment_required": [
+      "none"
+    ],
+    "space_requirement": "MEDIUM",
+    "coaching_complexity": "MED",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": null
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "pro_agility_5_10_5_submax",
+    "name": "Pro Agility 5-10-5 (Submax)",
+    "aliases": [
+      "5-10-5"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E2",
+    "band": 2,
+    "block_eligibility": [
+      "PREP",
+      "WORK"
+    ],
+    "population_tags": [
+      "adult",
+      "youth_13_17"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 2,
+    "eccentric_s": 0.0,
+    "default_reps": 4,
+    "default_sets": 2,
+    "capability_tags": [
+      "bilateral"
+    ],
+    "intent_tags": [
+      "change_of_direction",
+      "deceleration"
+    ],
+    "movement_pattern": "other",
+    "day_role_preference": [
+      "ANY"
+    ],
+    "intensity_profile": "MODERATE",
+    "surface_requirements": [
+      "hardcourt",
+      "turf",
+      "any"
+    ],
+    "equipment_required": [
+      "none"
+    ],
+    "space_requirement": "MEDIUM",
+    "coaching_complexity": "MED",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": null
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "carioca",
+    "name": "Carioca",
+    "aliases": [
+      "grapevine"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E2",
+    "band": 2,
+    "block_eligibility": [
+      "PREP",
+      "WORK"
+    ],
+    "population_tags": [
+      "adult",
+      "youth_13_17"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 2,
+    "eccentric_s": 0.0,
+    "default_reps": 4,
+    "default_sets": 2,
+    "capability_tags": [
+      "bilateral"
+    ],
+    "intent_tags": [
+      "change_of_direction",
+      "deceleration"
+    ],
+    "movement_pattern": "shuffle",
+    "day_role_preference": [
+      "ANY"
+    ],
+    "intensity_profile": "MODERATE",
+    "surface_requirements": [
+      "hardcourt",
+      "turf",
+      "any"
+    ],
+    "equipment_required": [
+      "none"
+    ],
+    "space_requirement": "MEDIUM",
+    "coaching_complexity": "MED",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": null
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "backpedal_to_break_stick",
+    "name": "Backpedal to Break (Stick)",
+    "aliases": [
+      "backpedal break"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E2",
+    "band": 2,
+    "block_eligibility": [
+      "PREP",
+      "WORK"
+    ],
+    "population_tags": [
+      "adult",
+      "youth_13_17"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 2,
+    "eccentric_s": 0.0,
+    "default_reps": 4,
+    "default_sets": 2,
+    "capability_tags": [
+      "bilateral"
+    ],
+    "intent_tags": [
+      "change_of_direction",
+      "deceleration"
+    ],
+    "movement_pattern": "other",
+    "day_role_preference": [
+      "ANY"
+    ],
+    "intensity_profile": "MODERATE",
+    "surface_requirements": [
+      "hardcourt",
+      "turf",
+      "any"
+    ],
+    "equipment_required": [
+      "none"
+    ],
+    "space_requirement": "MEDIUM",
+    "coaching_complexity": "MED",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": null
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "crossover_step_to_stick",
+    "name": "Crossover Step to Stick",
+    "aliases": [
+      "crossover stick"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E2",
+    "band": 2,
+    "block_eligibility": [
+      "PREP",
+      "WORK"
+    ],
+    "population_tags": [
+      "adult",
+      "youth_13_17"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 2,
+    "eccentric_s": 0.0,
+    "default_reps": 4,
+    "default_sets": 2,
+    "capability_tags": [
+      "bilateral"
+    ],
+    "intent_tags": [
+      "change_of_direction",
+      "deceleration"
+    ],
+    "movement_pattern": "other",
+    "day_role_preference": [
+      "ANY"
+    ],
+    "intensity_profile": "MODERATE",
+    "surface_requirements": [
+      "hardcourt",
+      "turf",
+      "any"
+    ],
+    "equipment_required": [
+      "none"
+    ],
+    "space_requirement": "MEDIUM",
+    "coaching_complexity": "MED",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": null
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "lateral_bound_to_stick",
+    "name": "Lateral Bound to Stick",
+    "aliases": [
+      "skater bound stick"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E2",
+    "band": 2,
+    "block_eligibility": [
+      "PREP",
+      "WORK"
+    ],
+    "population_tags": [
+      "adult",
+      "youth_13_17"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 1,
+    "eccentric_s": 0.0,
+    "default_reps": 4,
+    "default_sets": 2,
+    "capability_tags": [
+      "unilateral"
+    ],
+    "intent_tags": [
+      "change_of_direction",
+      "deceleration"
+    ],
+    "movement_pattern": "bound",
+    "day_role_preference": [
+      "ANY"
+    ],
+    "intensity_profile": "MODERATE",
+    "surface_requirements": [
+      "hardcourt",
+      "turf",
+      "any"
+    ],
+    "equipment_required": [
+      "none"
+    ],
+    "space_requirement": "MEDIUM",
+    "coaching_complexity": "HIGH",
+    "bilateral": false,
+    "execution_style": "standard",
+    "notes": null
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "skater_jump",
+    "name": "Skater Jump",
+    "aliases": [
+      "skater jump"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E2",
+    "band": 2,
+    "block_eligibility": [
+      "PREP",
+      "WORK"
+    ],
+    "population_tags": [
+      "adult",
+      "youth_13_17"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 1,
+    "eccentric_s": 0.0,
+    "default_reps": 4,
+    "default_sets": 2,
+    "capability_tags": [
+      "unilateral"
+    ],
+    "intent_tags": [
+      "change_of_direction",
+      "deceleration"
+    ],
+    "movement_pattern": "bound",
+    "day_role_preference": [
+      "ANY"
+    ],
+    "intensity_profile": "MODERATE",
+    "surface_requirements": [
+      "hardcourt",
+      "turf",
+      "any"
+    ],
+    "equipment_required": [
+      "none"
+    ],
+    "space_requirement": "MEDIUM",
+    "coaching_complexity": "HIGH",
+    "bilateral": false,
+    "execution_style": "standard",
+    "notes": null
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "single_leg_hop_to_stick",
+    "name": "Single-Leg Hop to Stick",
+    "aliases": [
+      "sl hop stick"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E2",
+    "band": 2,
+    "block_eligibility": [
+      "PREP",
+      "WORK"
+    ],
+    "population_tags": [
+      "adult",
+      "youth_13_17"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 1,
+    "eccentric_s": 0.0,
+    "default_reps": 4,
+    "default_sets": 2,
+    "capability_tags": [
+      "unilateral"
+    ],
+    "intent_tags": [
+      "change_of_direction",
+      "deceleration"
+    ],
+    "movement_pattern": "hop",
+    "day_role_preference": [
+      "ANY"
+    ],
+    "intensity_profile": "MODERATE",
+    "surface_requirements": [
+      "hardcourt",
+      "turf",
+      "any"
+    ],
+    "equipment_required": [
+      "none"
+    ],
+    "space_requirement": "MEDIUM",
+    "coaching_complexity": "HIGH",
+    "bilateral": false,
+    "execution_style": "standard",
+    "notes": null
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "drop_lunge_to_stick",
+    "name": "Drop Lunge to Stick",
+    "aliases": [
+      "drop lunge stick"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E2",
+    "band": 2,
+    "block_eligibility": [
+      "PREP",
+      "WORK"
+    ],
+    "population_tags": [
+      "adult",
+      "youth_13_17"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 1,
+    "eccentric_s": 0.0,
+    "default_reps": 4,
+    "default_sets": 2,
+    "capability_tags": [
+      "unilateral"
+    ],
+    "intent_tags": [
+      "change_of_direction",
+      "deceleration"
+    ],
+    "movement_pattern": "other",
+    "day_role_preference": [
+      "ANY"
+    ],
+    "intensity_profile": "MODERATE",
+    "surface_requirements": [
+      "hardcourt",
+      "turf",
+      "any"
+    ],
+    "equipment_required": [
+      "none"
+    ],
+    "space_requirement": "MEDIUM",
+    "coaching_complexity": "HIGH",
+    "bilateral": false,
+    "execution_style": "standard",
+    "notes": null
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "countermovement_jump",
+    "name": "Countermovement Jump",
+    "aliases": [
+      "cmj",
+      "vertical jump"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E2",
+    "band": 2,
+    "block_eligibility": [
+      "WORK"
+    ],
+    "population_tags": [
+      "adult",
+      "youth_13_17"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 2,
+    "eccentric_s": 0.0,
+    "default_reps": 3,
+    "default_sets": 3,
+    "capability_tags": [
+      "bilateral",
+      "plyo"
+    ],
+    "intent_tags": [
+      "power",
+      "reactive_strength",
+      "vertical_force"
+    ],
+    "movement_pattern": "jump",
+    "day_role_preference": [
+      "ANY"
+    ],
+    "intensity_profile": "HIGH",
+    "surface_requirements": [
+      "turf",
+      "hardcourt",
+      "any"
+    ],
+    "equipment_required": [
+      "none"
+    ],
+    "space_requirement": "SMALL",
+    "coaching_complexity": "MED",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": null
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "squat_jump",
+    "name": "Squat Jump",
+    "aliases": [
+      "squat jump"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E2",
+    "band": 2,
+    "block_eligibility": [
+      "WORK"
+    ],
+    "population_tags": [
+      "adult",
+      "youth_13_17"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 2,
+    "eccentric_s": 0.0,
+    "default_reps": 3,
+    "default_sets": 3,
+    "capability_tags": [
+      "bilateral",
+      "plyo"
+    ],
+    "intent_tags": [
+      "power",
+      "reactive_strength",
+      "vertical_force"
+    ],
+    "movement_pattern": "jump",
+    "day_role_preference": [
+      "ANY"
+    ],
+    "intensity_profile": "HIGH",
+    "surface_requirements": [
+      "turf",
+      "hardcourt",
+      "any"
+    ],
+    "equipment_required": [
+      "none"
+    ],
+    "space_requirement": "SMALL",
+    "coaching_complexity": "MED",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": null
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "tuck_jump",
+    "name": "Tuck Jump",
+    "aliases": [
+      "tuck jump"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E2",
+    "band": 2,
+    "block_eligibility": [
+      "WORK"
+    ],
+    "population_tags": [
+      "adult",
+      "youth_13_17"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 2,
+    "eccentric_s": 0.0,
+    "default_reps": 3,
+    "default_sets": 3,
+    "capability_tags": [
+      "bilateral",
+      "plyo"
+    ],
+    "intent_tags": [
+      "power",
+      "reactive_strength",
+      "vertical_force"
+    ],
+    "movement_pattern": "jump",
+    "day_role_preference": [
+      "ANY"
+    ],
+    "intensity_profile": "HIGH",
+    "surface_requirements": [
+      "turf",
+      "hardcourt",
+      "any"
+    ],
+    "equipment_required": [
+      "none"
+    ],
+    "space_requirement": "SMALL",
+    "coaching_complexity": "MED",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": null
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "box_jump_12in",
+    "name": "Box Jump (12in)",
+    "aliases": [
+      "box jump 12"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E2",
+    "band": 2,
+    "block_eligibility": [
+      "WORK"
+    ],
+    "population_tags": [
+      "adult",
+      "youth_13_17"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 1,
+    "eccentric_s": 0.0,
+    "default_reps": 4,
+    "default_sets": 3,
+    "capability_tags": [
+      "bilateral",
+      "plyo"
+    ],
+    "intent_tags": [
+      "power",
+      "reactive_strength",
+      "vertical_force"
+    ],
+    "movement_pattern": "jump",
+    "day_role_preference": [
+      "ANY"
+    ],
+    "intensity_profile": "HIGH",
+    "surface_requirements": [
+      "turf",
+      "hardcourt",
+      "any"
+    ],
+    "equipment_required": [
+      "box"
+    ],
+    "space_requirement": "SMALL",
+    "coaching_complexity": "MED",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": null
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "box_jump_18in",
+    "name": "Box Jump (18in)",
+    "aliases": [
+      "box jump 18"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E2",
+    "band": 2,
+    "block_eligibility": [
+      "WORK"
+    ],
+    "population_tags": [
+      "adult",
+      "youth_13_17"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 1,
+    "eccentric_s": 0.0,
+    "default_reps": 4,
+    "default_sets": 3,
+    "capability_tags": [
+      "bilateral",
+      "plyo"
+    ],
+    "intent_tags": [
+      "power",
+      "reactive_strength",
+      "vertical_force"
+    ],
+    "movement_pattern": "jump",
+    "day_role_preference": [
+      "ANY"
+    ],
+    "intensity_profile": "HIGH",
+    "surface_requirements": [
+      "turf",
+      "hardcourt",
+      "any"
+    ],
+    "equipment_required": [
+      "box"
+    ],
+    "space_requirement": "SMALL",
+    "coaching_complexity": "MED",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": null
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "depth_drop_12in_box",
+    "name": "Depth Drop (12in Box)",
+    "aliases": [
+      "depth drop 12"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E2",
+    "band": 2,
+    "block_eligibility": [
+      "WORK"
+    ],
+    "population_tags": [
+      "adult",
+      "youth_13_17"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 1,
+    "eccentric_s": 0.0,
+    "default_reps": 4,
+    "default_sets": 3,
+    "capability_tags": [
+      "bilateral",
+      "plyo"
+    ],
+    "intent_tags": [
+      "deceleration"
+    ],
+    "movement_pattern": "jump",
+    "day_role_preference": [
+      "ANY"
+    ],
+    "intensity_profile": "HIGH",
+    "surface_requirements": [
+      "turf",
+      "hardcourt",
+      "any"
+    ],
+    "equipment_required": [
+      "box"
+    ],
+    "space_requirement": "SMALL",
+    "coaching_complexity": "MED",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": null
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "line_hops",
+    "name": "Line Hops",
+    "aliases": [
+      "line hops"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E2",
+    "band": 2,
+    "block_eligibility": [
+      "WORK"
+    ],
+    "population_tags": [
+      "adult",
+      "youth_13_17"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 2,
+    "eccentric_s": 0.0,
+    "default_reps": 5,
+    "default_sets": 2,
+    "capability_tags": [
+      "bilateral",
+      "plyo"
+    ],
+    "intent_tags": [
+      "reactive_strength"
+    ],
+    "movement_pattern": "hop",
+    "day_role_preference": [
+      "ANY"
+    ],
+    "intensity_profile": "MODERATE",
+    "surface_requirements": [
+      "turf",
+      "hardcourt",
+      "any"
+    ],
+    "equipment_required": [
+      "none"
+    ],
+    "space_requirement": "SMALL",
+    "coaching_complexity": "MED",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": null
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "pogo_hops_forward",
+    "name": "Pogo Hops (Forward)",
+    "aliases": [
+      "forward pogos"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E2",
+    "band": 2,
+    "block_eligibility": [
+      "WORK"
+    ],
+    "population_tags": [
+      "adult",
+      "youth_13_17"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 2,
+    "eccentric_s": 0.0,
+    "default_reps": 5,
+    "default_sets": 2,
+    "capability_tags": [
+      "bilateral",
+      "plyo"
+    ],
+    "intent_tags": [
+      "reactive_strength"
+    ],
+    "movement_pattern": "hop",
+    "day_role_preference": [
+      "ANY"
+    ],
+    "intensity_profile": "HIGH",
+    "surface_requirements": [
+      "turf",
+      "hardcourt",
+      "any"
+    ],
+    "equipment_required": [
+      "none"
+    ],
+    "space_requirement": "SMALL",
+    "coaching_complexity": "MED",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": null
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "single_leg_pogo_hops",
+    "name": "Single-Leg Pogo Hops",
+    "aliases": [
+      "sl pogos"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E2",
+    "band": 2,
+    "block_eligibility": [
+      "WORK"
+    ],
+    "population_tags": [
+      "adult",
+      "youth_13_17"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 1,
+    "eccentric_s": 0.0,
+    "default_reps": 5,
+    "default_sets": 2,
+    "capability_tags": [
+      "unilateral",
+      "plyo"
+    ],
+    "intent_tags": [
+      "reactive_strength"
+    ],
+    "movement_pattern": "hop",
+    "day_role_preference": [
+      "ANY"
+    ],
+    "intensity_profile": "HIGH",
+    "surface_requirements": [
+      "turf",
+      "hardcourt",
+      "any"
+    ],
+    "equipment_required": [
+      "none"
+    ],
+    "space_requirement": "SMALL",
+    "coaching_complexity": "MED",
+    "bilateral": false,
+    "execution_style": "standard",
+    "notes": null
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "lateral_line_hops",
+    "name": "Lateral Line Hops",
+    "aliases": [
+      "lateral line hops"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E2",
+    "band": 2,
+    "block_eligibility": [
+      "WORK"
+    ],
+    "population_tags": [
+      "adult",
+      "youth_13_17"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 2,
+    "eccentric_s": 0.0,
+    "default_reps": 5,
+    "default_sets": 2,
+    "capability_tags": [
+      "bilateral",
+      "plyo"
+    ],
+    "intent_tags": [
+      "reactive_strength"
+    ],
+    "movement_pattern": "hop",
+    "day_role_preference": [
+      "ANY"
+    ],
+    "intensity_profile": "MODERATE",
+    "surface_requirements": [
+      "turf",
+      "hardcourt",
+      "any"
+    ],
+    "equipment_required": [
+      "none"
+    ],
+    "space_requirement": "SMALL",
+    "coaching_complexity": "MED",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": null
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "hurdle_hops_low",
+    "name": "Hurdle Hops (Low)",
+    "aliases": [
+      "hurdle hops"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E2",
+    "band": 2,
+    "block_eligibility": [
+      "WORK"
+    ],
+    "population_tags": [
+      "adult",
+      "youth_13_17"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 2,
+    "eccentric_s": 0.0,
+    "default_reps": 4,
+    "default_sets": 3,
+    "capability_tags": [
+      "bilateral",
+      "plyo"
+    ],
+    "intent_tags": [
+      "reactive_strength"
+    ],
+    "movement_pattern": "hop",
+    "day_role_preference": [
+      "ANY"
+    ],
+    "intensity_profile": "HIGH",
+    "surface_requirements": [
+      "turf",
+      "hardcourt",
+      "any"
+    ],
+    "equipment_required": [
+      "hurdle"
+    ],
+    "space_requirement": "SMALL",
+    "coaching_complexity": "MED",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": null
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "broad_jump_submax_to_stick",
+    "name": "Broad Jump (Submax) to Stick",
+    "aliases": [
+      "broad jump stick"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E2",
+    "band": 2,
+    "block_eligibility": [
+      "WORK"
+    ],
+    "population_tags": [
+      "adult",
+      "youth_13_17"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 2,
+    "eccentric_s": 0.0,
+    "default_reps": 3,
+    "default_sets": 3,
+    "capability_tags": [
+      "bilateral",
+      "plyo"
+    ],
+    "intent_tags": [
+      "power",
+      "reactive_strength",
+      "vertical_force"
+    ],
+    "movement_pattern": "jump",
+    "day_role_preference": [
+      "ANY"
+    ],
+    "intensity_profile": "MODERATE",
+    "surface_requirements": [
+      "turf",
+      "hardcourt",
+      "any"
+    ],
+    "equipment_required": [
+      "none"
+    ],
+    "space_requirement": "MEDIUM",
+    "coaching_complexity": "MED",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": null
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "medicine_ball_scoop_toss",
+    "name": "Medicine Ball Scoop Toss",
+    "aliases": [
+      "scoop toss"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E2",
+    "band": 2,
+    "block_eligibility": [
+      "WORK"
+    ],
+    "population_tags": [
+      "adult",
+      "youth_13_17"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 0,
+    "eccentric_s": 0.0,
+    "default_reps": 6,
+    "default_sets": 3,
+    "capability_tags": [
+      "medball",
+      "bilateral"
+    ],
+    "intent_tags": [
+      "power",
+      "horizontal_force"
+    ],
+    "movement_pattern": "throw",
+    "day_role_preference": [
+      "ANY"
+    ],
+    "intensity_profile": "HIGH",
+    "surface_requirements": [
+      "any"
+    ],
+    "equipment_required": [
+      "medicine_ball"
+    ],
+    "space_requirement": "MEDIUM",
+    "coaching_complexity": "MED",
+    "bilateral": false,
+    "execution_style": "standard",
+    "notes": null
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "medicine_ball_rotational_scoop_toss",
+    "name": "Medicine Ball Rotational Scoop Toss",
+    "aliases": [
+      "rot scoop toss"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E2",
+    "band": 2,
+    "block_eligibility": [
+      "WORK"
+    ],
+    "population_tags": [
+      "adult",
+      "youth_13_17"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 0,
+    "eccentric_s": 0.0,
+    "default_reps": 6,
+    "default_sets": 3,
+    "capability_tags": [
+      "medball",
+      "bilateral"
+    ],
+    "intent_tags": [
+      "power",
+      "horizontal_force"
+    ],
+    "movement_pattern": "throw",
+    "day_role_preference": [
+      "ANY"
+    ],
+    "intensity_profile": "HIGH",
+    "surface_requirements": [
+      "any"
+    ],
+    "equipment_required": [
+      "medicine_ball"
+    ],
+    "space_requirement": "MEDIUM",
+    "coaching_complexity": "MED",
+    "bilateral": false,
+    "execution_style": "standard",
+    "notes": null
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "medicine_ball_overhead_backward_throw",
+    "name": "Medicine Ball Overhead Backward Throw",
+    "aliases": [
+      "oh back throw"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E2",
+    "band": 2,
+    "block_eligibility": [
+      "WORK"
+    ],
+    "population_tags": [
+      "adult",
+      "youth_13_17"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 0,
+    "eccentric_s": 0.0,
+    "default_reps": 6,
+    "default_sets": 3,
+    "capability_tags": [
+      "medball",
+      "bilateral"
+    ],
+    "intent_tags": [
+      "power",
+      "vertical_force"
+    ],
+    "movement_pattern": "throw",
+    "day_role_preference": [
+      "ANY"
+    ],
+    "intensity_profile": "HIGH",
+    "surface_requirements": [
+      "any"
+    ],
+    "equipment_required": [
+      "medicine_ball"
+    ],
+    "space_requirement": "MEDIUM",
+    "coaching_complexity": "MED",
+    "bilateral": false,
+    "execution_style": "standard",
+    "notes": null
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "medicine_ball_chest_pass",
+    "name": "Medicine Ball Chest Pass",
+    "aliases": [
+      "chest pass"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E2",
+    "band": 2,
+    "block_eligibility": [
+      "WORK"
+    ],
+    "population_tags": [
+      "adult",
+      "youth_13_17"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 0,
+    "eccentric_s": 0.0,
+    "default_reps": 6,
+    "default_sets": 3,
+    "capability_tags": [
+      "medball",
+      "bilateral"
+    ],
+    "intent_tags": [
+      "power",
+      "vertical_force"
+    ],
+    "movement_pattern": "throw",
+    "day_role_preference": [
+      "ANY"
+    ],
+    "intensity_profile": "HIGH",
+    "surface_requirements": [
+      "any"
+    ],
+    "equipment_required": [
+      "medicine_ball"
+    ],
+    "space_requirement": "MEDIUM",
+    "coaching_complexity": "MED",
+    "bilateral": false,
+    "execution_style": "standard",
+    "notes": null
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "medicine_ball_shot_put_throw_r",
+    "name": "Medicine Ball Shot Put Throw (R)",
+    "aliases": [
+      "shot put r"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E2",
+    "band": 2,
+    "block_eligibility": [
+      "WORK"
+    ],
+    "population_tags": [
+      "adult",
+      "youth_13_17"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 0,
+    "eccentric_s": 0.0,
+    "default_reps": 6,
+    "default_sets": 3,
+    "capability_tags": [
+      "medball",
+      "unilateral"
+    ],
+    "intent_tags": [
+      "power",
+      "horizontal_force"
+    ],
+    "movement_pattern": "throw",
+    "day_role_preference": [
+      "ANY"
+    ],
+    "intensity_profile": "HIGH",
+    "surface_requirements": [
+      "any"
+    ],
+    "equipment_required": [
+      "medicine_ball"
+    ],
+    "space_requirement": "MEDIUM",
+    "coaching_complexity": "MED",
+    "bilateral": false,
+    "execution_style": "standard",
+    "notes": null
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "medicine_ball_shot_put_throw_l",
+    "name": "Medicine Ball Shot Put Throw (L)",
+    "aliases": [
+      "shot put l"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E2",
+    "band": 2,
+    "block_eligibility": [
+      "WORK"
+    ],
+    "population_tags": [
+      "adult",
+      "youth_13_17"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 0,
+    "eccentric_s": 0.0,
+    "default_reps": 6,
+    "default_sets": 3,
+    "capability_tags": [
+      "medball",
+      "unilateral"
+    ],
+    "intent_tags": [
+      "power",
+      "horizontal_force"
+    ],
+    "movement_pattern": "throw",
+    "day_role_preference": [
+      "ANY"
+    ],
+    "intensity_profile": "HIGH",
+    "surface_requirements": [
+      "any"
+    ],
+    "equipment_required": [
+      "medicine_ball"
+    ],
+    "space_requirement": "MEDIUM",
+    "coaching_complexity": "MED",
+    "bilateral": false,
+    "execution_style": "standard",
+    "notes": null
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "medicine_ball_overhead_slam",
+    "name": "Medicine Ball Overhead Slam",
+    "aliases": [
+      "overhead slam"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E2",
+    "band": 2,
+    "block_eligibility": [
+      "WORK"
+    ],
+    "population_tags": [
+      "adult",
+      "youth_13_17"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 0,
+    "eccentric_s": 0.0,
+    "default_reps": 6,
+    "default_sets": 3,
+    "capability_tags": [
+      "medball",
+      "bilateral"
+    ],
+    "intent_tags": [
+      "power",
+      "vertical_force"
+    ],
+    "movement_pattern": "throw",
+    "day_role_preference": [
+      "ANY"
+    ],
+    "intensity_profile": "HIGH",
+    "surface_requirements": [
+      "any"
+    ],
+    "equipment_required": [
+      "medicine_ball"
+    ],
+    "space_requirement": "MEDIUM",
+    "coaching_complexity": "MED",
+    "bilateral": false,
+    "execution_style": "standard",
+    "notes": null
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "medicine_ball_side_toss_r",
+    "name": "Medicine Ball Side Toss (R)",
+    "aliases": [
+      "side toss r"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E2",
+    "band": 2,
+    "block_eligibility": [
+      "WORK"
+    ],
+    "population_tags": [
+      "adult",
+      "youth_13_17"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 0,
+    "eccentric_s": 0.0,
+    "default_reps": 6,
+    "default_sets": 3,
+    "capability_tags": [
+      "medball",
+      "unilateral"
+    ],
+    "intent_tags": [
+      "power",
+      "horizontal_force"
+    ],
+    "movement_pattern": "throw",
+    "day_role_preference": [
+      "ANY"
+    ],
+    "intensity_profile": "HIGH",
+    "surface_requirements": [
+      "any"
+    ],
+    "equipment_required": [
+      "medicine_ball"
+    ],
+    "space_requirement": "MEDIUM",
+    "coaching_complexity": "MED",
+    "bilateral": false,
+    "execution_style": "standard",
+    "notes": null
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "standing_broad_jump",
+    "name": "Standing Broad Jump",
+    "aliases": [
+      "broad jump"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E3",
+    "band": 3,
+    "block_eligibility": [
+      "WORK"
+    ],
+    "population_tags": [
+      "adult"
+    ],
+    "band3_requires_approval": true,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 2,
+    "eccentric_s": 0.0,
+    "default_reps": 3,
+    "default_sets": 3,
+    "capability_tags": [
+      "bilateral",
+      "plyo"
+    ],
+    "intent_tags": [
+      "power",
+      "reactive_strength"
+    ],
+    "movement_pattern": "jump",
+    "day_role_preference": [
+      "B",
+      "ANY"
+    ],
+    "intensity_profile": "MAXIMAL",
+    "surface_requirements": [
+      "turf",
+      "hardcourt",
+      "any"
+    ],
+    "equipment_required": [
+      "none"
+    ],
+    "space_requirement": "MEDIUM",
+    "coaching_complexity": "HIGH",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": "Adult-only E3 seed."
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "drop_jump_24in",
+    "name": "Drop Jump (24in)",
+    "aliases": [
+      "drop jump 24"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E3",
+    "band": 3,
+    "block_eligibility": [
+      "WORK"
+    ],
+    "population_tags": [
+      "adult"
+    ],
+    "band3_requires_approval": true,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 2,
+    "eccentric_s": 0.0,
+    "default_reps": 3,
+    "default_sets": 3,
+    "capability_tags": [
+      "bilateral",
+      "plyo"
+    ],
+    "intent_tags": [
+      "power",
+      "reactive_strength"
+    ],
+    "movement_pattern": "jump",
+    "day_role_preference": [
+      "B",
+      "ANY"
+    ],
+    "intensity_profile": "MAXIMAL",
+    "surface_requirements": [
+      "turf",
+      "hardcourt",
+      "any"
+    ],
+    "equipment_required": [
+      "box"
+    ],
+    "space_requirement": "MEDIUM",
+    "coaching_complexity": "HIGH",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": "Adult-only E3 seed."
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "depth_jump_18in",
+    "name": "Depth Jump (18in)",
+    "aliases": [
+      "depth jump 18"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E3",
+    "band": 3,
+    "block_eligibility": [
+      "WORK"
+    ],
+    "population_tags": [
+      "adult"
+    ],
+    "band3_requires_approval": true,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 2,
+    "eccentric_s": 0.0,
+    "default_reps": 3,
+    "default_sets": 3,
+    "capability_tags": [
+      "bilateral",
+      "plyo"
+    ],
+    "intent_tags": [
+      "power",
+      "reactive_strength"
+    ],
+    "movement_pattern": "jump",
+    "day_role_preference": [
+      "B",
+      "ANY"
+    ],
+    "intensity_profile": "MAXIMAL",
+    "surface_requirements": [
+      "turf",
+      "hardcourt",
+      "any"
+    ],
+    "equipment_required": [
+      "box"
+    ],
+    "space_requirement": "MEDIUM",
+    "coaching_complexity": "HIGH",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": "Adult-only E3 seed."
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "repeated_bounds_10m",
+    "name": "Repeated Bounds (10m)",
+    "aliases": [
+      "repeated bounds"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E3",
+    "band": 3,
+    "block_eligibility": [
+      "WORK"
+    ],
+    "population_tags": [
+      "adult"
+    ],
+    "band3_requires_approval": true,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 2,
+    "eccentric_s": 0.0,
+    "default_reps": 3,
+    "default_sets": 3,
+    "capability_tags": [
+      "bilateral",
+      "plyo"
+    ],
+    "intent_tags": [
+      "power",
+      "reactive_strength"
+    ],
+    "movement_pattern": "jump",
+    "day_role_preference": [
+      "B",
+      "ANY"
+    ],
+    "intensity_profile": "MAXIMAL",
+    "surface_requirements": [
+      "turf",
+      "hardcourt",
+      "any"
+    ],
+    "equipment_required": [
+      "none"
+    ],
+    "space_requirement": "MEDIUM",
+    "coaching_complexity": "HIGH",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": "Adult-only E3 seed."
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "lateral_bound_max_effort",
+    "name": "Lateral Bound (Max Effort)",
+    "aliases": [
+      "lateral bound max",
+      "skater bound max"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E3",
+    "band": 3,
+    "block_eligibility": [
+      "WORK"
+    ],
+    "population_tags": [
+      "adult"
+    ],
+    "band3_requires_approval": true,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 1,
+    "eccentric_s": 0.0,
+    "default_reps": 3,
+    "default_sets": 3,
+    "capability_tags": [
+      "unilateral",
+      "plyo"
+    ],
+    "intent_tags": [
+      "power",
+      "reactive_strength"
+    ],
+    "movement_pattern": "jump",
+    "day_role_preference": [
+      "B",
+      "ANY"
+    ],
+    "intensity_profile": "MAXIMAL",
+    "surface_requirements": [
+      "turf",
+      "hardcourt",
+      "any"
+    ],
+    "equipment_required": [
+      "none"
+    ],
+    "space_requirement": "MEDIUM",
+    "coaching_complexity": "HIGH",
+    "bilateral": false,
+    "execution_style": "standard",
+    "notes": "Adult-only E3 seed."
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "single_leg_hop_for_distance",
+    "name": "Single-Leg Hop for Distance",
+    "aliases": [
+      "sl hop distance"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E3",
+    "band": 3,
+    "block_eligibility": [
+      "WORK"
+    ],
+    "population_tags": [
+      "adult"
+    ],
+    "band3_requires_approval": true,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 1,
+    "eccentric_s": 0.0,
+    "default_reps": 3,
+    "default_sets": 3,
+    "capability_tags": [
+      "unilateral",
+      "plyo"
+    ],
+    "intent_tags": [
+      "power",
+      "reactive_strength"
+    ],
+    "movement_pattern": "jump",
+    "day_role_preference": [
+      "B",
+      "ANY"
+    ],
+    "intensity_profile": "MAXIMAL",
+    "surface_requirements": [
+      "turf",
+      "hardcourt",
+      "any"
+    ],
+    "equipment_required": [
+      "none"
+    ],
+    "space_requirement": "MEDIUM",
+    "coaching_complexity": "HIGH",
+    "bilateral": false,
+    "execution_style": "standard",
+    "notes": "Adult-only E3 seed."
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "hurdle_hop_series_medium",
+    "name": "Hurdle Hop Series (Medium)",
+    "aliases": [
+      "hurdle series"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E3",
+    "band": 3,
+    "block_eligibility": [
+      "WORK"
+    ],
+    "population_tags": [
+      "adult"
+    ],
+    "band3_requires_approval": true,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 2,
+    "eccentric_s": 0.0,
+    "default_reps": 3,
+    "default_sets": 3,
+    "capability_tags": [
+      "bilateral",
+      "plyo"
+    ],
+    "intent_tags": [
+      "power",
+      "reactive_strength"
+    ],
+    "movement_pattern": "jump",
+    "day_role_preference": [
+      "B",
+      "ANY"
+    ],
+    "intensity_profile": "MAXIMAL",
+    "surface_requirements": [
+      "turf",
+      "hardcourt",
+      "any"
+    ],
+    "equipment_required": [
+      "hurdle"
+    ],
+    "space_requirement": "MEDIUM",
+    "coaching_complexity": "HIGH",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": "Adult-only E3 seed."
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "contrast_jump_series_3_singles",
+    "name": "Contrast Jump Series (3 Singles)",
+    "aliases": [
+      "contrast jumps"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E3",
+    "band": 3,
+    "block_eligibility": [
+      "WORK"
+    ],
+    "population_tags": [
+      "adult"
+    ],
+    "band3_requires_approval": true,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 2,
+    "eccentric_s": 0.0,
+    "default_reps": 3,
+    "default_sets": 3,
+    "capability_tags": [
+      "bilateral",
+      "plyo"
+    ],
+    "intent_tags": [
+      "power",
+      "reactive_strength"
+    ],
+    "movement_pattern": "jump",
+    "day_role_preference": [
+      "B",
+      "ANY"
+    ],
+    "intensity_profile": "MAXIMAL",
+    "surface_requirements": [
+      "turf",
+      "hardcourt",
+      "any"
+    ],
+    "equipment_required": [
+      "none"
+    ],
+    "space_requirement": "MEDIUM",
+    "coaching_complexity": "HIGH",
+    "bilateral": true,
+    "execution_style": "contrast",
+    "notes": "Adult-only E3 seed."
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "reactive_box_jump_12in",
+    "name": "Reactive Box Jump (12in)",
+    "aliases": [
+      "reactive box jump"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E3",
+    "band": 3,
+    "block_eligibility": [
+      "WORK"
+    ],
+    "population_tags": [
+      "adult"
+    ],
+    "band3_requires_approval": true,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 2,
+    "eccentric_s": 0.0,
+    "default_reps": 3,
+    "default_sets": 3,
+    "capability_tags": [
+      "bilateral",
+      "plyo"
+    ],
+    "intent_tags": [
+      "power",
+      "reactive_strength"
+    ],
+    "movement_pattern": "jump",
+    "day_role_preference": [
+      "B",
+      "ANY"
+    ],
+    "intensity_profile": "MAXIMAL",
+    "surface_requirements": [
+      "turf",
+      "hardcourt",
+      "any"
+    ],
+    "equipment_required": [
+      "box"
+    ],
+    "space_requirement": "MEDIUM",
+    "coaching_complexity": "HIGH",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": "Adult-only E3 seed."
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "tuck_jump_series_5s",
+    "name": "Tuck Jump Series (5s)",
+    "aliases": [
+      "tuck jump series"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E3",
+    "band": 3,
+    "block_eligibility": [
+      "WORK"
+    ],
+    "population_tags": [
+      "adult"
+    ],
+    "band3_requires_approval": true,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 2,
+    "eccentric_s": 0.0,
+    "default_reps": 3,
+    "default_sets": 3,
+    "capability_tags": [
+      "bilateral",
+      "plyo"
+    ],
+    "intent_tags": [
+      "power",
+      "reactive_strength"
+    ],
+    "movement_pattern": "jump",
+    "day_role_preference": [
+      "B",
+      "ANY"
+    ],
+    "intensity_profile": "MAXIMAL",
+    "surface_requirements": [
+      "turf",
+      "hardcourt",
+      "any"
+    ],
+    "equipment_required": [
+      "none"
+    ],
+    "space_requirement": "MEDIUM",
+    "coaching_complexity": "HIGH",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": "Adult-only E3 seed."
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "step_down_4_second_eccentric",
+    "name": "Step-Down (4-Second Eccentric)",
+    "aliases": [
+      "slow eccentric step down"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E3",
+    "band": 3,
+    "block_eligibility": [
+      "WORK"
+    ],
+    "population_tags": [
+      "adult"
+    ],
+    "band3_requires_approval": true,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 1,
+    "eccentric_s": 4.0,
+    "default_reps": 3,
+    "default_sets": 3,
+    "capability_tags": [
+      "bilateral"
+    ],
+    "intent_tags": [
+      "deceleration"
+    ],
+    "movement_pattern": "other",
+    "day_role_preference": [
+      "B",
+      "ANY"
+    ],
+    "intensity_profile": "HIGH",
+    "surface_requirements": [
+      "turf",
+      "hardcourt",
+      "any"
+    ],
+    "equipment_required": [
+      "box"
+    ],
+    "space_requirement": "MEDIUM",
+    "coaching_complexity": "HIGH",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": "Eccentric >=4 triggers Tier-3 tempo weighting at E3/E4."
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "split_squat_4_second_eccentric",
+    "name": "Split Squat (4-Second Eccentric)",
+    "aliases": [
+      "slow ecc split squat"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E3",
+    "band": 3,
+    "block_eligibility": [
+      "WORK"
+    ],
+    "population_tags": [
+      "adult"
+    ],
+    "band3_requires_approval": true,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 1,
+    "eccentric_s": 4.0,
+    "default_reps": 3,
+    "default_sets": 3,
+    "capability_tags": [
+      "unilateral"
+    ],
+    "intent_tags": [
+      "deceleration"
+    ],
+    "movement_pattern": "other",
+    "day_role_preference": [
+      "B",
+      "ANY"
+    ],
+    "intensity_profile": "HIGH",
+    "surface_requirements": [
+      "turf",
+      "hardcourt",
+      "any"
+    ],
+    "equipment_required": [
+      "none"
+    ],
+    "space_requirement": "MEDIUM",
+    "coaching_complexity": "HIGH",
+    "bilateral": false,
+    "execution_style": "standard",
+    "notes": "Eccentric >=4 triggers Tier-3 tempo weighting at E3/E4."
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "nordic_hamstring_eccentric",
+    "name": "Nordic Hamstring (Eccentric)",
+    "aliases": [
+      "nordic eccentric"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E3",
+    "band": 3,
+    "block_eligibility": [
+      "WORK"
+    ],
+    "population_tags": [
+      "adult"
+    ],
+    "band3_requires_approval": true,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 1,
+    "eccentric_s": 4.0,
+    "default_reps": 3,
+    "default_sets": 3,
+    "capability_tags": [
+      "bilateral"
+    ],
+    "intent_tags": [
+      "deceleration"
+    ],
+    "movement_pattern": "other",
+    "day_role_preference": [
+      "B",
+      "ANY"
+    ],
+    "intensity_profile": "HIGH",
+    "surface_requirements": [
+      "turf",
+      "hardcourt",
+      "any"
+    ],
+    "equipment_required": [
+      "none"
+    ],
+    "space_requirement": "MEDIUM",
+    "coaching_complexity": "HIGH",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": "Eccentric >=4 triggers Tier-3 tempo weighting at E3/E4."
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "isometric_mid_thigh_pull",
+    "name": "Isometric Mid-Thigh Pull",
+    "aliases": [
+      "imt pull"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E3",
+    "band": 3,
+    "block_eligibility": [
+      "WORK"
+    ],
+    "population_tags": [
+      "adult"
+    ],
+    "band3_requires_approval": true,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 0,
+    "eccentric_s": 0.0,
+    "default_reps": 1,
+    "default_sets": 4,
+    "capability_tags": [
+      "isometric"
+    ],
+    "intent_tags": [
+      "power"
+    ],
+    "movement_pattern": "isometric",
+    "day_role_preference": [
+      "B",
+      "ANY"
+    ],
+    "intensity_profile": "MAXIMAL",
+    "surface_requirements": [
+      "turf",
+      "hardcourt",
+      "any"
+    ],
+    "equipment_required": [
+      "barbell"
+    ],
+    "space_requirement": "SMALL",
+    "coaching_complexity": "HIGH",
+    "bilateral": true,
+    "execution_style": "isometric",
+    "notes": "Adult-only E3 seed."
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "trap_bar_jump_shrug",
+    "name": "Trap Bar Jump Shrug",
+    "aliases": [
+      "jump shrug"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E3",
+    "band": 3,
+    "block_eligibility": [
+      "WORK"
+    ],
+    "population_tags": [
+      "adult"
+    ],
+    "band3_requires_approval": true,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 2,
+    "eccentric_s": 0.0,
+    "default_reps": 3,
+    "default_sets": 3,
+    "capability_tags": [
+      "bilateral",
+      "plyo"
+    ],
+    "intent_tags": [
+      "power",
+      "reactive_strength"
+    ],
+    "movement_pattern": "jump",
+    "day_role_preference": [
+      "B",
+      "ANY"
+    ],
+    "intensity_profile": "MAXIMAL",
+    "surface_requirements": [
+      "turf",
+      "hardcourt",
+      "any"
+    ],
+    "equipment_required": [
+      "none"
+    ],
+    "space_requirement": "MEDIUM",
+    "coaching_complexity": "HIGH",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": "Adult-only E3 seed."
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "band_assisted_jump_overspeed",
+    "name": "Band-Assisted Jump (Overspeed)",
+    "aliases": [
+      "overspeed jump"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E3",
+    "band": 3,
+    "block_eligibility": [
+      "WORK"
+    ],
+    "population_tags": [
+      "adult"
+    ],
+    "band3_requires_approval": true,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 2,
+    "eccentric_s": 0.0,
+    "default_reps": 3,
+    "default_sets": 3,
+    "capability_tags": [
+      "bilateral",
+      "plyo"
+    ],
+    "intent_tags": [
+      "power",
+      "reactive_strength"
+    ],
+    "movement_pattern": "jump",
+    "day_role_preference": [
+      "B",
+      "ANY"
+    ],
+    "intensity_profile": "MAXIMAL",
+    "surface_requirements": [
+      "turf",
+      "hardcourt",
+      "any"
+    ],
+    "equipment_required": [
+      "none"
+    ],
+    "space_requirement": "MEDIUM",
+    "coaching_complexity": "HIGH",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": "Adult-only E3 seed."
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "single_leg_pogo_hops_high_stiffness",
+    "name": "Single-Leg Pogo Hops (High Stiffness)",
+    "aliases": [
+      "sl pogos high"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E3",
+    "band": 3,
+    "block_eligibility": [
+      "WORK"
+    ],
+    "population_tags": [
+      "adult"
+    ],
+    "band3_requires_approval": true,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 1,
+    "eccentric_s": 0.0,
+    "default_reps": 3,
+    "default_sets": 3,
+    "capability_tags": [
+      "unilateral",
+      "plyo"
+    ],
+    "intent_tags": [
+      "power",
+      "reactive_strength"
+    ],
+    "movement_pattern": "jump",
+    "day_role_preference": [
+      "B",
+      "ANY"
+    ],
+    "intensity_profile": "MAXIMAL",
+    "surface_requirements": [
+      "turf",
+      "hardcourt",
+      "any"
+    ],
+    "equipment_required": [
+      "none"
+    ],
+    "space_requirement": "MEDIUM",
+    "coaching_complexity": "HIGH",
+    "bilateral": false,
+    "execution_style": "standard",
+    "notes": "Adult-only E3 seed."
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "depth_drop_to_stick_18in",
+    "name": "Depth Drop to Stick (18in)",
+    "aliases": [
+      "depth drop 18"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E3",
+    "band": 3,
+    "block_eligibility": [
+      "WORK"
+    ],
+    "population_tags": [
+      "adult"
+    ],
+    "band3_requires_approval": true,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 2,
+    "eccentric_s": 0.0,
+    "default_reps": 3,
+    "default_sets": 3,
+    "capability_tags": [
+      "bilateral",
+      "plyo"
+    ],
+    "intent_tags": [
+      "power",
+      "reactive_strength"
+    ],
+    "movement_pattern": "jump",
+    "day_role_preference": [
+      "B",
+      "ANY"
+    ],
+    "intensity_profile": "MAXIMAL",
+    "surface_requirements": [
+      "turf",
+      "hardcourt",
+      "any"
+    ],
+    "equipment_required": [
+      "box"
+    ],
+    "space_requirement": "MEDIUM",
+    "coaching_complexity": "HIGH",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": "Adult-only E3 seed."
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "lateral_hop_to_stick_reactive",
+    "name": "Lateral Hop to Stick (Reactive)",
+    "aliases": [
+      "reactive lateral hop"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E3",
+    "band": 3,
+    "block_eligibility": [
+      "WORK"
+    ],
+    "population_tags": [
+      "adult"
+    ],
+    "band3_requires_approval": true,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 2,
+    "eccentric_s": 0.0,
+    "default_reps": 3,
+    "default_sets": 3,
+    "capability_tags": [
+      "bilateral",
+      "plyo"
+    ],
+    "intent_tags": [
+      "power",
+      "reactive_strength"
+    ],
+    "movement_pattern": "jump",
+    "day_role_preference": [
+      "B",
+      "ANY"
+    ],
+    "intensity_profile": "MAXIMAL",
+    "surface_requirements": [
+      "turf",
+      "hardcourt",
+      "any"
+    ],
+    "equipment_required": [
+      "none"
+    ],
+    "space_requirement": "MEDIUM",
+    "coaching_complexity": "HIGH",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": "Adult-only E3 seed."
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "medicine_ball_scoop_toss_max_effort",
+    "name": "Medicine Ball Scoop Toss (Max Effort)",
+    "aliases": [
+      "mb scoop max"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E3",
+    "band": 3,
+    "block_eligibility": [
+      "WORK"
+    ],
+    "population_tags": [
+      "adult"
+    ],
+    "band3_requires_approval": true,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 0,
+    "eccentric_s": 0.0,
+    "default_reps": 3,
+    "default_sets": 3,
+    "capability_tags": [
+      "medball",
+      "bilateral"
+    ],
+    "intent_tags": [
+      "power",
+      "horizontal_force"
+    ],
+    "movement_pattern": "throw",
+    "day_role_preference": [
+      "B",
+      "ANY"
+    ],
+    "intensity_profile": "HIGH",
+    "surface_requirements": [
+      "any"
+    ],
+    "equipment_required": [
+      "medicine_ball"
+    ],
+    "space_requirement": "MEDIUM",
+    "coaching_complexity": "HIGH",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": "Adult-only E3 seed."
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "depth_drop_12in_box_youth_approval_required",
+    "name": "Depth Drop (12in Box) \u2014 Youth (Approval Required)",
+    "aliases": [
+      "youth depth drop 12",
+      "dd12 youth"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E3",
+    "band": 3,
+    "block_eligibility": [
+      "WORK"
+    ],
+    "population_tags": [
+      "youth_13_17"
+    ],
+    "band3_requires_approval": true,
+    "e4_requires_clearance": false,
+    "plyo_contacts_per_rep": 1,
+    "eccentric_s": 0.0,
+    "default_reps": 3,
+    "default_sets": 2,
+    "capability_tags": [
+      "bilateral",
+      "plyo"
+    ],
+    "intent_tags": [
+      "deceleration",
+      "reactive_strength"
+    ],
+    "movement_pattern": "jump",
+    "day_role_preference": [
+      "B",
+      "ANY"
+    ],
+    "intensity_profile": "HIGH",
+    "surface_requirements": [
+      "turf",
+      "hardcourt",
+      "any"
+    ],
+    "equipment_required": [
+      "box"
+    ],
+    "space_requirement": "SMALL",
+    "coaching_complexity": "HIGH",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": "Band 3 approval required. Generator must enforce: E3 is HARDFAIL for youth ages 13\u201315; route only 16\u201317."
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "depth_jump_24in",
+    "name": "Depth Jump (24in)",
+    "aliases": [
+      "depth jump 24"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E4",
+    "band": 4,
+    "block_eligibility": [
+      "WORK"
+    ],
+    "population_tags": [
+      "adult"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": true,
+    "plyo_contacts_per_rep": 2,
+    "eccentric_s": 0.0,
+    "default_reps": 2,
+    "default_sets": 4,
+    "capability_tags": [
+      "bilateral",
+      "plyo"
+    ],
+    "intent_tags": [
+      "power",
+      "reactive_strength"
+    ],
+    "movement_pattern": "jump",
+    "day_role_preference": [
+      "B",
+      "ANY"
+    ],
+    "intensity_profile": "MAXIMAL",
+    "surface_requirements": [
+      "turf",
+      "hardcourt"
+    ],
+    "equipment_required": [
+      "box"
+    ],
+    "space_requirement": "MEDIUM",
+    "coaching_complexity": "HIGH",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": "E4 requires clearance."
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "single_leg_bounds_series",
+    "name": "Single-Leg Bounds (Series)",
+    "aliases": [
+      "sl bounds series"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E4",
+    "band": 4,
+    "block_eligibility": [
+      "WORK"
+    ],
+    "population_tags": [
+      "adult"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": true,
+    "plyo_contacts_per_rep": 1,
+    "eccentric_s": 0.0,
+    "default_reps": 2,
+    "default_sets": 4,
+    "capability_tags": [
+      "unilateral",
+      "plyo"
+    ],
+    "intent_tags": [
+      "power",
+      "reactive_strength"
+    ],
+    "movement_pattern": "jump",
+    "day_role_preference": [
+      "B",
+      "ANY"
+    ],
+    "intensity_profile": "MAXIMAL",
+    "surface_requirements": [
+      "turf",
+      "hardcourt"
+    ],
+    "equipment_required": [
+      "box"
+    ],
+    "space_requirement": "MEDIUM",
+    "coaching_complexity": "HIGH",
+    "bilateral": false,
+    "execution_style": "standard",
+    "notes": "E4 requires clearance."
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "drop_jump_reactive_24in",
+    "name": "Drop Jump (Reactive) (24in)",
+    "aliases": [
+      "reactive drop jump 24"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E4",
+    "band": 4,
+    "block_eligibility": [
+      "WORK"
+    ],
+    "population_tags": [
+      "adult"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": true,
+    "plyo_contacts_per_rep": 2,
+    "eccentric_s": 0.0,
+    "default_reps": 2,
+    "default_sets": 4,
+    "capability_tags": [
+      "bilateral",
+      "plyo"
+    ],
+    "intent_tags": [
+      "power",
+      "reactive_strength"
+    ],
+    "movement_pattern": "jump",
+    "day_role_preference": [
+      "B",
+      "ANY"
+    ],
+    "intensity_profile": "MAXIMAL",
+    "surface_requirements": [
+      "turf",
+      "hardcourt"
+    ],
+    "equipment_required": [
+      "box"
+    ],
+    "space_requirement": "MEDIUM",
+    "coaching_complexity": "HIGH",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": "E4 requires clearance."
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "depth_drop_to_rebound_18in",
+    "name": "Depth Drop to Rebound (18in)",
+    "aliases": [
+      "dd to rebound 18"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E4",
+    "band": 4,
+    "block_eligibility": [
+      "WORK"
+    ],
+    "population_tags": [
+      "adult"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": true,
+    "plyo_contacts_per_rep": 2,
+    "eccentric_s": 0.0,
+    "default_reps": 2,
+    "default_sets": 4,
+    "capability_tags": [
+      "bilateral",
+      "plyo"
+    ],
+    "intent_tags": [
+      "power",
+      "reactive_strength"
+    ],
+    "movement_pattern": "jump",
+    "day_role_preference": [
+      "B",
+      "ANY"
+    ],
+    "intensity_profile": "MAXIMAL",
+    "surface_requirements": [
+      "turf",
+      "hardcourt"
+    ],
+    "equipment_required": [
+      "box"
+    ],
+    "space_requirement": "MEDIUM",
+    "coaching_complexity": "HIGH",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": "E4 requires clearance."
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "repeated_hurdle_hops_high",
+    "name": "Repeated Hurdle Hops (High)",
+    "aliases": [
+      "hurdle hops high"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E4",
+    "band": 4,
+    "block_eligibility": [
+      "WORK"
+    ],
+    "population_tags": [
+      "adult"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": true,
+    "plyo_contacts_per_rep": 2,
+    "eccentric_s": 0.0,
+    "default_reps": 2,
+    "default_sets": 4,
+    "capability_tags": [
+      "bilateral",
+      "plyo"
+    ],
+    "intent_tags": [
+      "power",
+      "reactive_strength"
+    ],
+    "movement_pattern": "jump",
+    "day_role_preference": [
+      "B",
+      "ANY"
+    ],
+    "intensity_profile": "MAXIMAL",
+    "surface_requirements": [
+      "turf",
+      "hardcourt"
+    ],
+    "equipment_required": [
+      "hurdle"
+    ],
+    "space_requirement": "MEDIUM",
+    "coaching_complexity": "HIGH",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": "E4 requires clearance."
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "flying_20_sprint",
+    "name": "Flying 20 Sprint",
+    "aliases": [
+      "flying 20"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E4",
+    "band": 4,
+    "block_eligibility": [
+      "WORK"
+    ],
+    "population_tags": [
+      "adult"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": true,
+    "plyo_contacts_per_rep": 1,
+    "eccentric_s": 0.0,
+    "default_reps": 1,
+    "default_sets": 6,
+    "capability_tags": [
+      "bilateral"
+    ],
+    "intent_tags": [
+      "acceleration",
+      "horizontal_force"
+    ],
+    "movement_pattern": "sprint_drill",
+    "day_role_preference": [
+      "B",
+      "ANY"
+    ],
+    "intensity_profile": "HIGH",
+    "surface_requirements": [
+      "turf",
+      "grass",
+      "any"
+    ],
+    "equipment_required": [
+      "none"
+    ],
+    "space_requirement": "LARGE",
+    "coaching_complexity": "HIGH",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": "E4 requires clearance."
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "isometric_mid_thigh_pull_max",
+    "name": "Isometric Mid-Thigh Pull (Max)",
+    "aliases": [
+      "imt pull max"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E4",
+    "band": 4,
+    "block_eligibility": [
+      "WORK"
+    ],
+    "population_tags": [
+      "adult"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": true,
+    "plyo_contacts_per_rep": 0,
+    "eccentric_s": 0.0,
+    "default_reps": 1,
+    "default_sets": 4,
+    "capability_tags": [
+      "isometric"
+    ],
+    "intent_tags": [
+      "power"
+    ],
+    "movement_pattern": "isometric",
+    "day_role_preference": [
+      "B",
+      "ANY"
+    ],
+    "intensity_profile": "MAXIMAL",
+    "surface_requirements": [
+      "turf",
+      "hardcourt"
+    ],
+    "equipment_required": [
+      "barbell"
+    ],
+    "space_requirement": "SMALL",
+    "coaching_complexity": "HIGH",
+    "bilateral": true,
+    "execution_style": "isometric",
+    "notes": "E4 requires clearance."
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "step_down_4_second_eccentric_e4",
+    "name": "Step-Down (4-Second Eccentric) \u2014 E4",
+    "aliases": [
+      "slow ecc step down e4"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E4",
+    "band": 4,
+    "block_eligibility": [
+      "WORK"
+    ],
+    "population_tags": [
+      "adult"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": true,
+    "plyo_contacts_per_rep": 1,
+    "eccentric_s": 4.0,
+    "default_reps": 4,
+    "default_sets": 3,
+    "capability_tags": [
+      "unilateral"
+    ],
+    "intent_tags": [
+      "power"
+    ],
+    "movement_pattern": "other",
+    "day_role_preference": [
+      "B",
+      "ANY"
+    ],
+    "intensity_profile": "HIGH",
+    "surface_requirements": [
+      "turf",
+      "hardcourt"
+    ],
+    "equipment_required": [
+      "box"
+    ],
+    "space_requirement": "MEDIUM",
+    "coaching_complexity": "HIGH",
+    "bilateral": true,
+    "execution_style": "standard",
+    "notes": "E4 requires clearance. Eccentric >=4 triggers Tier-3 tempo weighting."
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "single_leg_hop_reactive",
+    "name": "Single-Leg Hop (Reactive)",
+    "aliases": [
+      "sl reactive hop"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E4",
+    "band": 4,
+    "block_eligibility": [
+      "WORK"
+    ],
+    "population_tags": [
+      "adult"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": true,
+    "plyo_contacts_per_rep": 1,
+    "eccentric_s": 0.0,
+    "default_reps": 2,
+    "default_sets": 4,
+    "capability_tags": [
+      "unilateral",
+      "plyo"
+    ],
+    "intent_tags": [
+      "power",
+      "reactive_strength"
+    ],
+    "movement_pattern": "jump",
+    "day_role_preference": [
+      "B",
+      "ANY"
+    ],
+    "intensity_profile": "MAXIMAL",
+    "surface_requirements": [
+      "turf",
+      "hardcourt"
+    ],
+    "equipment_required": [
+      "box"
+    ],
+    "space_requirement": "MEDIUM",
+    "coaching_complexity": "HIGH",
+    "bilateral": false,
+    "execution_style": "standard",
+    "notes": "E4 requires clearance."
+  },
+  {
+    "_schema_version": "EFL-EL-1.0.1",
+    "id": "contrast_plyometric_series_e4",
+    "name": "Contrast Plyometric Series (E4)",
+    "aliases": [
+      "contrast plyo e4"
+    ],
+    "version_introduced": "1.0.0",
+    "deprecated": false,
+    "replacement_id": null,
+    "enode": "E4",
+    "band": 4,
+    "block_eligibility": [
+      "WORK"
+    ],
+    "population_tags": [
+      "adult"
+    ],
+    "band3_requires_approval": false,
+    "e4_requires_clearance": true,
+    "plyo_contacts_per_rep": 2,
+    "eccentric_s": 0.0,
+    "default_reps": 2,
+    "default_sets": 4,
+    "capability_tags": [
+      "bilateral",
+      "plyo"
+    ],
+    "intent_tags": [
+      "power",
+      "reactive_strength"
+    ],
+    "movement_pattern": "jump",
+    "day_role_preference": [
+      "B",
+      "ANY"
+    ],
+    "intensity_profile": "MAXIMAL",
+    "surface_requirements": [
+      "turf",
+      "hardcourt"
+    ],
+    "equipment_required": [
+      "box"
+    ],
+    "space_requirement": "MEDIUM",
+    "coaching_complexity": "HIGH",
+    "bilateral": true,
+    "execution_style": "contrast",
+    "notes": "E4 requires clearance."
+  }
+]
