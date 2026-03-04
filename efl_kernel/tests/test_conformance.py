@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 from efl_kernel.kernel.dependency_provider import InMemoryDependencyProvider
 from efl_kernel.kernel.kernel import KernelRunner
 from efl_kernel.kernel.kdo import KDOValidator, freeze_kdo
@@ -146,15 +148,9 @@ def test_step4_missing_lineage_context_quarantines():
 
 def test_step6_enforces_kernel_owned_violation_fields():
     payload = _session_input()
-    payload["gateViolations"] = [
-        {
-            "code": "CL.CLEARANCEMISSING",
-            "moduleID": "SESSION",
-            "severity": "WARNING",
-            "overridePossible": True,
-        }
-    ]
-    kdo = _runner().evaluate(payload, "SESSION")
+    payload["session"] = {"exercises": [{"exerciseID": "isometric_mid_thigh_pull_max"}]}
+    dep = InMemoryDependencyProvider(athlete_profile={"a1": {"e4_clearance": False}})
+    kdo = KernelRunner(dep).evaluate(payload, "SESSION")
     violation = kdo.violations[0]
     assert violation["severity"] == "HARDFAIL"
     assert violation["overridePossible"] is False
@@ -162,16 +158,18 @@ def test_step6_enforces_kernel_owned_violation_fields():
 
 def test_step7_unregistered_violation_adds_synthetic():
     payload = _session_input()
-    payload["gateViolations"] = [{"code": "CL.UNKNOWN", "moduleID": "SESSION"}]
-    kdo = _runner().evaluate(payload, "SESSION")
+    fake = [{"code": "CL.NOTREGISTERED", "moduleID": "SESSION", "overrideUsed": False}]
+    with patch("efl_kernel.kernel.kernel.run_cl_gates", return_value=fake):
+        kdo = _runner().evaluate(payload, "SESSION")
     codes = [v["code"] for v in kdo.violations]
     assert "RAL.UNREGISTEREDVIOLATIONCODE" in codes
 
 
 def test_step8_module_id_mismatch_adds_synthetic():
     payload = _session_input()
-    payload["gateViolations"] = [{"code": "CL.CLEARANCEMISSING", "moduleID": "MESO"}]
-    kdo = _runner().evaluate(payload, "SESSION")
+    fake = [{"code": "CL.CLEARANCEMISSING", "moduleID": "MESO", "overrideUsed": False}]
+    with patch("efl_kernel.kernel.kernel.run_cl_gates", return_value=fake):
+        kdo = _runner().evaluate(payload, "SESSION")
     codes = [v["code"] for v in kdo.violations]
     assert "RAL.MODULEKDOMODULEIDMISMATCH" in codes
 
@@ -222,54 +220,42 @@ def test_ral_derivation_helpers_and_hashing():
 
 def test_step9_override_reason_cap_breach_adds_synthetic_violation():
     payload = _session_input()
-    payload["gateViolations"] = [
-        {
-            "code": "CL.CLEARANCEMISSING",
-            "moduleID": "SESSION",
-            "overrideUsed": True,
-            "overrideReasonCode": "OR-001",
-        }
-    ]
+    payload["session"] = {"exercises": [{"exerciseID": "isometric_mid_thigh_pull_max"}]}
     dep = InMemoryDependencyProvider(
-        override_history={("a1|s1", "SESSION", 28): {"byReasonCode": {"OR-001": 2}, "byViolationCode": {"CL.CLEARANCEMISSING": 0}}}
+        athlete_profile={"a1": {"e4_clearance": False}},
+        override_history={("a1|s1", "SESSION", 28): {"byReasonCode": {"OR-001": 2}, "byViolationCode": {"CL.CLEARANCEMISSING": 0}}},
     )
-    kdo = KernelRunner(dep).evaluate(payload, "SESSION")
+    fake = [{"code": "CL.CLEARANCEMISSING", "moduleID": "SESSION", "overrideUsed": True, "overrideReasonCode": "OR-001"}]
+    with patch("efl_kernel.kernel.kernel.run_cl_gates", return_value=fake):
+        kdo = KernelRunner(dep).evaluate(payload, "SESSION")
     codes = [v["code"] for v in kdo.violations]
     assert "RAL.OVERRIDEREASONCAPBREACH" in codes
 
 
 def test_step9_override_violation_cap_breach_adds_synthetic_violation():
     payload = _session_input()
-    payload["gateViolations"] = [
-        {
-            "code": "CL.CLEARANCEMISSING",
-            "moduleID": "SESSION",
-            "overrideUsed": True,
-            "overrideReasonCode": "OR-001",
-        }
-    ]
+    payload["session"] = {"exercises": [{"exerciseID": "isometric_mid_thigh_pull_max"}]}
     dep = InMemoryDependencyProvider(
-        override_history={("a1|s1", "SESSION", 28): {"byReasonCode": {"OR-001": 0}, "byViolationCode": {"CL.CLEARANCEMISSING": 2}}}
+        athlete_profile={"a1": {"e4_clearance": False}},
+        override_history={("a1|s1", "SESSION", 28): {"byReasonCode": {"OR-001": 0}, "byViolationCode": {"CL.CLEARANCEMISSING": 2}}},
     )
-    kdo = KernelRunner(dep).evaluate(payload, "SESSION")
+    fake = [{"code": "CL.CLEARANCEMISSING", "moduleID": "SESSION", "overrideUsed": True, "overrideReasonCode": "OR-001"}]
+    with patch("efl_kernel.kernel.kernel.run_cl_gates", return_value=fake):
+        kdo = KernelRunner(dep).evaluate(payload, "SESSION")
     codes = [v["code"] for v in kdo.violations]
     assert "RAL.OVERRIDEVIOLATIONCAPBREACH" in codes
 
 
 def test_step10_review_override_cluster_upgrades_publish_state():
     payload = _session_input()
-    payload["gateViolations"] = [
-        {
-            "code": "CL.CLEARANCEMISSING",
-            "moduleID": "SESSION",
-            "overrideUsed": True,
-            "overrideReasonCode": "OR-001",
-        }
-    ]
+    payload["session"] = {"exercises": [{"exerciseID": "isometric_mid_thigh_pull_max"}]}
     dep = InMemoryDependencyProvider(
-        override_history={("a1|s1", "SESSION", 28): {"byReasonCode": {"OR-001": 0}, "byViolationCode": {"CL.CLEARANCEMISSING": 0}}}
+        athlete_profile={"a1": {"e4_clearance": False}},
+        override_history={("a1|s1", "SESSION", 28): {"byReasonCode": {"OR-001": 0}, "byViolationCode": {"CL.CLEARANCEMISSING": 0}}},
     )
-    kdo = KernelRunner(dep).evaluate(payload, "SESSION")
+    fake = [{"code": "CL.CLEARANCEMISSING", "moduleID": "SESSION", "overrideUsed": True, "overrideReasonCode": "OR-001"}]
+    with patch("efl_kernel.kernel.kernel.run_cl_gates", return_value=fake):
+        kdo = KernelRunner(dep).evaluate(payload, "SESSION")
     assert kdo.resolution["finalPublishState"] == "REQUIRESREVIEW"
 
 
@@ -305,3 +291,12 @@ def test_kdovalidator_rejects_invalid_and_passes_for_valid_spec_values():
         kdo.resolution["finalSeverity"] = "HARDFAIL" if label.startswith("HARDFAIL") else label
         kdo.resolution["finalPublishState"] = "LEGALREADY"
         assert "invalid_finalEffectiveLabel" not in validator.validate(kdo), f"valid label {label!r} was rejected"
+
+
+def test_gate_violations_in_payload_are_completely_ignored():
+    # gateViolations with a valid code must produce no violations when dep_provider
+    # and session data do not computationally trigger any gate.
+    payload = _session_input()
+    payload["gateViolations"] = [{"code": "CL.CLEARANCEMISSING", "moduleID": "SESSION"}]
+    kdo = _runner().evaluate(payload, "SESSION")
+    assert kdo.violations == []

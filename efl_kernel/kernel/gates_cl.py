@@ -28,8 +28,4 @@ def run_cl_gates(raw_input: dict, dep_provider) -> list[dict]:
         if exercise_def.get("e4_requires_clearance", False) and not has_clearance:
             violations.append({"code": "CL.CLEARANCEMISSING", "moduleID": "SESSION", "overrideUsed": False})
 
-    for v in raw_input.get("gateViolations", []):
-        if v.get("code", "").startswith("CL."):
-            violations.append(dict(v))
-
     return violations
