@@ -270,3 +270,37 @@ def test_step10_review_override_cluster_upgrades_publish_state():
     )
     kdo = KernelRunner(dep).evaluate(payload, "SESSION")
     assert kdo.resolution["finalPublishState"] == "REQUIRESREVIEW"
+
+
+def test_kdovalidator_rejects_invalid_and_passes_for_valid_spec_values():
+    from efl_kernel.kernel.kdo import _PUBLISH_STATE_MAP
+
+    validator = KDOValidator()
+    kdo = _runner().evaluate(_governance_input(), "GOVERNANCE")
+
+    # Reject an unknown publish state
+    kdo.resolution["finalPublishState"] = "BOGUS_STATE"
+    assert "invalid_finalPublishState" in validator.validate(kdo)
+
+    # Reject an unknown effective label
+    kdo.resolution["finalPublishState"] = "LEGALREADY"
+    kdo.resolution["finalEffectiveLabel"] = "BOGUS_LABEL"
+    assert "invalid_finalEffectiveLabel" in validator.validate(kdo)
+
+    # All spec-derived publish states must pass
+    valid_publish = {
+        _PUBLISH_STATE_MAP.get(m["publishState"], m["publishState"])
+        for m in RAL_SPEC["RALPublishStateDerivation"]["baseMapping"]
+    }
+    for state in valid_publish:
+        kdo.resolution["finalEffectiveLabel"] = "CLAMP"
+        kdo.resolution["finalSeverity"] = "CLAMP"
+        kdo.resolution["finalPublishState"] = state
+        assert "invalid_finalPublishState" not in validator.validate(kdo), f"valid state {state!r} was rejected"
+
+    # All spec-defined labels must pass
+    for label in RAL_SPEC["RALPrecedenceRule"]["precedenceOrder"]:
+        kdo.resolution["finalEffectiveLabel"] = label
+        kdo.resolution["finalSeverity"] = "HARDFAIL" if label.startswith("HARDFAIL") else label
+        kdo.resolution["finalPublishState"] = "LEGALREADY"
+        assert "invalid_finalEffectiveLabel" not in validator.validate(kdo), f"valid label {label!r} was rejected"

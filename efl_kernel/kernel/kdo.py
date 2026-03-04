@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
-from .ral import canonicalize_and_hash
+from .ral import RAL_SPEC, canonicalize_and_hash
 
 
 @dataclass
@@ -21,10 +21,24 @@ class KDO:
     audit: dict
 
 
+_PUBLISH_STATE_MAP = {
+    "BLOCKED": "ILLEGALQUARANTINED",
+    "REGENERATE_REQUIRED": "REQUIRESREVIEW",
+    "PUBLISH_WITH_WARNING": "LEGALOVERRIDE",
+    "PUBLISH_WITH_CLAMP": "LEGALREADY",
+}
+
+
 class KDOValidator:
-    allowed_labels = {"QUARANTINE", "REGENERATE", "HARDFAILNOOVERRIDE", "HARDFAILOVERRIDEPOSSIBLE", "WARNING", "CLAMP"}
-    allowed_publish = {"LEGALREADY", "LEGALOVERRIDE", "ILLEGALQUARANTINED", "REQUIRESREVIEW"}
-    allowed_severity = {"QUARANTINE", "REGENERATE", "HARDFAIL", "WARNING", "CLAMP"}
+    allowed_labels = set(RAL_SPEC["RALPrecedenceRule"]["precedenceOrder"])
+    allowed_publish = {
+        _PUBLISH_STATE_MAP.get(m["publishState"], m["publishState"])
+        for m in RAL_SPEC["RALPublishStateDerivation"]["baseMapping"]
+    }
+    allowed_severity = {
+        "HARDFAIL" if label.startswith("HARDFAIL") else label
+        for label in RAL_SPEC["RALPrecedenceRule"]["precedenceOrder"]
+    }
 
     def validate(self, kdo: KDO) -> list[str]:
         errors: list[str] = []
