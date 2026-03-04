@@ -1,7 +1,7 @@
 {
   "specID": "EFL-RAL",
   "version": "1.2.0",
-  "documentHash": "afddbd3acf5f5ec0bae06a060b48ea56258f506059448efdbbecffec6c74ae1a",
+  "documentHash": "0d4a6a5fbefe72c54fb4896a80b851972759fb51544f10bc630461e79ca64fa1",
   "RALPrecedenceRule": {
     "precedenceOrder": [
       "QUARANTINE",
@@ -75,6 +75,24 @@
       },
       {
         "code": "RAL.MODULEKDOMODULEIDMISMATCH",
+        "severity": "QUARANTINE",
+        "overridePossible": false,
+        "logRequired": true
+      },
+      {
+        "code": "RAL.MODULEREGISTRYMISMATCH",
+        "severity": "QUARANTINE",
+        "overridePossible": false,
+        "logRequired": true
+      },
+      {
+        "code": "RAL.OVERRIDEREASONCAPBREACH",
+        "severity": "QUARANTINE",
+        "overridePossible": false,
+        "logRequired": true
+      },
+      {
+        "code": "RAL.OVERRIDEVIOLATIONCAPBREACH",
         "severity": "QUARANTINE",
         "overridePossible": false,
         "logRequired": true

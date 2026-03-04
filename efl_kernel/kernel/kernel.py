@@ -19,7 +19,7 @@ from .ral import (
     derive_lineage_key,
     derive_publish_state,
 )
-from .registry import enforce_kernel_owned_fields, lookup_violation
+from .registry import VIOLATION_REGISTRY, enforce_kernel_owned_fields, lookup_violation
 
 
 class KernelRunner:
@@ -27,17 +27,10 @@ class KernelRunner:
         self.dep_provider = dep_provider
 
     def _syn_violation(self, code: str, module_id: str) -> dict:
-        spec = KERNEL_SYNTHETIC_VIOLATIONS.get(code)
-        if spec is None and code in {
-            "RAL.MODULEREGISTRYMISMATCH",
-            "RAL.OVERRIDEREASONCAPBREACH",
-            "RAL.OVERRIDEVIOLATIONCAPBREACH",
-        }:
-            # Compatibility fallback: these synthetic codes are emitted by the pipeline but absent
-            # from the frozen RAL synthetic registry in this repository snapshot.
-            spec = {"severity": "QUARANTINE", "overridePossible": False}
-        if spec is None:
-            raise KeyError(f"Unknown synthetic violation code: {code}")
+        try:
+            spec = KERNEL_SYNTHETIC_VIOLATIONS[code]
+        except KeyError:
+            raise KeyError(f"Unknown synthetic violation code: {code!r}")
         return {
             "code": code,
             "moduleID": module_id,
@@ -81,15 +74,16 @@ class KernelRunner:
         )
 
     def evaluate(self, raw_input: dict, module_id: str) -> KDO:
-        # Step 0
+        # Step 0 - module identity
         if module_id not in ["SESSION", "MESO", "MACRO", "GOVERNANCE"]:
             return self._build_kdo(module_id, raw_input, [self._syn_violation("RAL.MODULEREGISTRATIONINCOMPLETE", module_id)])
 
-        # Step 1
+        # Step 1 - required fields (must precede registry version check)
         required = ["moduleVersion", "moduleViolationRegistryVersion", "registryHash", "objectID", "evaluationContext", "windowContext"]
         if any(k not in raw_input for k in required):
             return self._build_kdo(module_id, raw_input, [self._syn_violation("RAL.MISSINGORUNDEFINEDREQUIREDSTATE", module_id)])
 
+        # Step 0b - registry version match
         reg = RAL_SPEC.get("moduleRegistration", {}).get(module_id, {})
         if (
             raw_input.get("moduleVersion") != reg.get("moduleVersion")
@@ -142,48 +136,32 @@ class KernelRunner:
                 violations.append(self._syn_violation("RAL.MODULEKDOMODULEIDMISMATCH", module_id))
                 break
 
-        # Step 9: OC-001 override cap enforcement
-        history = None
-        override_candidates = [v for v in violations if v.get("overrideUsed") is True]
-        if override_candidates:
-            history = self.dep_provider.get_override_history(eval_ctx["lineageKey"], module_id, 28)
-            by_reason = history.get("byReasonCode", {})
-            by_violation = history.get("byViolationCode", {})
-            module_level_caps = RAL_SPEC.get("RALModuleLevelOverrideCaps", {}) or {}
+        # Step 9 - override cap breach
+        lineage_key = eval_ctx.get("lineageKey", "")
+        cap_violations = []
+        for v in list(violations):
+            if v.get("overrideUsed"):
+                reason_code = v.get("overrideReasonCode")
+                history = self.dep_provider.get_override_history(lineage_key, module_id, 28)
+                cap = compute_effective_cap(module_id, reason_code, v.get("violationCap"), {})
+                if history.get("byReasonCode", {}).get(reason_code, 0) >= cap:
+                    cap_violations.append(self._syn_violation("RAL.OVERRIDEREASONCAPBREACH", module_id))
+                if history.get("byViolationCode", {}).get(v.get("code"), 0) >= cap:
+                    cap_violations.append(self._syn_violation("RAL.OVERRIDEVIOLATIONCAPBREACH", module_id))
+        violations.extend(cap_violations)
 
-            for violation in override_candidates:
-                reason_code = violation.get("overrideReasonCode")
-                if not reason_code:
-                    violation["kernelComputedOverrideValid"] = False
-                    continue
-
-                reason_count = by_reason.get(reason_code, 0) + 1
-                violation_count = by_violation.get(violation.get("code", ""), 0) + 1
-                effective_cap = compute_effective_cap(module_id, reason_code, violation.get("violationCap"), module_level_caps)
-
-                if reason_count > effective_cap:
-                    violation["kernelComputedOverrideValid"] = False
-                    violations.append(self._syn_violation("RAL.OVERRIDEREASONCAPBREACH", module_id))
-                elif violation_count > effective_cap:
-                    violation["kernelComputedOverrideValid"] = False
-                    violations.append(self._syn_violation("RAL.OVERRIDEVIOLATIONCAPBREACH", module_id))
-                else:
-                    violation["kernelComputedOverrideValid"] = True
-
-        kdo = self._build_kdo(module_id, raw_input, violations)
-
-        # Step 10: REVIEW-OVERRIDE-CLUSTER overlay
-        if history and kdo.resolution.get("finalPublishState") in {"LEGALREADY", "LEGALOVERRIDE"}:
-            by_violation = history.get("byViolationCode", {})
-            for violation in violations:
-                if not violation.get("kernelComputedOverrideValid"):
-                    continue
-                threshold = violation.get("reviewOverrideThreshold28D")
-                if threshold is None:
-                    continue
-                count = by_violation.get(violation.get("code", ""), 0) + 1
-                if count >= threshold:
-                    kdo.resolution["finalPublishState"] = "REQUIRESREVIEW"
+        # Step 10 - review override cluster
+        requires_review = False
+        for v in violations:
+            threshold = v.get("reviewOverrideThreshold28D")
+            if v.get("overrideUsed") and threshold is not None:
+                history = self.dep_provider.get_override_history(lineage_key, module_id, 28)
+                prior_count = history.get("byViolationCode", {}).get(v.get("code"), 0)
+                if prior_count + 1 >= threshold:
+                    requires_review = True
                     break
 
+        kdo = self._build_kdo(module_id, raw_input, violations)
+        if requires_review:
+            kdo.resolution["finalPublishState"] = "REQUIRESREVIEW"
         return kdo
