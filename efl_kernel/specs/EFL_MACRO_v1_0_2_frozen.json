@@ -1,0 +1,25 @@
+{
+  "specID": "EFL-MACRO",
+  "version": "1.0.2",
+  "moduleID": "MACRO",
+  "violationRegistry": {
+    "registryVersion": "1.0.2",
+    "registryHash": "dc52f54f1dfc0c1466d4285c61b9dbb6990bdd48629909de57a744fba6912e58",
+    "violations": [
+      {
+        "code": "MACRO.PHASEMISMATCH",
+        "moduleID": "MACRO",
+        "severity": "HARDFAIL",
+        "overridePossible": true,
+        "allowedOverrideReasonCodes": [
+          "OR-001"
+        ],
+        "violationCap": 2,
+        "reviewOverrideThreshold28D": 1,
+        "clampBehavior": {
+          "action": "NONE"
+        }
+      }
+    ]
+  }
+}
