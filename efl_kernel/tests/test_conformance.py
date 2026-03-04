@@ -33,7 +33,6 @@ def _session_input() -> dict:
             {"windowType": "ROLLING7DAYS", "anchorDate": "2026-01-01", "startDate": "2025-12-26", "endDate": "2026-01-01", "timezone": "UTC"},
             {"windowType": "ROLLING28DAYS", "anchorDate": "2026-01-01", "startDate": "2025-12-05", "endDate": "2026-01-01", "timezone": "UTC"},
         ],
-        "gateViolations": [{"code": "SCM.MAXDAILYLOAD", "moduleID": "SESSION"}],
     }
 
 
@@ -82,7 +81,7 @@ def _governance_input() -> dict:
 def test_happy_path_kdo_validates_and_freezes():
     kdo = _runner().evaluate(_session_input(), "SESSION")
     assert KDOValidator().validate(kdo) == []
-    assert kdo.resolution["finalEffectiveLabel"] == "HARDFAILOVERRIDEPOSSIBLE"
+    assert kdo.resolution["finalEffectiveLabel"] == "CLAMP"
     assert kdo.evaluation_context["lineageKey"] == "a1|s1"
     decision_hash = freeze_kdo(kdo)
     assert decision_hash is not None
@@ -151,21 +150,21 @@ def test_step6_enforces_kernel_owned_violation_fields():
     payload = _session_input()
     payload["gateViolations"] = [
         {
-            "code": "SCM.MAXDAILYLOAD",
+            "code": "CL.CLEARANCEMISSING",
             "moduleID": "SESSION",
             "severity": "WARNING",
-            "overridePossible": False,
+            "overridePossible": True,
         }
     ]
     kdo = _runner().evaluate(payload, "SESSION")
     violation = kdo.violations[0]
     assert violation["severity"] == "HARDFAIL"
-    assert violation["overridePossible"] is True
+    assert violation["overridePossible"] is False
 
 
 def test_step7_unregistered_violation_adds_synthetic():
     payload = _session_input()
-    payload["gateViolations"] = [{"code": "SCM.UNKNOWN", "moduleID": "SESSION"}]
+    payload["gateViolations"] = [{"code": "CL.UNKNOWN", "moduleID": "SESSION"}]
     kdo = _runner().evaluate(payload, "SESSION")
     codes = [v["code"] for v in kdo.violations]
     assert "RAL.UNREGISTEREDVIOLATIONCODE" in codes
@@ -220,14 +219,14 @@ def test_step9_override_reason_cap_breach_adds_synthetic_violation():
     payload = _session_input()
     payload["gateViolations"] = [
         {
-            "code": "SCM.MAXDAILYLOAD",
+            "code": "CL.CLEARANCEMISSING",
             "moduleID": "SESSION",
             "overrideUsed": True,
             "overrideReasonCode": "OR-001",
         }
     ]
     dep = InMemoryDependencyProvider(
-        override_history={("a1|s1", "SESSION", 28): {"byReasonCode": {"OR-001": 2}, "byViolationCode": {"SCM.MAXDAILYLOAD": 0}}}
+        override_history={("a1|s1", "SESSION", 28): {"byReasonCode": {"OR-001": 2}, "byViolationCode": {"CL.CLEARANCEMISSING": 0}}}
     )
     kdo = KernelRunner(dep).evaluate(payload, "SESSION")
     codes = [v["code"] for v in kdo.violations]
@@ -238,14 +237,14 @@ def test_step9_override_violation_cap_breach_adds_synthetic_violation():
     payload = _session_input()
     payload["gateViolations"] = [
         {
-            "code": "SCM.MAXDAILYLOAD",
+            "code": "CL.CLEARANCEMISSING",
             "moduleID": "SESSION",
             "overrideUsed": True,
             "overrideReasonCode": "OR-001",
         }
     ]
     dep = InMemoryDependencyProvider(
-        override_history={("a1|s1", "SESSION", 28): {"byReasonCode": {"OR-001": 0}, "byViolationCode": {"SCM.MAXDAILYLOAD": 2}}}
+        override_history={("a1|s1", "SESSION", 28): {"byReasonCode": {"OR-001": 0}, "byViolationCode": {"CL.CLEARANCEMISSING": 2}}}
     )
     kdo = KernelRunner(dep).evaluate(payload, "SESSION")
     codes = [v["code"] for v in kdo.violations]
@@ -256,17 +255,14 @@ def test_step10_review_override_cluster_upgrades_publish_state():
     payload = _session_input()
     payload["gateViolations"] = [
         {
-            "code": "RAL.TESTWARNING",
+            "code": "CL.CLEARANCEMISSING",
             "moduleID": "SESSION",
-            "severity": "WARNING",
-            "overridePossible": True,
             "overrideUsed": True,
             "overrideReasonCode": "OR-001",
-            "reviewOverrideThreshold28D": 1,
         }
     ]
     dep = InMemoryDependencyProvider(
-        override_history={("a1|s1", "SESSION", 28): {"byReasonCode": {"OR-001": 0}, "byViolationCode": {"RAL.TESTWARNING": 0}}}
+        override_history={("a1|s1", "SESSION", 28): {"byReasonCode": {"OR-001": 0}, "byViolationCode": {"CL.CLEARANCEMISSING": 0}}}
     )
     kdo = KernelRunner(dep).evaluate(payload, "SESSION")
     assert kdo.resolution["finalPublishState"] == "REQUIRESREVIEW"

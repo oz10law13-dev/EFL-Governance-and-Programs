@@ -123,6 +123,75 @@ def test_all_registered_gate_codes_emitted_by_live_gate_logic():
     assert "MACRO.PHASEMISMATCH" in seen_codes
 
 
+def test_scm_gate01_fires_on_contactload_field():
+    raw = deepcopy(_base_session_input())
+    raw["session"]["contactLoad"] = 200
+    provider = InMemoryDependencyProvider(
+        athlete_profile={"ath-functional": {"maxDailyContactLoad": 100, "minimumRestIntervalHours": 24}},
+    )
+    kdo = KernelRunner(provider).evaluate(raw, "SESSION")
+    codes = [v["code"] for v in kdo.violations]
+    assert "SCM.MAXDAILYLOAD" in codes
+
+
+def test_scm_gate01_fires_from_computed_exercises():
+    raw = deepcopy(_base_session_input())
+    del raw["session"]["contactLoad"]
+    raw["session"]["exercises"] = [{"exerciseID": "squat", "reps": 20, "sets": 3, "plyo_contacts_per_rep": 2}]
+    provider = InMemoryDependencyProvider(
+        athlete_profile={"ath-functional": {"maxDailyContactLoad": 100, "minimumRestIntervalHours": 24}},
+    )
+    kdo = KernelRunner(provider).evaluate(raw, "SESSION")
+    codes = [v["code"] for v in kdo.violations]
+    assert "SCM.MAXDAILYLOAD" in codes
+
+
+def test_scm_gate01_silent_when_within_limit():
+    raw = deepcopy(_base_session_input())
+    raw["session"]["contactLoad"] = 50
+    provider = InMemoryDependencyProvider(
+        athlete_profile={"ath-functional": {"maxDailyContactLoad": 100, "minimumRestIntervalHours": 24}},
+    )
+    kdo = KernelRunner(provider).evaluate(raw, "SESSION")
+    codes = [v["code"] for v in kdo.violations]
+    assert "SCM.MAXDAILYLOAD" not in codes
+
+
+def test_scm_gate02_fires_when_rest_too_short():
+    raw = deepcopy(_base_session_input())
+    raw["session"]["contactLoad"] = 0
+    provider = InMemoryDependencyProvider(
+        athlete_profile={"ath-functional": {"maxDailyContactLoad": 500, "minimumRestIntervalHours": 24}},
+        prior_session={"ath-functional": {"sessionDate": "2026-01-01T10:00:00+00:00"}},
+    )
+    kdo = KernelRunner(provider).evaluate(raw, "SESSION")
+    codes = [v["code"] for v in kdo.violations]
+    assert "SCM.MINREST" in codes
+
+
+def test_scm_gate02_silent_when_rest_sufficient():
+    raw = deepcopy(_base_session_input())
+    raw["session"]["contactLoad"] = 0
+    provider = InMemoryDependencyProvider(
+        athlete_profile={"ath-functional": {"maxDailyContactLoad": 500, "minimumRestIntervalHours": 24}},
+        prior_session={"ath-functional": {"sessionDate": "2025-12-30T12:00:00+00:00"}},
+    )
+    kdo = KernelRunner(provider).evaluate(raw, "SESSION")
+    codes = [v["code"] for v in kdo.violations]
+    assert "SCM.MINREST" not in codes
+
+
+def test_scm_gate02_silent_when_no_prior_session():
+    raw = deepcopy(_base_session_input())
+    raw["session"]["contactLoad"] = 0
+    provider = InMemoryDependencyProvider(
+        athlete_profile={"ath-functional": {"maxDailyContactLoad": 500, "minimumRestIntervalHours": 24}},
+    )
+    kdo = KernelRunner(provider).evaluate(raw, "SESSION")
+    codes = [v["code"] for v in kdo.violations]
+    assert "SCM.MINREST" not in codes
+
+
 def test_unknown_exercise_id_is_ignored_by_cl_gate():
     raw = _base_session_input()
     raw["session"]["contactLoad"] = 0
