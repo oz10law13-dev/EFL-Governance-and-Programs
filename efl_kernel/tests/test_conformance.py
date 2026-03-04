@@ -98,7 +98,7 @@ def test_step0_registration_mismatch_quarantines():
     payload = _session_input()
     payload["moduleVersion"] = "0.0.0"
     kdo = _runner().evaluate(payload, "SESSION")
-    assert kdo.violations[0]["code"] == "RAL.MODULEREGISTRATIONINCOMPLETE"
+    assert kdo.violations[0]["code"] == "RAL.MODULEREGISTRYMISMATCH"
 
 
 def test_step1_missing_required_state_quarantines():
@@ -172,7 +172,7 @@ def test_governance_no_gates_results_in_clamp_publish_state():
     kdo = _runner().evaluate(_governance_input(), "GOVERNANCE")
     assert kdo.violations == []
     assert kdo.resolution["finalEffectiveLabel"] == "CLAMP"
-    assert kdo.resolution["finalPublishState"] == "PUBLISH_WITH_CLAMP"
+    assert kdo.resolution["finalPublishState"] == "LEGALREADY"
 
 
 def test_ral_derivation_helpers_and_hashing():
@@ -183,7 +183,7 @@ def test_ral_derivation_helpers_and_hashing():
     label = compute_effective_label(violations)
     assert label == "HARDFAILOVERRIDEPOSSIBLE"
     assert derive_final_severity(label) == "HARDFAIL"
-    assert derive_publish_state("WARNING", []) == "PUBLISH_WITH_WARNING"
+    assert derive_publish_state("WARNING", []) == "LEGALOVERRIDE"
     assert derive_lineage_key("SESSION", {"athleteID": "a", "sessionID": "s"}) == "a|s"
     assert derive_lineage_key("MESO", {"athleteID": "a", "mesoID": "m"}) == "a|m"
     assert derive_lineage_key("MACRO", {"athleteID": "a", "seasonID": "x"}) == "a|x"

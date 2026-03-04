@@ -26,7 +26,7 @@ class KernelRunner:
         self.dep_provider = dep_provider
 
     def _syn_violation(self, code: str, module_id: str) -> dict:
-        spec = KERNEL_SYNTHETIC_VIOLATIONS[code]
+        spec = KERNEL_SYNTHETIC_VIOLATIONS.get(code, {"severity": "QUARANTINE", "overridePossible": False})
         return {
             "code": code,
             "moduleID": module_id,
@@ -79,7 +79,7 @@ class KernelRunner:
             or raw_input.get("moduleViolationRegistryVersion") != reg.get("moduleViolationRegistryVersion")
             or raw_input.get("registryHash") != reg.get("registryHash")
         ):
-            return self._build_kdo(module_id, raw_input, [self._syn_violation("RAL.MODULEREGISTRATIONINCOMPLETE", module_id)])
+            return self._build_kdo(module_id, raw_input, [self._syn_violation("RAL.MODULEREGISTRYMISMATCH", module_id)])
 
         # Step 1
         required = ["moduleVersion", "moduleViolationRegistryVersion", "registryHash", "objectID", "evaluationContext", "windowContext"]

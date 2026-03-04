@@ -72,13 +72,19 @@ def derive_final_severity(effective_label: str) -> str:
 
 def derive_publish_state(effective_label: str, violations: list[dict]) -> str:
     final_severity = derive_final_severity(effective_label)
+    publish_state_mapping = {
+        "BLOCKED": "ILLEGALQUARANTINED",
+        "REGENERATE_REQUIRED": "REQUIRESREVIEW",
+        "PUBLISH_WITH_WARNING": "LEGALOVERRIDE",
+        "PUBLISH_WITH_CLAMP": "LEGALREADY",
+    }
     for mapping in PUBLISH_STATE_BASE_MAPPING:
         when = mapping.get("when", {})
         if "finalEffectiveLabel" in when and when["finalEffectiveLabel"] == effective_label:
-            return mapping["publishState"]
+            return publish_state_mapping.get(mapping["publishState"], mapping["publishState"])
         if "finalSeverity" in when and when["finalSeverity"] == final_severity:
-            return mapping["publishState"]
-    return "BLOCKED"
+            return publish_state_mapping.get(mapping["publishState"], mapping["publishState"])
+    return "ILLEGALQUARANTINED"
 
 
 

@@ -23,7 +23,7 @@ class KDO:
 
 class KDOValidator:
     allowed_labels = {"QUARANTINE", "REGENERATE", "HARDFAILNOOVERRIDE", "HARDFAILOVERRIDEPOSSIBLE", "WARNING", "CLAMP"}
-    allowed_publish = {"BLOCKED", "REGENERATE_REQUIRED", "PUBLISH_WITH_WARNING", "PUBLISH_WITH_CLAMP"}
+    allowed_publish = {"LEGALREADY", "LEGALOVERRIDE", "ILLEGALQUARANTINED", "REQUIRESREVIEW"}
     allowed_severity = {"QUARANTINE", "REGENERATE", "HARDFAIL", "WARNING", "CLAMP"}
 
     def validate(self, kdo: KDO) -> list[str]:
