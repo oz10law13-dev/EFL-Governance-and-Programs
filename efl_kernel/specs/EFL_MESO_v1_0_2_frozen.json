@@ -1,0 +1,25 @@
+{
+  "specID": "EFL-MESO",
+  "version": "1.0.2",
+  "moduleID": "MESO",
+  "violationRegistry": {
+    "registryVersion": "1.0.2",
+    "registryHash": "54113cf2db1116bf67407da998c10c09d89a111d28dd25fd0baa3da03e36e7f5",
+    "violations": [
+      {
+        "code": "MESO.LOADIMBALANCE",
+        "moduleID": "MESO",
+        "severity": "HARDFAIL",
+        "overridePossible": true,
+        "allowedOverrideReasonCodes": [
+          "OR-001"
+        ],
+        "violationCap": 2,
+        "reviewOverrideThreshold28D": 1,
+        "clampBehavior": {
+          "action": "NONE"
+        }
+      }
+    ]
+  }
+}
