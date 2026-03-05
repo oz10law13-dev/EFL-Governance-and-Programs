@@ -1,1 +1,5 @@
 pytest>=8.0
+
+# Phase 14: HTTP service dependencies
+fastapi
+httpx
