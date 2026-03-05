@@ -9,6 +9,7 @@ from efl_kernel.kernel.audit_store import AuditStore
 from efl_kernel.kernel.kernel import KernelRunner
 from efl_kernel.kernel.operational_store import OperationalStore
 from efl_kernel.kernel.sqlite_dependency_provider import SqliteDependencyProvider
+from efl_kernel.kernel.artifact_store import ArtifactStore
 
 
 def create_app(db_path: str | None = None) -> FastAPI:
@@ -32,6 +33,7 @@ def create_app(db_path: str | None = None) -> FastAPI:
         app.state.op_store, app.state.audit_store
     )
     app.state.runner = KernelRunner(app.state.provider)
+    app.state.artifact_store = ArtifactStore(resolved_path)
 
     _register_routes(app)
     return app
@@ -94,6 +96,65 @@ def _register_routes(app: FastAPI) -> None:
             payload,
             "MACRO",
         )
+
+    @app.post("/artifacts", status_code=201)
+    def commit_artifact(payload: dict, request: Request):
+        result = request.app.state.artifact_store.commit_artifact_version(
+            artifact_id=payload["artifact_id"],
+            module_id=payload["module_id"],
+            object_id=payload["object_id"],
+            content=payload["content"],
+        )
+        return result
+
+    @app.post("/artifacts/{version_id}/link-kdo")
+    def link_artifact_kdo(version_id: str, payload: dict, request: Request):
+        result = request.app.state.artifact_store.link_kdo(
+            version_id=version_id,
+            decision_hash=payload["decision_hash"],
+            content_hash_at_eval=payload["content_hash_at_eval"],
+        )
+        return result
+
+    @app.post("/artifacts/{version_id}/review")
+    def add_artifact_review(version_id: str, payload: dict, request: Request):
+        try:
+            result = request.app.state.artifact_store.add_review_record(
+                artifact_version_id=version_id,
+                decision_hash=payload["decision_hash"],
+                reviewer_id=payload["reviewer_id"],
+                reason=payload["reason"],
+                decision=payload["decision"],
+            )
+        except ValueError as e:
+            raise HTTPException(status_code=422, detail=str(e))
+        return result
+
+    @app.post("/artifacts/{version_id}/promote")
+    def promote_artifact(version_id: str, request: Request):
+        try:
+            result = request.app.state.artifact_store.promote_to_live(
+                version_id=version_id,
+                get_kdo_fn=request.app.state.audit_store.get_kdo,
+            )
+        except ValueError as e:
+            raise HTTPException(status_code=409, detail=str(e))
+        return result
+
+    @app.get("/artifacts/{version_id}")
+    def get_artifact_version(version_id: str, request: Request):
+        result = request.app.state.artifact_store.get_version(version_id)
+        if result is None:
+            raise HTTPException(status_code=404, detail=f"version {version_id!r} not found")
+        return result
+
+    @app.post("/artifacts/{version_id}/retire")
+    def retire_artifact(version_id: str, request: Request):
+        try:
+            result = request.app.state.artifact_store.retire(version_id)
+        except ValueError as e:
+            raise HTTPException(status_code=409, detail=str(e))
+        return result
 
 
 # Module-level app for uvicorn: create_app() with no args
