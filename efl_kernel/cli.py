@@ -6,6 +6,7 @@ import sys
 
 from efl_kernel.kernel.audit_store import AuditStore
 from efl_kernel.kernel.kernel import KernelRunner
+from efl_kernel.kernel.operational_store import OperationalStore
 from efl_kernel.kernel.ral import RAL_SPEC
 from efl_kernel.kernel.sqlite_dependency_provider import SqliteDependencyProvider
 
@@ -38,7 +39,8 @@ def main(argv: list[str] | None = None) -> None:
 
     try:
         audit_store = AuditStore(args.db_path)
-        dep = SqliteDependencyProvider(audit_store)
+        op_store = OperationalStore(args.db_path)
+        dep = SqliteDependencyProvider(op_store, audit_store)
         kdo = KernelRunner(dep).evaluate(payload, args.module)
         audit_store.commit_kdo(kdo)
         print(json.dumps(kdo.__dict__, sort_keys=True, indent=2))

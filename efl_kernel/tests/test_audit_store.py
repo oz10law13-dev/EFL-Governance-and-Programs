@@ -4,6 +4,7 @@ from datetime import datetime, timedelta, timezone
 
 from efl_kernel.kernel.audit_store import AuditStore
 from efl_kernel.kernel.kdo import KDO
+from efl_kernel.kernel.operational_store import OperationalStore
 from efl_kernel.kernel.sqlite_dependency_provider import SqliteDependencyProvider
 
 
@@ -109,7 +110,8 @@ def test_append_only_duplicate_hash_ignored():
 
 def test_sqlite_dependency_provider_delegates_to_audit_store():
     store = AuditStore(":memory:")
-    provider = SqliteDependencyProvider(store)
+    op_store = OperationalStore(":memory:")
+    provider = SqliteDependencyProvider(op_store, store)
     violations = [
         {"code": "SCM.MAXDAILYLOAD", "moduleID": "SESSION", "overrideUsed": True, "overrideReasonCode": "OR-001"}
     ]
