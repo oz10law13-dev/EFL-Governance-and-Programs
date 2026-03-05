@@ -1,0 +1,96 @@
+{
+  "athletes": [
+    {
+      "athlete_id": "ATH001",
+      "max_daily_contact_load": 150.0,
+      "minimum_rest_interval_hours": 24.0,
+      "e4_clearance": 0
+    },
+    {
+      "athlete_id": "ATH002",
+      "max_daily_contact_load": 80.0,
+      "minimum_rest_interval_hours": 24.0,
+      "e4_clearance": 1
+    }
+  ],
+  "sessions": [
+    {
+      "_comment": "ATH001 — one session outside the 28-day window ending 2026-02-01",
+      "session_id": "S-ATH001-OUT",
+      "athlete_id": "ATH001",
+      "session_date": "2026-01-02T10:00:00+00:00",
+      "contact_load": 60.0
+    },
+    {
+      "_comment": "ATH001 — four balanced sessions within the window (no MESO violation)",
+      "session_id": "S-ATH001-01",
+      "athlete_id": "ATH001",
+      "session_date": "2026-01-05T10:00:00+00:00",
+      "contact_load": 50.0
+    },
+    {
+      "session_id": "S-ATH001-02",
+      "athlete_id": "ATH001",
+      "session_date": "2026-01-12T10:00:00+00:00",
+      "contact_load": 55.0
+    },
+    {
+      "session_id": "S-ATH001-03",
+      "athlete_id": "ATH001",
+      "session_date": "2026-01-19T10:00:00+00:00",
+      "contact_load": 50.0
+    },
+    {
+      "session_id": "S-ATH001-04",
+      "athlete_id": "ATH001",
+      "session_date": "2026-01-26T10:00:00+00:00",
+      "contact_load": 55.0
+    },
+    {
+      "_comment": "ATH002 — four sessions with load spike on last (triggers MESO.LOADIMBALANCE)",
+      "_meso_check": "avg=(30+35+30+150)/4=61.25, max=150, 150 > 122.5 → violation",
+      "session_id": "S-ATH002-01",
+      "athlete_id": "ATH002",
+      "session_date": "2026-01-05T10:00:00+00:00",
+      "contact_load": 30.0
+    },
+    {
+      "session_id": "S-ATH002-02",
+      "athlete_id": "ATH002",
+      "session_date": "2026-01-12T10:00:00+00:00",
+      "contact_load": 35.0
+    },
+    {
+      "session_id": "S-ATH002-03",
+      "athlete_id": "ATH002",
+      "session_date": "2026-01-19T10:00:00+00:00",
+      "contact_load": 30.0
+    },
+    {
+      "session_id": "S-ATH002-04",
+      "athlete_id": "ATH002",
+      "session_date": "2026-01-26T10:00:00+00:00",
+      "contact_load": 150.0
+    }
+  ],
+  "seasons": [
+    {
+      "_comment": "ATH001 — valid ratio (4/8=0.5 ≤ 2.0): no MACRO.PHASEMISMATCH",
+      "athlete_id": "ATH001",
+      "season_id": "SEASON-2026",
+      "competition_weeks": 4,
+      "gpp_weeks": 8,
+      "start_date": "2026-01-01",
+      "end_date": "2026-12-31"
+    },
+    {
+      "_comment": "ATH002 — invalid ratio (10/2=5.0 > 2.0): triggers MACRO.PHASEMISMATCH",
+      "athlete_id": "ATH002",
+      "season_id": "SEASON-2026",
+      "competition_weeks": 10,
+      "gpp_weeks": 2,
+      "start_date": "2026-01-01",
+      "end_date": "2026-12-31"
+    }
+  ]
+}
