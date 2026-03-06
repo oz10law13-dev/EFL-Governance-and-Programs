@@ -42,7 +42,7 @@ DCC-Physique is a **containment-first hypertrophy system** for healthy adults �
 3. **Auditability** across sessions, weeks, and mesocycles
 4. **Enforceability** through external Exercise Classification Authority (ECA)
 
-**DCC-Physique v1.2-CORRECTED is the definitive, implementation-ready specification.** All rules are deterministic, machine-enforceable, and closed to interpretation loopholes.
+**DCC-Physique v1.2.1 is the definitive, implementation-ready specification.** All rules are deterministic, machine-enforceable, and closed to interpretation loopholes.
 
 ---
 
@@ -945,12 +945,12 @@ PRIME is inherited from DCC v2.2 with strict scope enforcement.
 
 ---
 
-# 14. ECA ENFORCEMENT PATCHES (GROUPS K–P): MANDATORY FOR v1.2 COMPLIANCE
+# 14. ECA ENFORCEMENT PATCHES (GROUPS K–P): MANDATORY FOR v1.2.1 COMPLIANCE
 
-DCC-Physique v1.2 philosophy: Sections 1–13 define the training law. **Patches K–P represent the mandatory implementation layer** that makes all rules auditable, deterministic, and exploit-proof.
+DCC-Physique v1.2.1 philosophy: Sections 1–13 define the training law. **Patches K–P represent the mandatory implementation layer** that makes all rules auditable, deterministic, and exploit-proof.
 
-**Without K–P:** v1.2 remains principle-based.  
-**With K–P:** v1.2 becomes fully specification-enforceable.
+**Without K–P:** v1.2.1 remains principle-based.  
+**With K–P:** v1.2.1 becomes fully specification-enforceable.
 
 ### Patch Group K: Exclusive Coverage Rule
 
@@ -1009,6 +1009,8 @@ The following movement families **must have complete ECA coverage** to support c
 | **movement_family** | squat, hinge, press, pull, carry, isolate, trunk | Movement archetype | Squat (squat); Deadlift (hinge); Curl (isolate); Plank (trunk) |
 
 **Missing any field → `ECAPATTERNINCOMPLETE` (exercise cannot be used). No defaults allowed. Every exercise must be explicitly classified.**
+
+**Runtime Boundary Clarification (Whitelist/ECA → MCC):** Law-level runtime `horiz_vert` taxonomy for pattern-balance enforcement remains `horizontal|vertical|sagittal|frontal`. Whitelist/ECA authoring may retain richer labels (e.g., `Incline`) but those labels are not injected directly into MCC schema fields; runtime must apply an explicit, deterministic normalization adapter before MCC validation. If no mapping is defined, validation fails closed (no implicit collapse/defaulting).
 
 ---
 
