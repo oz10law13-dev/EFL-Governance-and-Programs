@@ -1,11 +1,11 @@
 # EFL Physique — Program Framework v2.1
-## Frequency-Agnostic Generation Envelope for DCC-Physique v1.2 + MCC v1.0
+## Frequency-Agnostic Generation Envelope for DCC-Physique v1.2.1 + MCC v1.0
 
 **Status:** PRODUCTION-READY  
 **Version:** 2.1.0  
 **Date:** 2026-01-25  
 **Authority Dependencies:**
-- DCC-Physique v1.2 (training law)
+- DCC-Physique v1.2.1 (training law)
 - MCC v1.0.0/v1.0.1-PATCHPACK (meso constraint controller)
 - ECA v1.2 (exercise catalog)
 - Minimal Runtime Shell v1.0 (enforcement infrastructure)
@@ -73,7 +73,7 @@ This single principle enables the framework to scale from 2–6+ days per week w
 ### 2.3 Design Rationale
 
 - **MCC schema** allows `frequency_per_week: 2–8` as schema-legal
-- **DCC-Physique v1.2** targets 3–6 as primary intent
+- **DCC-Physique v1.2.1** targets 3–6 as primary intent
 - **Framework v2.1** supports 3–6 for full generation; 2× for maintenance; 7–8× reserved
 
 This aligns with MCC's "schema legal vs runtime enforcement" boundary.
@@ -614,7 +614,7 @@ Sat: DAY_D (REGENERATION)
 
 | Layer | Role | Mutable | Enforcement |
 |-------|------|---------|-------------|
-| **DCC-Physique v1.2** | Training law | ❌ | Pass 1 (LAW mode) |
+| **DCC-Physique v1.2.1** | Training law | ❌ | Pass 1 (LAW mode) |
 | **ECA v1.2** | Exercise definitions | ❌ | Pre-pass validator |
 | **MCC v1.0** | Accumulation restriction | ❌ | Pass 2 (CONTROL mode) |
 | **Program Framework v2.1** | Generation envelope | ✅ | Pre-generation constraints |
