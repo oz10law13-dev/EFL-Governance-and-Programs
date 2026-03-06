@@ -255,3 +255,43 @@ def test_kdo_log_increments_across_evaluations(tmp_path):
     payload_file_2.write_text(json.dumps(payload_2), encoding="utf-8")
     _run_cli(db_path, "MACRO", payload_file_2)
     assert _kdo_log_count(db_path) == 2
+
+
+# ------------------------------------------------------------------ #
+# Import stability check                                              #
+# ------------------------------------------------------------------ #
+
+def test_cli_runs_from_non_repo_cwd(tmp_path, monkeypatch):
+    db_path = tmp_path / "test.db"
+    outside_cwd = tmp_path / "outside"
+    outside_cwd.mkdir()
+    monkeypatch.chdir(outside_cwd)
+
+    _seed(db_path)
+
+    payload = {
+        "moduleVersion": MACRO_REG["moduleVersion"],
+        "moduleViolationRegistryVersion": MACRO_REG["moduleViolationRegistryVersion"],
+        "registryHash": MACRO_REG["registryHash"],
+        "objectID": "SMOKE-MACRO-CWD-001",
+        "evaluationContext": {
+            "athleteID": "ATH002",
+            "seasonID": "SEASON-2026",
+        },
+        "windowContext": [
+            {
+                "windowType": "SEASON",
+                "anchorDate": "2026-12-31",
+                "startDate": "2026-01-01",
+                "endDate": "2026-12-31",
+                "timezone": "UTC",
+            },
+        ],
+    }
+
+    payload_file = tmp_path / "macro_cwd_payload.json"
+    payload_file.write_text(json.dumps(payload), encoding="utf-8")
+
+    kdo = _run_cli(db_path, "MACRO", payload_file)
+    violation_codes = [v["code"] for v in kdo["violations"]]
+    assert "MACRO.PHASEMISMATCH" in violation_codes
