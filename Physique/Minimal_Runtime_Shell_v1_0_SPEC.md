@@ -177,6 +177,11 @@ For each `exercises[i].eca_id`:
    - `push_pull`, `horiz_vert`
    - archetype flags
 
+4. **Authoring-taxonomy boundary (deterministic):**
+   - ECA/whitelist authoring may include richer labels than MCC runtime enums (e.g., `horiz_vert = "Incline"`).
+   - Before MCC schema validation, runtime MUST normalize richer authoring labels into the active MCC enum domain (`horizontal|vertical|sagittal|frontal`) via an explicit adapter contract.
+   - If no mapping is defined for a richer label, runtime MUST fail closed (reject) rather than defaulting or silently collapsing categories.
+
 ### 4.4 Design Choice: Fail-Closed (Recommended for v1)
 
 **Policy:** If proposal fields conflict with ECA canonical values → return `ECA_FIELD_CONFLICT` and halt.
