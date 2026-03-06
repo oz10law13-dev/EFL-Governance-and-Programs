@@ -210,7 +210,7 @@
       "primary_joint": "Shoulder/Elbow",
       "pattern_plane": "Horizontal",
       "push_pull": "push",
-      "horiz_vert": "horizontal",
+      "horiz_vert": "Incline",
       "compound_isolation": "Compound",
       "uni_bi": "Bilateral",
       "equipment": "Dumbbell",
