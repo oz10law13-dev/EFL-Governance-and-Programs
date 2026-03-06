@@ -219,7 +219,7 @@
       ],
       "severity": 5,
       "severity_label": "REJECT",
-      "description": "Forbidden adjacency pattern detected (B\u2192B, A_BAND3\u2192B, B\u2192C_NODE3, 3\u00d7 consecutive NODE3)",
+      "description": "Forbidden adjacency pattern detected (B→B, A_BAND3→B, B→C_NODE3, 3× consecutive NODE3)",
       "authority": "MCC v1.0",
       "ledger_fields": [
         "pattern_detected",
@@ -254,7 +254,7 @@
       ],
       "severity": 5,
       "severity_label": "REJECT",
-      "description": "Frequency composition violates DAY_A minimum guarantee (\u22651 DAY_A required)",
+      "description": "Frequency composition violates DAY_A minimum guarantee (≥1 DAY_A required)",
       "authority": "MCC v1.0",
       "ledger_fields": [
         "day_a_count",
@@ -271,7 +271,7 @@
       ],
       "severity": 5,
       "severity_label": "REJECT",
-      "description": "DAY_D minimum frequency requirement violated (\u22651 DAY_D at 5\u00d7/week, \u22652 at 6\u00d7/week)",
+      "description": "DAY_D minimum frequency requirement violated (≥1 DAY_D at 5×/week, ≥2 at 6×/week)",
       "authority": "MCC v1.0",
       "ledger_fields": [
         "frequency",
@@ -519,7 +519,7 @@
       ],
       "severity": 3,
       "severity_label": "WARN",
-      "description": "Density ledger thresholds exceeded (BAND2\u00d7NODE3 or total NODE3 sets)",
+      "description": "Density ledger thresholds exceeded (BAND2×NODE3 or total NODE3 sets)",
       "authority": "MCC v1.0",
       "ledger_fields": [
         "band2_node3_sets",
@@ -672,7 +672,7 @@
       ],
       "severity": 5,
       "severity_label": "REJECT",
-      "description": "ACL hardstop symptom detected (pain\u22654, effusion, giving way, limp, sharp pain, or pain spike)",
+      "description": "ACL hardstop symptom detected (pain≥4, effusion, giving way, limp, sharp pain, or pain spike)",
       "authority": "R2P-ACL Input Gate v1.0",
       "ledger_fields": [
         "hardstop_symptoms",
@@ -750,12 +750,278 @@
         "reason_code"
       ],
       "introduced_version": "1.1.0"
+    },
+    {
+      "code": "MCC_CHRONIC_YELLOW_GUARD_TRIGGERED",
+      "namespace": "MCC",
+      "allowed_passes": [
+        2
+      ],
+      "severity": 5,
+      "severity_label": "REJECT",
+      "description": "Chronic readiness guard triggered (>=3 YELLOW/RED days in 7-day window)",
+      "authority": "MCC v1.0",
+      "ledger_fields": [
+        "yellow_days_in_7",
+        "red_days_in_7",
+        "reason_code"
+      ],
+      "introduced_version": "1.0.1"
+    },
+    {
+      "code": "MCC_COLLAPSE_ESCALATION_TRIGGERED",
+      "namespace": "MCC",
+      "allowed_passes": [
+        2
+      ],
+      "severity": 5,
+      "severity_label": "REJECT",
+      "description": "Collapse escalation threshold triggered without required intervention",
+      "authority": "MCC v1.0",
+      "ledger_fields": [
+        "collapses_in_7_days",
+        "collapses_in_14_days",
+        "reason_code"
+      ],
+      "introduced_version": "1.0.1"
+    },
+    {
+      "code": "MCC_CONSECUTIVE_NODE3_EXCEEDED",
+      "namespace": "MCC",
+      "allowed_passes": [
+        2
+      ],
+      "severity": 5,
+      "severity_label": "REJECT",
+      "description": "Consecutive NODE 3 exposure exceeded allowed threshold",
+      "authority": "MCC v1.0",
+      "ledger_fields": [
+        "consecutive_node3_days",
+        "day_sequence",
+        "reason_code"
+      ],
+      "introduced_version": "1.0.1"
+    },
+    {
+      "code": "MCC_DAY_A_FREQUENCY_EXCEEDED",
+      "namespace": "MCC",
+      "allowed_passes": [
+        2
+      ],
+      "severity": 5,
+      "severity_label": "REJECT",
+      "description": "DAY_A frequency exceeded weekly maximum",
+      "authority": "MCC v1.0",
+      "ledger_fields": [
+        "day_a_count",
+        "frequency",
+        "reason_code"
+      ],
+      "introduced_version": "1.0.1"
+    },
+    {
+      "code": "MCC_DAY_B_FREQUENCY_EXCEEDED",
+      "namespace": "MCC",
+      "allowed_passes": [
+        2
+      ],
+      "severity": 5,
+      "severity_label": "REJECT",
+      "description": "DAY_B frequency exceeded weekly maximum",
+      "authority": "MCC v1.0",
+      "ledger_fields": [
+        "day_b_count",
+        "frequency",
+        "reason_code"
+      ],
+      "introduced_version": "1.0.1"
+    },
+    {
+      "code": "MCC_DAY_C_PATTERN_REPETITION",
+      "namespace": "MCC",
+      "allowed_passes": [
+        2
+      ],
+      "severity": 5,
+      "severity_label": "REJECT",
+      "description": "DAY_C pattern/tissue focus repeated when rotation is required",
+      "authority": "MCC v1.0",
+      "ledger_fields": [
+        "c_day_focus",
+        "current_week",
+        "reason_code"
+      ],
+      "introduced_version": "1.0.1"
+    },
+    {
+      "code": "MCC_DAY_D_INTENT_VIOLATION",
+      "namespace": "MCC",
+      "allowed_passes": [
+        2
+      ],
+      "severity": 5,
+      "severity_label": "REJECT",
+      "description": "DAY_D intent contract violated (recovery day contains disallowed stimulus)",
+      "authority": "MCC v1.0",
+      "ledger_fields": [
+        "day_role",
+        "exercise_id",
+        "reason_code"
+      ],
+      "introduced_version": "1.0.1"
+    },
+    {
+      "code": "MCC_ECA_COVERAGE_MISSING",
+      "namespace": "MCC",
+      "allowed_passes": [
+        2
+      ],
+      "severity": 5,
+      "severity_label": "REJECT",
+      "description": "Exercise not present in ECA/whitelist coverage for governed generation",
+      "authority": "MCC v1.0",
+      "ledger_fields": [
+        "exercise_id",
+        "reason_code"
+      ],
+      "introduced_version": "1.0.1"
+    },
+    {
+      "code": "MCC_ECA_PATTERN_INCOMPLETE",
+      "namespace": "MCC",
+      "allowed_passes": [
+        2
+      ],
+      "severity": 5,
+      "severity_label": "REJECT",
+      "description": "Exercise is missing required pattern tuple fields for validation",
+      "authority": "MCC v1.0",
+      "ledger_fields": [
+        "exercise_id",
+        "missing_fields",
+        "reason_code"
+      ],
+      "introduced_version": "1.0.1"
+    },
+    {
+      "code": "MCC_FAMILY_MULTI_AXIS_VIOLATION",
+      "namespace": "MCC",
+      "allowed_passes": [
+        2
+      ],
+      "severity": 5,
+      "severity_label": "REJECT",
+      "description": "Movement-family progression violates ONE_AXIS_AT_A_TIME at family scope",
+      "authority": "MCC v1.0",
+      "ledger_fields": [
+        "movement_family",
+        "axes_modified",
+        "reason_code"
+      ],
+      "introduced_version": "1.0.1"
+    },
+    {
+      "code": "MCC_FREQUENCY_NOT_SUPPORTED",
+      "namespace": "MCC",
+      "allowed_passes": [
+        2
+      ],
+      "severity": 5,
+      "severity_label": "REJECT",
+      "description": "Frequency is outside supported DCC Physique contract",
+      "authority": "MCC v1.0",
+      "ledger_fields": [
+        "frequency",
+        "reason_code"
+      ],
+      "introduced_version": "1.0.1"
+    },
+    {
+      "code": "MCC_H4_FREQUENCY_EXCEEDED",
+      "namespace": "MCC",
+      "allowed_passes": [
+        2
+      ],
+      "severity": 5,
+      "severity_label": "REJECT",
+      "description": "H4 weekly frequency exceeded allowed maximum",
+      "authority": "MCC v1.0",
+      "ledger_fields": [
+        "h4_blocks_per_week",
+        "reason_code"
+      ],
+      "introduced_version": "1.0.1"
+    },
+    {
+      "code": "MCC_PRIME_SCOPE_VIOLATION",
+      "namespace": "MCC",
+      "allowed_passes": [
+        2
+      ],
+      "severity": 5,
+      "severity_label": "REJECT",
+      "description": "PRIME block contains out-of-scope work that should be in WORK/CLEAR",
+      "authority": "MCC v1.0",
+      "ledger_fields": [
+        "prime_content",
+        "reason_code"
+      ],
+      "introduced_version": "1.0.1"
+    },
+    {
+      "code": "MCC_SESSION_DURATION_EXCEEDED",
+      "namespace": "MCC",
+      "allowed_passes": [
+        2
+      ],
+      "severity": 5,
+      "severity_label": "REJECT",
+      "description": "Session duration exceeds allowed maximum window",
+      "authority": "MCC v1.0",
+      "ledger_fields": [
+        "session_duration_minutes",
+        "reason_code"
+      ],
+      "introduced_version": "1.0.1"
+    },
+    {
+      "code": "MCC_VOLUME_CLASS_OVERRIDE_ATTEMPT",
+      "namespace": "MCC",
+      "allowed_passes": [
+        2
+      ],
+      "severity": 5,
+      "severity_label": "REJECT",
+      "description": "Attempted override of immutable ECA volume_class classification (legacy alias: VOLUMECLASSIMMUTABILITYVIOLATED; emit canonical code MCC_VOLUME_CLASS_OVERRIDE_ATTEMPT).",
+      "authority": "MCC v1.0",
+      "ledger_fields": [
+        "exercise_id",
+        "volume_class",
+        "reason_code"
+      ],
+      "introduced_version": "1.0.1"
+    },
+    {
+      "code": "MCC_WORK_BLOCK_INSUFFICIENT",
+      "namespace": "MCC",
+      "allowed_passes": [
+        2
+      ],
+      "severity": 5,
+      "severity_label": "REJECT",
+      "description": "WORK block duration is below required minimum",
+      "authority": "MCC v1.0",
+      "ledger_fields": [
+        "work_block_minutes",
+        "reason_code"
+      ],
+      "introduced_version": "1.0.1"
     }
   ],
-  "total_codes": 39,
+  "total_codes": 55,
   "codes_by_namespace": {
     "DCC": 7,
-    "MCC": 25,
+    "MCC": 41,
     "R2P": 5,
     "ADVISORY": 2
   }
