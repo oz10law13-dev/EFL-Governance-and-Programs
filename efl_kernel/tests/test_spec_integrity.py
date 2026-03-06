@@ -40,4 +40,4 @@ def test_all_frozen_spec_hashes_are_valid():
             )
             checked += 1
 
-    assert checked > 0, "No hash fields found in any spec file — check SPECS_DIR path"
+    assert checked >= 4, f"Expected at least 4 hash checks across spec files, got {checked} — check SPECS_DIR path"
