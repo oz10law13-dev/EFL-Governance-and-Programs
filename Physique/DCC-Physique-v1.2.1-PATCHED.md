@@ -254,7 +254,7 @@ DCC-Physique is a **containment-first hypertrophy system** for healthy adults �
 - Load beyond BAND 1
 - Any exercise taken near failure (RPE >4)
 
-**Violation Code:** `DAYDINTENTVIOLATION`
+**Violation Code:** `MCC_DAY_D_INTENT_VIOLATION`
 
 ---
 
@@ -290,7 +290,7 @@ Training frequency governs deployment and sequencing of fixed day roles (A, B, C
   - 5×: mandatory (≥1 required)
   - 6×: **mandatory (≥2 required)**
 
-**Reason Codes (DCC Pass 1):** `FREQUENCYNOTSUPPORTED`, `DAYAFREQUENCYEXCEEDED`, `DAYBFREQUENCYEXCEEDED`, `DMINIMUMVIOLATED`
+**Reason Codes (DCC Pass 1):** `MCC_FREQUENCY_NOT_SUPPORTED`, `MCC_DAY_A_FREQUENCY_EXCEEDED`, `MCC_DAY_B_FREQUENCY_EXCEEDED`, `MCC_D_MINIMUM_VIOLATED`
 
 **Patch F Enforcement Note:** When `frequency_per_week = 6` and `DAY_B_count = 2`, the weekly plan is **conditionally legal** and MUST be escalated to **MCC Pass 2**. If MCC Pass 2 fails adjacency/density gates, the plan is rejected (see Appendix F-04).
 
@@ -331,7 +331,7 @@ At higher training frequencies, mandatory recovery days prevent chronic fatigue 
 
 **Failure to meet D-minimum invalidates the weekly plan.**
 
-**Reason Code:** `DMINIMUMVIOLATED`
+**Reason Code:** `MCC_D_MINIMUM_VIOLATED`
 
 ---
 
@@ -352,7 +352,7 @@ At higher training frequencies, mandatory recovery days prevent chronic fatigue 
 **2 B days are allowed at 6× if:**
 1. No B→B adjacency (e.g., Mon A / Tue D / Wed B / Thu C / Fri B / Sat D)
 2. MCC Pass 2 validates: no forbidden patterns, density ledger GREEN/YELLOW, no 3+ consecutive NODE 3
-3. MCC Pass 2 emits `ADJACENCYVIOLATION` and/or `CONSECUTIVENODE3EXCEEDED` on failure (and the weekly plan is rejected)
+3. MCC Pass 2 emits `MCC_ADJACENCY_VIOLATION` and/or `MCC_CONSECUTIVE_NODE3_EXCEEDED` on failure (and the weekly plan is rejected)
 
 ### Preferred Adjacency (Coaching Guidance)
 
@@ -363,7 +363,7 @@ At higher training frequencies, mandatory recovery days prevent chronic fatigue 
 | DAY C | A or B | Allow structural work to recover before heavy loading |
 | DAY D | A or B | Recovery complete; ready for stimulus |
 
-**Reason Codes (MCC Pass 2):** `ADJACENCYVIOLATION`, `CONSECUTIVENODE3EXCEEDED`
+**Reason Codes (MCC Pass 2):** `MCC_ADJACENCY_VIOLATION`, `MCC_CONSECUTIVE_NODE3_EXCEEDED`
 
 ---
 
@@ -429,7 +429,7 @@ Each working set is tagged with a primary push/pull value in ECA:
 
 Weekly plan validator must compute pattern distribution using split-counting and flag if any pair falls below minimum threshold.
 
-**Reason Code:** `PATTERNBALANCEVIOLATED`
+**Reason Code:** `MCC_PATTERN_BALANCE_VIOLATED`
 
 ---
 
@@ -472,7 +472,7 @@ An **H3 session** is any training day in which ≥1 H3 archetype (from ECA Patch
 | DAY C-1 (Week 2 with H3 added) | Add H3 | 3 | Weekly total = 3/3 (at maximum) |
 | DAY A (same week with H3) | Add H3 (illegal anyway) | 4 | **Weekly total = 4/3 (VIOLATED)** |
 
-**Reason Code:** `H3AGGREGATEEXCEEDED`
+**Reason Code:** `MCC_H3_AGGREGATE_EXCEEDED`
 
 ---
 
@@ -489,7 +489,7 @@ BAND 2–NODE 3 combinations create near-maximal neural stress without triggerin
 **Validation Sequence:**
 1. Identify all sets marked as NODE 3 in weekly plan
 2. For each set, check exercise ECA entry: `nodemax ≥ 3`?
-3. If any set fails → `NODEPERMISSIONVIOLATION` (session invalid; do NOT proceed to ledger)
+3. If any set fails → `MCC_NODE_PERMISSION_VIOLATION` (session invalid; do NOT proceed to ledger)
 4. If all sets pass → Proceed to density ledger calculation
 
 **This ensures density caps apply only to LEGAL NODE 3 usage.**
@@ -507,7 +507,7 @@ BAND 2–NODE 3 combinations create near-maximal neural stress without triggerin
 - **Yellow:** Coach awareness flag; monitor readiness closely next session; consider intensity reduction if readiness degrades
 - **Red:** Weekly plan invalid; reduce NODE 3 volume or redistribute across different nodes
 
-**Reason Codes:** `DENSITYLEDGEREXCEEDED`, `NODEPERMISSIONVIOLATION`
+**Reason Codes:** `MCC_DENSITY_LEDGER_EXCEEDED`, `MCC_NODE_PERMISSION_VIOLATION`
 
 ---
 
@@ -530,7 +530,7 @@ All sessions follow the 4-block structure inherited from DCC v2.2:
 | **WORK block minimum** | 24 min | Ensures sufficient stimulus |
 | **WORK block maximum** | 30 min | Prevents junk volume and silent fatigue accumulation |
 
-**Reason Codes:** `SESSIONDURATIONEXCEEDED`, `WORKBLOCKINSUFFICIENT`
+**Reason Codes:** `MCC_SESSION_DURATION_EXCEEDED`, `MCC_WORK_BLOCK_INSUFFICIENT`
 
 ---
 
@@ -653,7 +653,7 @@ Training routes define stimulus intent and termination criteria, not just exerci
 
 **Purpose:** Prevents chronic fatigue tolerance and progressive degradation masked by formal session legality.
 
-**Reason Code:** `CHRONICYELLOWGUARDTRIGGERED`
+**Reason Code:** `MCC_CHRONIC_YELLOW_GUARD_TRIGGERED`
 
 ---
 
@@ -736,11 +736,12 @@ Farmer carry, suitcase carry, front-loaded carry, overhead carry:
 **Rules:**
 - Coaches cannot override Primary ↔ Assistance ↔ Accessory classification at program level
 - Classification is assigned once in ECA and is **immutable across all programs**
-- Any override attempt → `VOLUMECLASSOVERRIDEATTEMPT`
+- Legacy label `VOLUMECLASSIMMUTABILITYVIOLATED` is governed as the same condition; canonical emitted code is `MCC_VOLUME_CLASS_OVERRIDE_ATTEMPT`
+- Any override attempt → `MCC_VOLUME_CLASS_OVERRIDE_ATTEMPT`
 
 **Example:** If hip thrust is classified as Primary for glutes in ECA, it cannot be reclassified as Assistance in a different program to inflate volume without reaching landmark ceilings.
 
-**Reason Code:** `VOLUMECLASSIMMUTABILITYVIOLATED`
+**Reason Code:** `MCC_VOLUME_CLASS_OVERRIDE_ATTEMPT`
 
 ---
 
@@ -769,7 +770,7 @@ From EPA Exercise Progression Law v1.0.2, adapted for physique training.
 
 **Known Limitation:** Deferred to tooling. Without a persistent progression ledger, coaches can accidentally stack axes via different exercises in the same week (e.g., progress squat volume + deadlift load in same microcycle). Current mitigation: narrative rule + coaching discipline. Future tooling will enforce via exercise-level progression tracking (ECA Patch H, deferred).
 
-**Reason Code:** `MULTIAXISPROGRESSIONVIOLATION`
+**Reason Code:** `MCC_MULTI_AXIS_PROGRESSION_VIOLATION`
 
 ---
 
@@ -853,7 +854,7 @@ In addition to fixed Week 4 deload, a **reactive deload is mandatory** if any of
 
 **Purpose:** Prevents tolerance to session failure; escalates intervention before chronic injury.
 
-**Reason Code:** `COLLAPSEESCALATIONTRIGGERED`
+**Reason Code:** `MCC_COLLAPSE_ESCALATION_TRIGGERED`
 
 ---
 
@@ -890,7 +891,7 @@ PRIME is inherited from DCC v2.2 with strict scope enforcement.
 
 **If a drill raises HR significantly, causes fatigue, or is dosed at meaningful volume → ILLEGAL PRIME content.**
 
-**Reason Code:** `PRIMESCOPEVIOLATION`
+**Reason Code:** `MCC_PRIME_SCOPE_VIOLATION`
 
 ---
 
@@ -910,38 +911,38 @@ PRIME is inherited from DCC v2.2 with strict scope enforcement.
 
 | Behavior | Why Illegal | Consequence | Reason Code |
 |----------|-----------|-------------|-----------|
-| **BAND 3 + NODE 3 simultaneous** | CNS overload + metabolic fatigue = injury risk | Session invalid; downgrade to BAND 2–NODE 2 or BAND 3–NODE 1 | `BANDNODEILLEGALCOMBINATION` |
-| **>25 working sets in session** | Junk volume, diminishing returns, silent fatigue | Session invalid; cap at 25 sets | `SESSIONVOLUMEEXCEEDED` |
-| **>1 movement pattern at BAND 3 per session** | Hidden CNS overload across patterns | Session invalid; limit BAND 3 to 1 pattern | `BAND3PATTERNEXCEEDED` |
-| **DAY A with <3 compound lifts** | Violates primary strength guarantee | Session invalid; restructure | `DAYAPATTERNGUARANTEEVIOLATED` |
-| **RED readiness + full load** | Ignores recovery debt = injury risk | Session invalid; collapse to BAND 0–1 or rest day | `READINESSVIOLATION` |
-| **YELLOW readiness + BAND 3** | Insufficient recovery for maximal loads | Session invalid; cap at BAND 2 | `READINESSBANDMISMATCH` |
-| **Session >60 min total** | Silent fatigue accumulation, adherence risk | Session invalid; reduce WORK duration or exercise count | `SESSIONDURATIONEXCEEDED` |
-| **WORK block <24 min** | Insufficient stimulus | Session invalid; extend WORK or add exercises | `WORKBLOCKINSUFFICIENT` |
-| **2-axis progression in same week** | Violates ONEAXIS rule (EPA binding) | Progression invalid; revert 1 axis | `MULTIAXISPROGRESSIONVIOLATION` |
-| **Family-level multi-axis progression** | E.g., squat volume + deadlift load same week | Progression flagged (coaching mitigation; future tooling enforces) | `FAMILYMULTIAXISVIOLATION` |
-| **>1 H4 block per week** | Peak CNS stress over-exposure | Weekly plan invalid; remove H4 or defer | `H4FREQUENCYEXCEEDED` |
-| **>3 H3 sessions per week** | Neural + local fatigue accumulation | Weekly plan invalid; redistribute H3 or remove | `H3AGGREGATEEXCEEDED` |
-| **NODE 3 on non-approved exercise** | Permission violation (Patch P-01) | Session invalid before ledger calculation | `NODEPERMISSIONVIOLATION` |
-| **BAND 2–NODE 3 >30 sets/week** | Near-maximal stress without BAND 3 legality | Weekly plan flagged YELLOW (21–30) or invalid (≥30) | `DENSITYLEDGEREXCEEDED` |
-| **Total NODE 3 >60 sets/week** | Chronic density overload | Weekly plan invalid; reduce NODE 3 volume | `DENSITYLEDGEREXCEEDED` |
-| **Pattern balance violated** | Structural imbalance = postural dysfunction, asymmetry | Weekly plan invalid; redistribute patterns | `PATTERNBALANCEVIOLATED` |
-| **DAY D exercise not on whitelist** | Intent violation (Patch O-01) | Session invalid; remove non-whitelisted exercises | `DAYDINTENTVIOLATION` |
-| **DAY C pattern repeats in consecutive weeks** | Local tissue abuse = overuse without variety | Weekly plan invalid; rotate C-day tissue targets | `DAYCPATTERNREPETITION` |
+| **BAND 3 + NODE 3 simultaneous** | CNS overload + metabolic fatigue = injury risk | Session invalid; downgrade to BAND 2–NODE 2 or BAND 3–NODE 1 | `MCC_BAND_NODE_ILLEGAL_COMBINATION` |
+| **>25 working sets in session** | Junk volume, diminishing returns, silent fatigue | Session invalid; cap at 25 sets | `MCC_SESSION_VOLUME_EXCEEDED` |
+| **>1 movement pattern at BAND 3 per session** | Hidden CNS overload across patterns | Session invalid; limit BAND 3 to 1 pattern | `MCC_BAND3_PATTERN_EXCEEDED` |
+| **DAY A with <3 compound lifts** | Violates primary strength guarantee | Session invalid; restructure | `MCC_DAY_A_PATTERN_GUARANTEE_VIOLATED` |
+| **RED readiness + full load** | Ignores recovery debt = injury risk | Session invalid; collapse to BAND 0–1 or rest day | `MCC_READINESS_VIOLATION` |
+| **YELLOW readiness + BAND 3** | Insufficient recovery for maximal loads | Session invalid; cap at BAND 2 | `MCC_READINESS_BAND_MISMATCH` |
+| **Session >60 min total** | Silent fatigue accumulation, adherence risk | Session invalid; reduce WORK duration or exercise count | `MCC_SESSION_DURATION_EXCEEDED` |
+| **WORK block <24 min** | Insufficient stimulus | Session invalid; extend WORK or add exercises | `MCC_WORK_BLOCK_INSUFFICIENT` |
+| **2-axis progression in same week** | Violates ONEAXIS rule (EPA binding) | Progression invalid; revert 1 axis | `MCC_MULTI_AXIS_PROGRESSION_VIOLATION` |
+| **Family-level multi-axis progression** | E.g., squat volume + deadlift load same week | Progression flagged (coaching mitigation; future tooling enforces) | `MCC_FAMILY_MULTI_AXIS_VIOLATION` |
+| **>1 H4 block per week** | Peak CNS stress over-exposure | Weekly plan invalid; remove H4 or defer | `MCC_H4_FREQUENCY_EXCEEDED` |
+| **>3 H3 sessions per week** | Neural + local fatigue accumulation | Weekly plan invalid; redistribute H3 or remove | `MCC_H3_AGGREGATE_EXCEEDED` |
+| **NODE 3 on non-approved exercise** | Permission violation (Patch P-01) | Session invalid before ledger calculation | `MCC_NODE_PERMISSION_VIOLATION` |
+| **BAND 2–NODE 3 >30 sets/week** | Near-maximal stress without BAND 3 legality | Weekly plan flagged YELLOW (21–30) or invalid (≥30) | `MCC_DENSITY_LEDGER_EXCEEDED` |
+| **Total NODE 3 >60 sets/week** | Chronic density overload | Weekly plan invalid; reduce NODE 3 volume | `MCC_DENSITY_LEDGER_EXCEEDED` |
+| **Pattern balance violated** | Structural imbalance = postural dysfunction, asymmetry | Weekly plan invalid; redistribute patterns | `MCC_PATTERN_BALANCE_VIOLATED` |
+| **DAY D exercise not on whitelist** | Intent violation (Patch O-01) | Session invalid; remove non-whitelisted exercises | `MCC_DAY_D_INTENT_VIOLATION` |
+| **DAY C pattern repeats in consecutive weeks** | Local tissue abuse = overuse without variety | Weekly plan invalid; rotate C-day tissue targets | `MCC_DAY_C_PATTERN_REPETITION` |
 | **Identical PRIME content 2+ sessions** | Neural habituation = adaptation plateau | Warning only (coaching discipline required) | `PRIMEREPETITIONWARNING` |
-| **PRIME with activation circuits/conditioning** | Scope creep = fatigue generation | Session invalid; move content to WORK or remove | `PRIMESCOPEVIOLATION` |
-| **Frequency not in {3, 4, 5, 6}** | Undefined deployment rules | Weekly plan invalid | `FREQUENCYNOTSUPPORTED` |
-| **DAY A >1 per week** | CNS overload | Weekly plan invalid | `DAYAFREQUENCYEXCEEDED` |
-| **DAY B >1 per week (at 3–5×/week)** | Density saturation | Weekly plan invalid | `DAYBFREQUENCYEXCEEDED` |
-| **DAY B >2 per week (at 6×/week)** | Exceeds Patch F exception ceiling | Weekly plan invalid | `DAYBFREQUENCYEXCEEDED` |
-| **5×/week without ≥1 DAY D** | Missing mandatory recovery | Weekly plan invalid | `DMINIMUMVIOLATED` |
-| **6×/week without ≥2 DAY D** | **v1.2 Patch F mandatory** | Weekly plan invalid | `DMINIMUMVIOLATED` |
-| **Forbidden adjacency (B→B, A(BAND3)→B, 3+ consecutive NODE 3)** | CNS/density stacking without recovery | Weekly plan invalid | `ADJACENCYVIOLATION`, `CONSECUTIVENODE3EXCEEDED` |
-| **Exercise not in ECA** | Ungoverned movement = undefined classification | Session invalid; add to ECA before use | `ECACOVERAGEMISSING` |
-| **Exercise missing pattern tuple** | Cannot validate pattern balance | Session invalid; complete ECA tagging | `ECAPATTERNINCOMPLETE` |
-| **Volume class override attempt** | Immutability violation (Patch M-01) | Override rejected; use ECA classification | `VOLUMECLASSOVERRIDEATTEMPT` |
-| **≥2 collapses in 7 days without escalation** | Tolerance to session failure | Forced meso intervention | `COLLAPSEESCALATIONTRIGGERED` |
-| **≥3 YELLOW/RED days in 7-day window (ignored)** | Chronic YELLOW accumulation = silent fatigue | Forced check-in + intervention | `CHRONICYELLOWGUARDTRIGGERED` |
+| **PRIME with activation circuits/conditioning** | Scope creep = fatigue generation | Session invalid; move content to WORK or remove | `MCC_PRIME_SCOPE_VIOLATION` |
+| **Frequency not in {3, 4, 5, 6}** | Undefined deployment rules | Weekly plan invalid | `MCC_FREQUENCY_NOT_SUPPORTED` |
+| **DAY A >1 per week** | CNS overload | Weekly plan invalid | `MCC_DAY_A_FREQUENCY_EXCEEDED` |
+| **DAY B >1 per week (at 3–5×/week)** | Density saturation | Weekly plan invalid | `MCC_DAY_B_FREQUENCY_EXCEEDED` |
+| **DAY B >2 per week (at 6×/week)** | Exceeds Patch F exception ceiling | Weekly plan invalid | `MCC_DAY_B_FREQUENCY_EXCEEDED` |
+| **5×/week without ≥1 DAY D** | Missing mandatory recovery | Weekly plan invalid | `MCC_D_MINIMUM_VIOLATED` |
+| **6×/week without ≥2 DAY D** | **v1.2 Patch F mandatory** | Weekly plan invalid | `MCC_D_MINIMUM_VIOLATED` |
+| **Forbidden adjacency (B→B, A(BAND3)→B, 3+ consecutive NODE 3)** | CNS/density stacking without recovery | Weekly plan invalid | `MCC_ADJACENCY_VIOLATION`, `MCC_CONSECUTIVE_NODE3_EXCEEDED` |
+| **Exercise not in ECA** | Ungoverned movement = undefined classification | Session invalid; add to ECA before use | `MCC_ECA_COVERAGE_MISSING` |
+| **Exercise missing pattern tuple** | Cannot validate pattern balance | Session invalid; complete ECA tagging | `MCC_ECA_PATTERN_INCOMPLETE` |
+| **Volume class override attempt** | Immutability violation (Patch M-01) | Override rejected; use ECA classification | `MCC_VOLUME_CLASS_OVERRIDE_ATTEMPT` |
+| **≥2 collapses in 7 days without escalation** | Tolerance to session failure | Forced meso intervention | `MCC_COLLAPSE_ESCALATION_TRIGGERED` |
+| **≥3 YELLOW/RED days in 7-day window (ignored)** | Chronic YELLOW accumulation = silent fatigue | Forced check-in + intervention | `MCC_CHRONIC_YELLOW_GUARD_TRIGGERED` |
 
 ---
 
@@ -961,7 +962,7 @@ DCC-Physique v1.2.1 philosophy: Sections 1–13 define the training law. **Patch
 **Only exercises explicitly present in the ECA exercise master list are legal for DCC-Physique session construction.**
 
 **Rules:**
-- Any exercise NOT in ECA → `ECACOVERAGEMISSING` (session invalid)
+- Any exercise NOT in ECA → `MCC_ECA_COVERAGE_MISSING` (session invalid)
 - No free-text exercise entry in compliant implementations
 - No inference (e.g., "treat this DB variation like the barbell version")
 - Unlisted movements must be added to ECA with complete tagging before use
@@ -1008,7 +1009,9 @@ The following movement families **must have complete ECA coverage** to support c
 | **horiz_vert** | horizontal, vertical, sagittal, frontal | Primary plane of motion for pattern balance | Bench (horizontal); Overhead press (vertical); Leg press (sagittal) |
 | **movement_family** | squat, hinge, press, pull, carry, isolate, trunk | Movement archetype | Squat (squat); Deadlift (hinge); Curl (isolate); Plank (trunk) |
 
-**Missing any field → `ECAPATTERNINCOMPLETE` (exercise cannot be used). No defaults allowed. Every exercise must be explicitly classified.**
+**Missing any field → `MCC_ECA_PATTERN_INCOMPLETE` (exercise cannot be used). No defaults allowed. Every exercise must be explicitly classified.**
+
+**Runtime Boundary Clarification (Whitelist/ECA → MCC):** Law-level runtime `horiz_vert` taxonomy for pattern-balance enforcement remains `horizontal|vertical|sagittal|frontal`. Whitelist/ECA authoring may retain richer labels (e.g., `Incline`) but those labels are not injected directly into MCC schema fields; runtime must apply an explicit, deterministic normalization adapter before MCC validation. If no mapping is defined, validation fails closed (no implicit collapse/defaulting).
 
 **Runtime Boundary Clarification (Whitelist/ECA → MCC):** Law-level runtime `horiz_vert` taxonomy for pattern-balance enforcement remains `horizontal|vertical|sagittal|frontal`. Whitelist/ECA authoring may retain richer labels (e.g., `Incline`) but those labels are not injected directly into MCC schema fields; runtime must apply an explicit, deterministic normalization adapter before MCC validation. If no mapping is defined, validation fails closed (no implicit collapse/defaulting).
 
@@ -1038,7 +1041,8 @@ The following movement families **must have complete ECA coverage** to support c
 **Rules:**
 - Coaches cannot override PRIMARY ↔ ASSISTANCE ↔ ACCESSORY at program level
 - Classification is assigned once in ECA and is **immutable across all programs**
-- Any override attempt → `VOLUMECLASSOVERRIDEATTEMPT`
+- Legacy label `VOLUMECLASSIMMUTABILITYVIOLATED` is governed as the same condition; canonical emitted code is `MCC_VOLUME_CLASS_OVERRIDE_ATTEMPT`
+- Any override attempt → `MCC_VOLUME_CLASS_OVERRIDE_ATTEMPT`
 
 **Example:** If hip thrust is classified as PRIMARY for glutes in ECA, it cannot be reclassified as ASSISTANCE in a different program to inflate volume without reaching landmark ceilings.
 
@@ -1080,7 +1084,7 @@ Every exercise using H3 or H4 must be tagged with a specific archetype:
 
 **Validation:** Session validator checks each exercise's `day_roles_allowed` array against the declared day role.
 
-**Violation Code:** `DAYDINTENTVIOLATION`, `ECACOVERAGEMISSING`, `ECAPATTERNINCOMPLETE`
+**Violation Code:** `MCC_DAY_D_INTENT_VIOLATION`, `MCC_ECA_COVERAGE_MISSING`, `MCC_ECA_PATTERN_INCOMPLETE`
 
 ---
 
@@ -1096,12 +1100,12 @@ Every exercise using H3 or H4 must be tagged with a specific archetype:
 - **Default:** `nodemax ≤ 2` → NODE 3 illegal
 - **Permitted:** Only exercises with explicit `nodemax ≥ 3` in ECA may be used at NODE 3
 - **Validation:** Before counting NODE 3 sets toward density ledger, validate permission
-- **Violation:** `NODEPERMISSIONVIOLATION` (session invalid)
+- **Violation:** `MCC_NODE_PERMISSION_VIOLATION` (session invalid)
 
 **Pre-Condition for Density Ledger (Section 4.8):**
 1. Identify all sets marked as NODE 3
 2. For each, check ECA `nodemax ≥ 3`?
-3. If any set fails → `NODEPERMISSIONVIOLATION` (do NOT proceed to ledger)
+3. If any set fails → `MCC_NODE_PERMISSION_VIOLATION` (do NOT proceed to ledger)
 4. If all pass → Proceed to density ledger calculation
 
 ---
@@ -1121,7 +1125,7 @@ Every exercise using H3 or H4 must be tagged with a specific archetype:
 | **DAY D minimum at 6×** | Optional mention | **Mandatory (≥2 required)** |
 | **Adjacency enforcement** | DCC (framework aware only) | **MCC Pass 2 enforces (no B→B, no A(BAND3)→B, etc.)** |
 | **Density ledger** | Node-level caps | **BAND 2–NODE 3 also capped per MCC schema** |
-| **Reason codes** | Standard set | Added `DAYBFREQUENCYEXCEEDED` (6× exception if MCC pass) |
+| **Reason codes** | Standard set | Added `MCC_DAY_B_FREQUENCY_EXCEEDED` (6× exception if MCC pass) |
 
 ---
 
@@ -1180,7 +1184,7 @@ Patch F introduces a **conditional legality** case that must be enforced determi
      - **Forbidden adjacency** (Section 4.5): no B→B; no A(BAND3)→B; no 3+ consecutive NODE 3 days
      - **Weekly density ledger** (Section 4.8): GREEN/YELLOW allowed; RED invalid
      - **NODE 3 permission pre-condition** (Patch P-01 integration)
-   - If MCC Pass 2 fails any gate, the weekly plan is rejected and must surface MCC reason codes (e.g., `ADJACENCYVIOLATION`, `CONSECUTIVENODE3EXCEEDED`, `DENSITYLEDGEREXCEEDED`, `NODEPERMISSIONVIOLATION`).
+   - If MCC Pass 2 fails any gate, the weekly plan is rejected and must surface MCC reason codes (e.g., `MCC_ADJACENCY_VIOLATION`, `MCC_CONSECUTIVE_NODE3_EXCEEDED`, `MCC_DENSITY_LEDGER_EXCEEDED`, `MCC_NODE_PERMISSION_VIOLATION`).
 
 ### Deterministic Rejection Rule (Non-Negotiable)
 
@@ -1198,15 +1202,15 @@ These are minimum unit-test fixtures for any validator/runtime implementation.
 
 ### FAIL (6× with B→B adjacency)
 - `A / D / B / B / C / D`
-- Expected: MCC emits `ADJACENCYVIOLATION` → reject
+- Expected: MCC emits `MCC_ADJACENCY_VIOLATION` → reject
 
 ### FAIL (6× without required D-minimum)
 - `A / B / C / B / C / C`
-- Expected: DCC emits `DMINIMUMVIOLATED` → reject
+- Expected: DCC emits `MCC_D_MINIMUM_VIOLATED` → reject
 
 ### FAIL (3–5× with B2)
 - `A / B / C / B` (4× example)
-- Expected: DCC emits `DAYBFREQUENCYEXCEEDED` → reject
+- Expected: DCC emits `MCC_DAY_B_FREQUENCY_EXCEEDED` → reject
 
 ### FAIL (6× with B2 but MCC not run)
 - `A / D / B / C / B / D` with no MCC pass invoked
@@ -1219,38 +1223,38 @@ These are minimum unit-test fixtures for any validator/runtime implementation.
 This document assumes a **global reason-code registry** exists (see `global_reason_codes_v1_0.json`) and that the runtime rejects unregistered codes. Therefore, the following codes **must** be present in the registry with correct namespace and allowed passes.
 
 ### DCC Pass 1 (namespace: DCC)
-- `FREQUENCYNOTSUPPORTED`
-- `DAYAFREQUENCYEXCEEDED`
-- `DAYBFREQUENCYEXCEEDED`
-- `DMINIMUMVIOLATED`
-- `PATTERNBALANCEVIOLATED`
-- `DAYDINTENTVIOLATION`
-- `DAYCPATTERNREPETITION`
-- `SESSIONVOLUMEEXCEEDED`
-- `SESSIONDURATIONEXCEEDED`
-- `WORKBLOCKINSUFFICIENT`
-- `READINESSVIOLATION`
-- `READINESSBANDMISMATCH`
-- `DAYAPATTERNGUARANTEEVIOLATED`
-- `MULTIAXISPROGRESSIONVIOLATION`
-- `FAMILYMULTIAXISVIOLATION`
-- `H4FREQUENCYEXCEEDED`
-- `H3AGGREGATEEXCEEDED`
-- `BANDNODEILLEGALCOMBINATION`
-- `BAND3PATTERNEXCEEDED`
-- `ECACOVERAGEMISSING`
-- `ECAPATTERNINCOMPLETE`
-- `VOLUMECLASSOVERRIDEATTEMPT`
+- `MCC_FREQUENCY_NOT_SUPPORTED`
+- `MCC_DAY_A_FREQUENCY_EXCEEDED`
+- `MCC_DAY_B_FREQUENCY_EXCEEDED`
+- `MCC_D_MINIMUM_VIOLATED`
+- `MCC_PATTERN_BALANCE_VIOLATED`
+- `MCC_DAY_D_INTENT_VIOLATION`
+- `MCC_DAY_C_PATTERN_REPETITION`
+- `MCC_SESSION_VOLUME_EXCEEDED`
+- `MCC_SESSION_DURATION_EXCEEDED`
+- `MCC_WORK_BLOCK_INSUFFICIENT`
+- `MCC_READINESS_VIOLATION`
+- `MCC_READINESS_BAND_MISMATCH`
+- `MCC_DAY_A_PATTERN_GUARANTEE_VIOLATED`
+- `MCC_MULTI_AXIS_PROGRESSION_VIOLATION`
+- `MCC_FAMILY_MULTI_AXIS_VIOLATION`
+- `MCC_H4_FREQUENCY_EXCEEDED`
+- `MCC_H3_AGGREGATE_EXCEEDED`
+- `MCC_BAND_NODE_ILLEGAL_COMBINATION`
+- `MCC_BAND3_PATTERN_EXCEEDED`
+- `MCC_ECA_COVERAGE_MISSING`
+- `MCC_ECA_PATTERN_INCOMPLETE`
+- `MCC_VOLUME_CLASS_OVERRIDE_ATTEMPT`
 - `PRIMEREPETITIONWARNING`
-- `PRIMESCOPEVIOLATION`
-- `COLLAPSEESCALATIONTRIGGERED`
-- `CHRONICYELLOWGUARDTRIGGERED`
+- `MCC_PRIME_SCOPE_VIOLATION`
+- `MCC_COLLAPSE_ESCALATION_TRIGGERED`
+- `MCC_CHRONIC_YELLOW_GUARD_TRIGGERED`
 
 ### MCC Pass 2 (namespace: MCC)
-- `ADJACENCYVIOLATION`
-- `CONSECUTIVENODE3EXCEEDED`
-- `DENSITYLEDGEREXCEEDED`
-- `NODEPERMISSIONVIOLATION`
+- `MCC_ADJACENCY_VIOLATION`
+- `MCC_CONSECUTIVE_NODE3_EXCEEDED`
+- `MCC_DENSITY_LEDGER_EXCEEDED`
+- `MCC_NODE_PERMISSION_VIOLATION`
 - `MCC_PASS2_MISSING_OR_FAILED` (runtime enforcement code; may be namespaced MCC or RUNTIME)
 
 **Registry Rule:** Any implementation emitting a code not listed here must update the registry first; otherwise the runtime must reject the artifact.
