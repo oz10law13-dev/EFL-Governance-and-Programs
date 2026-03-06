@@ -5,8 +5,8 @@ Reference implementation of the EFL compliance kernel with frozen JSON specs, a 
 ## Run tests
 
 ```bash
-cd efl_kernel
-pytest
+cd <repo-root>
+pytest -q
 ```
 
 ## What is covered
