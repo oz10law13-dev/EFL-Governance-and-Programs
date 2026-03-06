@@ -9,7 +9,8 @@ from pathlib import Path
 
 from efl_kernel.kernel.ral import RAL_SPEC
 
-FIXTURE_PATH = Path(__file__).parent.parent / "tools" / "fixtures" / "sample_seed.json"
+REPO_ROOT = Path(__file__).resolve().parents[2]  # Prevent cwd-dependent ModuleNotFoundError in subprocess calls.
+FIXTURE_PATH = REPO_ROOT / "efl_kernel" / "tools" / "fixtures" / "sample_seed.json"
 
 SESSION_REG = RAL_SPEC["moduleRegistration"]["SESSION"]
 MESO_REG = RAL_SPEC["moduleRegistration"]["MESO"]
@@ -24,7 +25,7 @@ def _seed(db_path: Path) -> None:
     # PYTHONIOENCODING=utf-8: seed.py prints a → (U+2192) character; on Windows
     # the default console encoding (cp1252) cannot encode it. Setting this env
     # variable forces the subprocess stdout to UTF-8 without modifying seed.py.
-    env = {**os.environ, "PYTHONIOENCODING": "utf-8"}
+    env = {**os.environ, "PYTHONIOENCODING": "utf-8", "PYTHONPATH": str(REPO_ROOT)}
     result = subprocess.run(
         [sys.executable, "-m", "efl_kernel.tools.seed",
          "--db", str(db_path),
@@ -37,6 +38,7 @@ def _seed(db_path: Path) -> None:
 
 
 def _run_cli(db_path: Path, module: str, payload_file: Path) -> dict:
+    env = {**os.environ, "PYTHONIOENCODING": "utf-8", "PYTHONPATH": str(REPO_ROOT)}
     result = subprocess.run(
         [sys.executable, "-m", "efl_kernel.cli",
          "--module", module,
@@ -44,6 +46,7 @@ def _run_cli(db_path: Path, module: str, payload_file: Path) -> dict:
          "--db", str(db_path)],
         capture_output=True,
         text=True,
+        env=env,
     )
     assert result.returncode == 0, (
         f"CLI failed (module={module}):\n{result.stderr}"
