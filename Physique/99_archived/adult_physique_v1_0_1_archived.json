@@ -1,0 +1,1414 @@
+{
+  "whitelist_version": "1.0.1",
+  "eca_version": "ECA-v1.2",
+  "population": "adult_physique",
+  "description": "Production-hardened exercise whitelist for adult physique clients (intermediate+ training age). Patched to reduce MCC intervention frequency.",
+  "date_created": "2026-01-25",
+  "changelog": {
+    "1.0.1": [
+      "Added NODE-3 prohibition policy",
+      "Restricted Conventional Deadlift to DAY_A only",
+      "Added MCC risk classification to high-risk exercises",
+      "Added hinge family H-node clustering hint",
+      "Added progression governance reference",
+      "Added preferred_block hints to select exercises",
+      "Expanded DAY_D carry options",
+      "Added hip abduction/rotation isolation exercises",
+      "Added selection bias hints"
+    ]
+  },
+  "node_3_policy": {
+    "default": "forbidden",
+    "requires": [
+      "explicit_MCC_opt_in",
+      "athlete_readiness_GREEN"
+    ],
+    "rationale": "NODE 3 is DCC-legal but requires explicit opt-in to prevent generator escalation"
+  },
+  "progression_governance": {
+    "rule": "ONE_AXIS_AT_A_TIME",
+    "scope": "per_movement_family_per_week",
+    "authority": "DCC-Physique v1.2",
+    "rationale": "Generator must not progress multiple exercises in same family on different axes within same week"
+  },
+  "family_h_node_limits": {
+    "hinge": {
+      "max_H3_per_week": 1,
+      "rationale": "High-eccentric hinge work accumulates rapidly; limit H3 exposure"
+    }
+  },
+  "movement_families": {
+    "squat": {
+      "family_description": "Knee-dominant lower body movements",
+      "exercises": [
+        {
+          "eca_id": "ECA-SQUAT-001",
+          "name": "Back Squat (High Bar)",
+          "movement_family": "squat",
+          "band_range": [
+            2,
+            3
+          ],
+          "node_max": 2,
+          "h_node": "H1",
+          "volume_class": "PRIMARY",
+          "push_pull": "none",
+          "horiz_vert": "sagittal",
+          "day_roles_allowed": [
+            "DAY_A",
+            "DAY_B"
+          ],
+          "equipment": [
+            "barbell",
+            "rack"
+          ],
+          "progression_axis": "load",
+          "mcc_risk_class": "moderate",
+          "preferred_block": [
+            "WORK"
+          ],
+          "notes": "Primary compound; suitable for MAX_STRENGTH_EXPRESSION"
+        },
+        {
+          "eca_id": "ECA-SQUAT-002",
+          "name": "Front Squat",
+          "movement_family": "squat",
+          "band_range": [
+            2,
+            3
+          ],
+          "node_max": 2,
+          "h_node": "H1",
+          "volume_class": "PRIMARY",
+          "push_pull": "none",
+          "horiz_vert": "sagittal",
+          "day_roles_allowed": [
+            "DAY_A",
+            "DAY_B"
+          ],
+          "equipment": [
+            "barbell",
+            "rack"
+          ],
+          "progression_axis": "load",
+          "mcc_risk_class": "moderate",
+          "preferred_block": [
+            "WORK"
+          ],
+          "notes": "Anterior-loaded squat variation"
+        },
+        {
+          "eca_id": "ECA-SQUAT-003",
+          "name": "Safety Bar Squat",
+          "movement_family": "squat",
+          "band_range": [
+            2,
+            3
+          ],
+          "node_max": 2,
+          "h_node": "H1",
+          "volume_class": "PRIMARY",
+          "push_pull": "none",
+          "horiz_vert": "sagittal",
+          "day_roles_allowed": [
+            "DAY_A",
+            "DAY_B"
+          ],
+          "equipment": [
+            "specialty_bar",
+            "rack"
+          ],
+          "progression_axis": "load",
+          "mcc_risk_class": "low",
+          "preferred_block": [
+            "WORK"
+          ],
+          "notes": "Reduced shoulder stress; upright torso"
+        },
+        {
+          "eca_id": "ECA-SQUAT-010",
+          "name": "Goblet Squat",
+          "movement_family": "squat",
+          "band_range": [
+            1,
+            2
+          ],
+          "node_max": 2,
+          "h_node": "H1",
+          "volume_class": "ASSISTANCE",
+          "push_pull": "none",
+          "horiz_vert": "sagittal",
+          "day_roles_allowed": [
+            "DAY_B",
+            "DAY_C",
+            "DAY_D"
+          ],
+          "equipment": [
+            "dumbbell",
+            "kettlebell"
+          ],
+          "progression_axis": "volume",
+          "mcc_risk_class": "low",
+          "preferred_block": [
+            "PREP",
+            "WORK"
+          ],
+          "notes": "Pattern reinforcement; corrective loading"
+        },
+        {
+          "eca_id": "ECA-SQUAT-011",
+          "name": "Bulgarian Split Squat",
+          "movement_family": "squat",
+          "band_range": [
+            1,
+            2
+          ],
+          "node_max": 2,
+          "h_node": "H2",
+          "volume_class": "ASSISTANCE",
+          "push_pull": "none",
+          "horiz_vert": "sagittal",
+          "day_roles_allowed": [
+            "DAY_B",
+            "DAY_C"
+          ],
+          "equipment": [
+            "dumbbell",
+            "bench"
+          ],
+          "progression_axis": "volume",
+          "mcc_risk_class": "high",
+          "preferred_block": [
+            "WORK"
+          ],
+          "notes": "Unilateral stability + quad emphasis; high accumulation risk"
+        },
+        {
+          "eca_id": "ECA-SQUAT-020",
+          "name": "Leg Press",
+          "movement_family": "squat",
+          "band_range": [
+            1,
+            2
+          ],
+          "node_max": 2,
+          "h_node": "H1",
+          "volume_class": "ASSISTANCE",
+          "push_pull": "none",
+          "horiz_vert": "sagittal",
+          "day_roles_allowed": [
+            "DAY_B",
+            "DAY_C"
+          ],
+          "equipment": [
+            "leg_press"
+          ],
+          "progression_axis": "volume",
+          "mcc_risk_class": "low",
+          "preferred_block": [
+            "WORK"
+          ],
+          "notes": "Machine-supported; reduced systemic fatigue"
+        }
+      ]
+    },
+    "hinge": {
+      "family_description": "Hip-dominant posterior chain movements",
+      "exercises": [
+        {
+          "eca_id": "ECA-HINGE-001",
+          "name": "Conventional Deadlift",
+          "movement_family": "hinge",
+          "band_range": [
+            2,
+            3
+          ],
+          "node_max": 2,
+          "h_node": "H1",
+          "volume_class": "PRIMARY",
+          "push_pull": "none",
+          "horiz_vert": "sagittal",
+          "day_roles_allowed": [
+            "DAY_A"
+          ],
+          "equipment": [
+            "barbell"
+          ],
+          "progression_axis": "load",
+          "mcc_risk_class": "high",
+          "preferred_block": [
+            "WORK"
+          ],
+          "notes": "Primary posterior chain; high systemic load; DAY_A only to reduce accumulation"
+        },
+        {
+          "eca_id": "ECA-HINGE-002",
+          "name": "Romanian Deadlift",
+          "movement_family": "hinge",
+          "band_range": [
+            2,
+            3
+          ],
+          "node_max": 2,
+          "h_node": "H1",
+          "volume_class": "PRIMARY",
+          "push_pull": "none",
+          "horiz_vert": "sagittal",
+          "day_roles_allowed": [
+            "DAY_A",
+            "DAY_B"
+          ],
+          "equipment": [
+            "barbell"
+          ],
+          "progression_axis": "load",
+          "mcc_risk_class": "moderate",
+          "preferred_block": [
+            "WORK"
+          ],
+          "notes": "Eccentric-emphasized hamstring/glute"
+        },
+        {
+          "eca_id": "ECA-HINGE-003",
+          "name": "Trap Bar Deadlift",
+          "movement_family": "hinge",
+          "band_range": [
+            2,
+            3
+          ],
+          "node_max": 2,
+          "h_node": "H1",
+          "volume_class": "PRIMARY",
+          "push_pull": "none",
+          "horiz_vert": "sagittal",
+          "day_roles_allowed": [
+            "DAY_A",
+            "DAY_B"
+          ],
+          "equipment": [
+            "trap_bar"
+          ],
+          "progression_axis": "load",
+          "mcc_risk_class": "moderate",
+          "preferred_block": [
+            "WORK"
+          ],
+          "notes": "Reduced shear stress; hybrid squat/hinge"
+        },
+        {
+          "eca_id": "ECA-HINGE-010",
+          "name": "Single-Leg RDL (Dumbbell)",
+          "movement_family": "hinge",
+          "band_range": [
+            1,
+            2
+          ],
+          "node_max": 2,
+          "h_node": "H2",
+          "volume_class": "ASSISTANCE",
+          "push_pull": "none",
+          "horiz_vert": "sagittal",
+          "day_roles_allowed": [
+            "DAY_B",
+            "DAY_C"
+          ],
+          "equipment": [
+            "dumbbell"
+          ],
+          "progression_axis": "volume",
+          "mcc_risk_class": "moderate",
+          "preferred_block": [
+            "WORK"
+          ],
+          "notes": "Unilateral stability + posterior chain"
+        },
+        {
+          "eca_id": "ECA-HINGE-011",
+          "name": "Glute-Ham Raise",
+          "movement_family": "hinge",
+          "band_range": [
+            0,
+            1
+          ],
+          "node_max": 2,
+          "h_node": "H2",
+          "volume_class": "ASSISTANCE",
+          "push_pull": "none",
+          "horiz_vert": "sagittal",
+          "day_roles_allowed": [
+            "DAY_B",
+            "DAY_C"
+          ],
+          "equipment": [
+            "GHD"
+          ],
+          "progression_axis": "complexity",
+          "mcc_risk_class": "moderate",
+          "preferred_block": [
+            "WORK"
+          ],
+          "notes": "Eccentric hamstring emphasis"
+        },
+        {
+          "eca_id": "ECA-HINGE-020",
+          "name": "Nordic Hamstring Curl",
+          "movement_family": "hinge",
+          "band_range": [
+            0,
+            1
+          ],
+          "node_max": 2,
+          "h_node": "H3",
+          "volume_class": "ACCESSORY",
+          "push_pull": "none",
+          "horiz_vert": "sagittal",
+          "day_roles_allowed": [
+            "DAY_B"
+          ],
+          "equipment": [
+            "pad"
+          ],
+          "progression_axis": "complexity",
+          "mcc_risk_class": "high",
+          "preferred_block": [
+            "WORK"
+          ],
+          "notes": "Advanced eccentric; MCC opt-in for H3; subject to family H-node limits"
+        }
+      ]
+    },
+    "press": {
+      "family_description": "Pressing movements (horizontal + vertical)",
+      "exercises": [
+        {
+          "eca_id": "ECA-PRESS-001",
+          "name": "Bench Press (Barbell)",
+          "movement_family": "press",
+          "band_range": [
+            2,
+            3
+          ],
+          "node_max": 2,
+          "h_node": "H1",
+          "volume_class": "PRIMARY",
+          "push_pull": "push",
+          "horiz_vert": "horizontal",
+          "day_roles_allowed": [
+            "DAY_A",
+            "DAY_B"
+          ],
+          "equipment": [
+            "barbell",
+            "bench"
+          ],
+          "progression_axis": "load",
+          "mcc_risk_class": "moderate",
+          "preferred_block": [
+            "WORK"
+          ],
+          "notes": "Primary horizontal press"
+        },
+        {
+          "eca_id": "ECA-PRESS-002",
+          "name": "Overhead Press (Barbell)",
+          "movement_family": "press",
+          "band_range": [
+            2,
+            3
+          ],
+          "node_max": 2,
+          "h_node": "H1",
+          "volume_class": "PRIMARY",
+          "push_pull": "push",
+          "horiz_vert": "vertical",
+          "day_roles_allowed": [
+            "DAY_A",
+            "DAY_B"
+          ],
+          "equipment": [
+            "barbell",
+            "rack"
+          ],
+          "progression_axis": "load",
+          "mcc_risk_class": "moderate",
+          "preferred_block": [
+            "WORK"
+          ],
+          "notes": "Primary vertical press"
+        },
+        {
+          "eca_id": "ECA-PRESS-003",
+          "name": "Incline Bench Press (Barbell)",
+          "movement_family": "press",
+          "band_range": [
+            2,
+            3
+          ],
+          "node_max": 2,
+          "h_node": "H1",
+          "volume_class": "PRIMARY",
+          "push_pull": "push",
+          "horiz_vert": "horizontal",
+          "day_roles_allowed": [
+            "DAY_A",
+            "DAY_B"
+          ],
+          "equipment": [
+            "barbell",
+            "incline_bench"
+          ],
+          "progression_axis": "load",
+          "mcc_risk_class": "moderate",
+          "preferred_block": [
+            "WORK"
+          ],
+          "notes": "Upper pec emphasis; 30-45\u00b0 angle"
+        },
+        {
+          "eca_id": "ECA-PRESS-010",
+          "name": "Dumbbell Bench Press",
+          "movement_family": "press",
+          "band_range": [
+            1,
+            2
+          ],
+          "node_max": 2,
+          "h_node": "H2",
+          "volume_class": "ASSISTANCE",
+          "push_pull": "push",
+          "horiz_vert": "horizontal",
+          "day_roles_allowed": [
+            "DAY_B",
+            "DAY_C"
+          ],
+          "equipment": [
+            "dumbbell",
+            "bench"
+          ],
+          "progression_axis": "volume",
+          "mcc_risk_class": "low",
+          "preferred_block": [
+            "WORK"
+          ],
+          "notes": "Unilateral + increased ROM"
+        },
+        {
+          "eca_id": "ECA-PRESS-011",
+          "name": "Dumbbell Overhead Press",
+          "movement_family": "press",
+          "band_range": [
+            1,
+            2
+          ],
+          "node_max": 2,
+          "h_node": "H2",
+          "volume_class": "ASSISTANCE",
+          "push_pull": "push",
+          "horiz_vert": "vertical",
+          "day_roles_allowed": [
+            "DAY_B",
+            "DAY_C"
+          ],
+          "equipment": [
+            "dumbbell"
+          ],
+          "progression_axis": "volume",
+          "mcc_risk_class": "low",
+          "preferred_block": [
+            "WORK"
+          ],
+          "notes": "Seated or standing; stability demand"
+        },
+        {
+          "eca_id": "ECA-PRESS-020",
+          "name": "Push-Up (Various)",
+          "movement_family": "press",
+          "band_range": [
+            0,
+            1
+          ],
+          "node_max": 2,
+          "h_node": "H1",
+          "volume_class": "ACCESSORY",
+          "push_pull": "push",
+          "horiz_vert": "horizontal",
+          "day_roles_allowed": [
+            "DAY_C",
+            "DAY_D"
+          ],
+          "equipment": [
+            "bodyweight"
+          ],
+          "progression_axis": "volume",
+          "mcc_risk_class": "low",
+          "preferred_block": [
+            "PREP",
+            "WORK",
+            "CLEAR"
+          ],
+          "notes": "Bodyweight press; trunk anti-extension"
+        },
+        {
+          "eca_id": "ECA-PRESS-021",
+          "name": "Landmine Press",
+          "movement_family": "press",
+          "band_range": [
+            1,
+            2
+          ],
+          "node_max": 2,
+          "h_node": "H2",
+          "volume_class": "ASSISTANCE",
+          "push_pull": "push",
+          "horiz_vert": "vertical",
+          "day_roles_allowed": [
+            "DAY_B",
+            "DAY_C"
+          ],
+          "equipment": [
+            "barbell",
+            "landmine"
+          ],
+          "progression_axis": "volume",
+          "mcc_risk_class": "low",
+          "preferred_block": [
+            "WORK"
+          ],
+          "notes": "Reduced shoulder stress; scapular-friendly"
+        }
+      ]
+    },
+    "pull": {
+      "family_description": "Pulling movements (horizontal + vertical)",
+      "exercises": [
+        {
+          "eca_id": "ECA-PULL-001",
+          "name": "Barbell Row (Bent Over)",
+          "movement_family": "pull",
+          "band_range": [
+            2,
+            3
+          ],
+          "node_max": 2,
+          "h_node": "H1",
+          "volume_class": "PRIMARY",
+          "push_pull": "pull",
+          "horiz_vert": "horizontal",
+          "day_roles_allowed": [
+            "DAY_A",
+            "DAY_B"
+          ],
+          "equipment": [
+            "barbell"
+          ],
+          "progression_axis": "load",
+          "mcc_risk_class": "moderate",
+          "preferred_block": [
+            "WORK"
+          ],
+          "notes": "Primary horizontal pull; posterior chain isometric"
+        },
+        {
+          "eca_id": "ECA-PULL-002",
+          "name": "Weighted Pull-Up",
+          "movement_family": "pull",
+          "band_range": [
+            2,
+            3
+          ],
+          "node_max": 2,
+          "h_node": "H1",
+          "volume_class": "PRIMARY",
+          "push_pull": "pull",
+          "horiz_vert": "vertical",
+          "day_roles_allowed": [
+            "DAY_A",
+            "DAY_B"
+          ],
+          "equipment": [
+            "pull_up_bar",
+            "weight_belt"
+          ],
+          "progression_axis": "load",
+          "mcc_risk_class": "moderate",
+          "preferred_block": [
+            "WORK"
+          ],
+          "notes": "Primary vertical pull; added load"
+        },
+        {
+          "eca_id": "ECA-PULL-003",
+          "name": "Weighted Chin-Up",
+          "movement_family": "pull",
+          "band_range": [
+            2,
+            3
+          ],
+          "node_max": 2,
+          "h_node": "H1",
+          "volume_class": "PRIMARY",
+          "push_pull": "pull",
+          "horiz_vert": "vertical",
+          "day_roles_allowed": [
+            "DAY_A",
+            "DAY_B"
+          ],
+          "equipment": [
+            "pull_up_bar",
+            "weight_belt"
+          ],
+          "progression_axis": "load",
+          "mcc_risk_class": "moderate",
+          "preferred_block": [
+            "WORK"
+          ],
+          "notes": "Supinated grip; bicep emphasis"
+        },
+        {
+          "eca_id": "ECA-PULL-010",
+          "name": "Dumbbell Row (Single Arm)",
+          "movement_family": "pull",
+          "band_range": [
+            1,
+            2
+          ],
+          "node_max": 2,
+          "h_node": "H2",
+          "volume_class": "ASSISTANCE",
+          "push_pull": "pull",
+          "horiz_vert": "horizontal",
+          "day_roles_allowed": [
+            "DAY_B",
+            "DAY_C"
+          ],
+          "equipment": [
+            "dumbbell",
+            "bench"
+          ],
+          "progression_axis": "volume",
+          "mcc_risk_class": "low",
+          "preferred_block": [
+            "WORK"
+          ],
+          "notes": "Unilateral + anti-rotation demand"
+        },
+        {
+          "eca_id": "ECA-PULL-011",
+          "name": "Lat Pulldown (Cable)",
+          "movement_family": "pull",
+          "band_range": [
+            1,
+            2
+          ],
+          "node_max": 2,
+          "h_node": "H1",
+          "volume_class": "ASSISTANCE",
+          "push_pull": "pull",
+          "horiz_vert": "vertical",
+          "day_roles_allowed": [
+            "DAY_B",
+            "DAY_C"
+          ],
+          "equipment": [
+            "cable"
+          ],
+          "progression_axis": "volume",
+          "mcc_risk_class": "low",
+          "preferred_block": [
+            "WORK"
+          ],
+          "notes": "Machine-supported vertical pull"
+        },
+        {
+          "eca_id": "ECA-PULL-012",
+          "name": "Seated Cable Row",
+          "movement_family": "pull",
+          "band_range": [
+            1,
+            2
+          ],
+          "node_max": 2,
+          "h_node": "H1",
+          "volume_class": "ASSISTANCE",
+          "push_pull": "pull",
+          "horiz_vert": "horizontal",
+          "day_roles_allowed": [
+            "DAY_B",
+            "DAY_C"
+          ],
+          "equipment": [
+            "cable"
+          ],
+          "progression_axis": "volume",
+          "mcc_risk_class": "low",
+          "preferred_block": [
+            "WORK"
+          ],
+          "notes": "Constant tension; reduced stabilizer demand"
+        },
+        {
+          "eca_id": "ECA-PULL-020",
+          "name": "Face Pull (Cable)",
+          "movement_family": "pull",
+          "band_range": [
+            1,
+            2
+          ],
+          "node_max": 2,
+          "h_node": "H2",
+          "volume_class": "ACCESSORY",
+          "push_pull": "pull",
+          "horiz_vert": "horizontal",
+          "day_roles_allowed": [
+            "DAY_B",
+            "DAY_C",
+            "DAY_D"
+          ],
+          "equipment": [
+            "cable"
+          ],
+          "progression_axis": "volume",
+          "mcc_risk_class": "low",
+          "preferred_block": [
+            "WORK",
+            "CLEAR"
+          ],
+          "notes": "Rear delt + scapular retraction"
+        },
+        {
+          "eca_id": "ECA-PULL-021",
+          "name": "Inverted Row",
+          "movement_family": "pull",
+          "band_range": [
+            0,
+            1
+          ],
+          "node_max": 2,
+          "h_node": "H1",
+          "volume_class": "ACCESSORY",
+          "push_pull": "pull",
+          "horiz_vert": "horizontal",
+          "day_roles_allowed": [
+            "DAY_C",
+            "DAY_D"
+          ],
+          "equipment": [
+            "barbell",
+            "rack"
+          ],
+          "progression_axis": "volume",
+          "mcc_risk_class": "low",
+          "preferred_block": [
+            "PREP",
+            "WORK",
+            "CLEAR"
+          ],
+          "notes": "Bodyweight horizontal pull; trunk anti-extension"
+        }
+      ]
+    },
+    "carry": {
+      "family_description": "Loaded carries and anti-movement patterns",
+      "exercises": [
+        {
+          "eca_id": "ECA-CARRY-001",
+          "name": "Farmer's Walk",
+          "movement_family": "carry",
+          "band_range": [
+            1,
+            2
+          ],
+          "node_max": 2,
+          "h_node": "H1",
+          "volume_class": "ASSISTANCE",
+          "push_pull": "none",
+          "horiz_vert": "sagittal",
+          "day_roles_allowed": [
+            "DAY_B",
+            "DAY_C"
+          ],
+          "equipment": [
+            "dumbbell",
+            "kettlebell"
+          ],
+          "progression_axis": "load",
+          "mcc_risk_class": "low",
+          "preferred_block": [
+            "WORK"
+          ],
+          "notes": "Bilateral carry; grip + trunk stability"
+        },
+        {
+          "eca_id": "ECA-CARRY-002",
+          "name": "Suitcase Carry",
+          "movement_family": "carry",
+          "band_range": [
+            1,
+            2
+          ],
+          "node_max": 2,
+          "h_node": "H2",
+          "volume_class": "ASSISTANCE",
+          "push_pull": "none",
+          "horiz_vert": "frontal",
+          "day_roles_allowed": [
+            "DAY_B",
+            "DAY_C",
+            "DAY_D"
+          ],
+          "equipment": [
+            "dumbbell",
+            "kettlebell"
+          ],
+          "progression_axis": "load",
+          "mcc_risk_class": "low",
+          "preferred_block": [
+            "WORK",
+            "CLEAR"
+          ],
+          "notes": "Unilateral; anti-lateral flexion; suitable for DAY_D at BAND 1"
+        },
+        {
+          "eca_id": "ECA-CARRY-003",
+          "name": "Overhead Carry",
+          "movement_family": "carry",
+          "band_range": [
+            1,
+            2
+          ],
+          "node_max": 2,
+          "h_node": "H2",
+          "volume_class": "ASSISTANCE",
+          "push_pull": "none",
+          "horiz_vert": "vertical",
+          "day_roles_allowed": [
+            "DAY_C"
+          ],
+          "equipment": [
+            "dumbbell",
+            "kettlebell"
+          ],
+          "progression_axis": "complexity",
+          "mcc_risk_class": "moderate",
+          "preferred_block": [
+            "WORK"
+          ],
+          "notes": "Shoulder stability + scapular upward rotation"
+        },
+        {
+          "eca_id": "ECA-CARRY-010",
+          "name": "Goblet Carry",
+          "movement_family": "carry",
+          "band_range": [
+            0,
+            1
+          ],
+          "node_max": 1,
+          "h_node": "H0",
+          "volume_class": "ACCESSORY",
+          "push_pull": "none",
+          "horiz_vert": "sagittal",
+          "day_roles_allowed": [
+            "DAY_C",
+            "DAY_D"
+          ],
+          "equipment": [
+            "kettlebell"
+          ],
+          "progression_axis": "load",
+          "mcc_risk_class": "low",
+          "preferred_block": [
+            "PREP",
+            "WORK",
+            "CLEAR"
+          ],
+          "notes": "Anterior load; thoracic extension demand; DAY_D safe at BAND 0-1"
+        }
+      ]
+    },
+    "isolate": {
+      "family_description": "Single-joint isolation movements",
+      "exercises": [
+        {
+          "eca_id": "ECA-ISOLATE-001",
+          "name": "Leg Extension (Machine)",
+          "movement_family": "isolate",
+          "band_range": [
+            1,
+            2
+          ],
+          "node_max": 2,
+          "h_node": "H2",
+          "volume_class": "ACCESSORY",
+          "push_pull": "none",
+          "horiz_vert": "sagittal",
+          "day_roles_allowed": [
+            "DAY_B",
+            "DAY_C"
+          ],
+          "equipment": [
+            "machine"
+          ],
+          "progression_axis": "volume",
+          "mcc_risk_class": "low",
+          "preferred_block": [
+            "WORK"
+          ],
+          "notes": "Quad isolation; terminal knee extension"
+        },
+        {
+          "eca_id": "ECA-ISOLATE-002",
+          "name": "Leg Curl (Machine)",
+          "movement_family": "isolate",
+          "band_range": [
+            1,
+            2
+          ],
+          "node_max": 2,
+          "h_node": "H2",
+          "volume_class": "ACCESSORY",
+          "push_pull": "none",
+          "horiz_vert": "sagittal",
+          "day_roles_allowed": [
+            "DAY_B",
+            "DAY_C"
+          ],
+          "equipment": [
+            "machine"
+          ],
+          "progression_axis": "volume",
+          "mcc_risk_class": "low",
+          "preferred_block": [
+            "WORK"
+          ],
+          "notes": "Hamstring isolation; knee flexion"
+        },
+        {
+          "eca_id": "ECA-ISOLATE-010",
+          "name": "Dumbbell Curl (Bicep)",
+          "movement_family": "isolate",
+          "band_range": [
+            1,
+            2
+          ],
+          "node_max": 2,
+          "h_node": "H2",
+          "volume_class": "ACCESSORY",
+          "push_pull": "pull",
+          "horiz_vert": "sagittal",
+          "day_roles_allowed": [
+            "DAY_B",
+            "DAY_C"
+          ],
+          "equipment": [
+            "dumbbell"
+          ],
+          "progression_axis": "volume",
+          "mcc_risk_class": "low",
+          "preferred_block": [
+            "WORK"
+          ],
+          "notes": "Elbow flexion; bicep hypertrophy"
+        },
+        {
+          "eca_id": "ECA-ISOLATE-011",
+          "name": "Cable Tricep Extension",
+          "movement_family": "isolate",
+          "band_range": [
+            1,
+            2
+          ],
+          "node_max": 2,
+          "h_node": "H2",
+          "volume_class": "ACCESSORY",
+          "push_pull": "push",
+          "horiz_vert": "sagittal",
+          "day_roles_allowed": [
+            "DAY_B",
+            "DAY_C"
+          ],
+          "equipment": [
+            "cable"
+          ],
+          "progression_axis": "volume",
+          "mcc_risk_class": "low",
+          "preferred_block": [
+            "WORK"
+          ],
+          "notes": "Elbow extension; tricep isolation"
+        },
+        {
+          "eca_id": "ECA-ISOLATE-012",
+          "name": "Lateral Raise (Dumbbell)",
+          "movement_family": "isolate",
+          "band_range": [
+            1,
+            2
+          ],
+          "node_max": 2,
+          "h_node": "H2",
+          "volume_class": "ACCESSORY",
+          "push_pull": "none",
+          "horiz_vert": "frontal",
+          "day_roles_allowed": [
+            "DAY_B",
+            "DAY_C"
+          ],
+          "equipment": [
+            "dumbbell"
+          ],
+          "progression_axis": "volume",
+          "mcc_risk_class": "low",
+          "preferred_block": [
+            "WORK"
+          ],
+          "notes": "Shoulder abduction; lateral delt emphasis"
+        },
+        {
+          "eca_id": "ECA-ISOLATE-020",
+          "name": "Calf Raise (Standing)",
+          "movement_family": "isolate",
+          "band_range": [
+            1,
+            2
+          ],
+          "node_max": 2,
+          "h_node": "H1",
+          "volume_class": "ACCESSORY",
+          "push_pull": "none",
+          "horiz_vert": "sagittal",
+          "day_roles_allowed": [
+            "DAY_B",
+            "DAY_C"
+          ],
+          "equipment": [
+            "machine"
+          ],
+          "progression_axis": "volume",
+          "mcc_risk_class": "low",
+          "preferred_block": [
+            "WORK"
+          ],
+          "notes": "Ankle plantarflexion; gastrocnemius emphasis"
+        },
+        {
+          "eca_id": "ECA-ISOLATE-030",
+          "name": "Hip Abduction (Cable/Band)",
+          "movement_family": "isolate",
+          "band_range": [
+            1,
+            2
+          ],
+          "node_max": 2,
+          "h_node": "H1",
+          "volume_class": "ACCESSORY",
+          "push_pull": "none",
+          "horiz_vert": "frontal",
+          "day_roles_allowed": [
+            "DAY_C",
+            "DAY_D"
+          ],
+          "equipment": [
+            "cable",
+            "band"
+          ],
+          "progression_axis": "volume",
+          "mcc_risk_class": "low",
+          "preferred_block": [
+            "PREP",
+            "WORK",
+            "CLEAR"
+          ],
+          "notes": "Glute medius isolation; frontal plane hip stability"
+        },
+        {
+          "eca_id": "ECA-ISOLATE-031",
+          "name": "Clamshell (Band)",
+          "movement_family": "isolate",
+          "band_range": [
+            0,
+            1
+          ],
+          "node_max": 1,
+          "h_node": "H0",
+          "volume_class": "ACCESSORY",
+          "push_pull": "none",
+          "horiz_vert": "frontal",
+          "day_roles_allowed": [
+            "DAY_C",
+            "DAY_D"
+          ],
+          "equipment": [
+            "band"
+          ],
+          "progression_axis": "volume",
+          "mcc_risk_class": "low",
+          "preferred_block": [
+            "PREP",
+            "CLEAR"
+          ],
+          "notes": "Hip external rotation; glute medius activation"
+        },
+        {
+          "eca_id": "ECA-ISOLATE-032",
+          "name": "Hip External Rotation (Seated)",
+          "movement_family": "isolate",
+          "band_range": [
+            0,
+            1
+          ],
+          "node_max": 1,
+          "h_node": "H0",
+          "volume_class": "ACCESSORY",
+          "push_pull": "none",
+          "horiz_vert": "horizontal",
+          "day_roles_allowed": [
+            "DAY_C",
+            "DAY_D"
+          ],
+          "equipment": [
+            "band",
+            "cable"
+          ],
+          "progression_axis": "volume",
+          "mcc_risk_class": "low",
+          "preferred_block": [
+            "PREP",
+            "CLEAR"
+          ],
+          "notes": "Deep hip rotator activation; seated position reduces load"
+        }
+      ]
+    },
+    "trunk": {
+      "family_description": "Anti-rotation, anti-extension, anti-flexion",
+      "exercises": [
+        {
+          "eca_id": "ECA-TRUNK-001",
+          "name": "Pallof Press (Cable)",
+          "movement_family": "trunk",
+          "band_range": [
+            1,
+            2
+          ],
+          "node_max": 2,
+          "h_node": "H0",
+          "volume_class": "ACCESSORY",
+          "push_pull": "none",
+          "horiz_vert": "frontal",
+          "day_roles_allowed": [
+            "DAY_C",
+            "DAY_D"
+          ],
+          "equipment": [
+            "cable"
+          ],
+          "progression_axis": "load",
+          "mcc_risk_class": "low",
+          "preferred_block": [
+            "PREP",
+            "WORK",
+            "CLEAR"
+          ],
+          "notes": "Anti-rotation; frontal plane stability"
+        },
+        {
+          "eca_id": "ECA-TRUNK-002",
+          "name": "Dead Bug",
+          "movement_family": "trunk",
+          "band_range": [
+            0,
+            1
+          ],
+          "node_max": 1,
+          "h_node": "H0",
+          "volume_class": "ACCESSORY",
+          "push_pull": "none",
+          "horiz_vert": "sagittal",
+          "day_roles_allowed": [
+            "DAY_C",
+            "DAY_D"
+          ],
+          "equipment": [
+            "bodyweight"
+          ],
+          "progression_axis": "complexity",
+          "mcc_risk_class": "low",
+          "preferred_block": [
+            "PREP",
+            "CLEAR"
+          ],
+          "notes": "Anti-extension; lumbar stability"
+        },
+        {
+          "eca_id": "ECA-TRUNK-003",
+          "name": "Plank (Front)",
+          "movement_family": "trunk",
+          "band_range": [
+            0,
+            1
+          ],
+          "node_max": 1,
+          "h_node": "H0",
+          "volume_class": "ACCESSORY",
+          "push_pull": "none",
+          "horiz_vert": "sagittal",
+          "day_roles_allowed": [
+            "DAY_C",
+            "DAY_D"
+          ],
+          "equipment": [
+            "bodyweight"
+          ],
+          "progression_axis": "complexity",
+          "mcc_risk_class": "low",
+          "preferred_block": [
+            "PREP",
+            "WORK",
+            "CLEAR"
+          ],
+          "notes": "Anti-extension isometric"
+        },
+        {
+          "eca_id": "ECA-TRUNK-004",
+          "name": "Side Plank",
+          "movement_family": "trunk",
+          "band_range": [
+            0,
+            1
+          ],
+          "node_max": 1,
+          "h_node": "H0",
+          "volume_class": "ACCESSORY",
+          "push_pull": "none",
+          "horiz_vert": "frontal",
+          "day_roles_allowed": [
+            "DAY_C",
+            "DAY_D"
+          ],
+          "equipment": [
+            "bodyweight"
+          ],
+          "progression_axis": "complexity",
+          "mcc_risk_class": "low",
+          "preferred_block": [
+            "PREP",
+            "WORK",
+            "CLEAR"
+          ],
+          "notes": "Anti-lateral flexion; frontal plane stability"
+        },
+        {
+          "eca_id": "ECA-TRUNK-010",
+          "name": "Bird Dog",
+          "movement_family": "trunk",
+          "band_range": [
+            0,
+            1
+          ],
+          "node_max": 1,
+          "h_node": "H0",
+          "volume_class": "ACCESSORY",
+          "push_pull": "none",
+          "horiz_vert": "sagittal",
+          "day_roles_allowed": [
+            "DAY_C",
+            "DAY_D"
+          ],
+          "equipment": [
+            "bodyweight"
+          ],
+          "progression_axis": "complexity",
+          "mcc_risk_class": "low",
+          "preferred_block": [
+            "PREP",
+            "CLEAR"
+          ],
+          "notes": "Anti-extension + anti-rotation; contralateral pattern"
+        },
+        {
+          "eca_id": "ECA-TRUNK-011",
+          "name": "Copenhagen Plank",
+          "movement_family": "trunk",
+          "band_range": [
+            0,
+            1
+          ],
+          "node_max": 2,
+          "h_node": "H2",
+          "volume_class": "ACCESSORY",
+          "push_pull": "none",
+          "horiz_vert": "frontal",
+          "day_roles_allowed": [
+            "DAY_C"
+          ],
+          "equipment": [
+            "bench"
+          ],
+          "progression_axis": "complexity",
+          "mcc_risk_class": "high",
+          "preferred_block": [
+            "WORK"
+          ],
+          "notes": "Adductor isometric; advanced stability; high accumulation risk"
+        }
+      ]
+    }
+  },
+  "selection_bias_hints": {
+    "DAY_A": {
+      "bias": "low",
+      "rationale": "Heavy compounds only; limited variety needed; focus on primary lifts"
+    },
+    "DAY_B": {
+      "bias": "high",
+      "rationale": "Primary hypertrophy driver; highest exercise variety; permits H3 techniques"
+    },
+    "DAY_C": {
+      "bias": "moderate",
+      "rationale": "Capacity + corrective work; moderate variety; stability emphasis"
+    },
+    "DAY_D": {
+      "bias": "low",
+      "rationale": "Recovery focus; minimal variety; movement quality over quantity"
+    }
+  },
+  "metadata": {
+    "total_exercises": 61,
+    "movement_family_counts": {
+      "squat": 6,
+      "hinge": 6,
+      "press": 7,
+      "pull": 8,
+      "carry": 4,
+      "isolate": 9,
+      "trunk": 6
+    },
+    "pattern_balance": {
+      "push_exercises": 11,
+      "pull_exercises": 10,
+      "push_percent": 52.4,
+      "pull_percent": 47.6,
+      "horizontal_exercises": 15,
+      "vertical_exercises": 9,
+      "horizontal_percent": 62.5,
+      "vertical_percent": 37.5
+    },
+    "day_role_coverage": {
+      "DAY_A": 18,
+      "DAY_B": 45,
+      "DAY_C": 43,
+      "DAY_D": 23
+    },
+    "volume_class_distribution": {
+      "PRIMARY": 15,
+      "ASSISTANCE": 21,
+      "ACCESSORY": 25
+    },
+    "mcc_risk_distribution": {
+      "high": 4,
+      "moderate": 12,
+      "low": 45
+    }
+  }
+}

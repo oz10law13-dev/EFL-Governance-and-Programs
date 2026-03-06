@@ -1,0 +1,1402 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://elitefitlab.com/schemas/mcc-dcc-physique-v1.0.1-patchpack.json",
+  "title": "MCC (Meso Constraint Controller) v1.0.1-PATCHPACK \u2014 Fluid DCC-Physique Schema",
+  "description": "Deterministic mesocycle-level arbitration layer for DCC-Physique v1.2+. Enforces safety-critical invariants at schema level while allowing controlled evolution via extensions objects. Designed for long-term stability across DCC specification updates.\n\nPatchPack Extensions: Adds namespaced target identity convention (ECA:/SES:/MESO:/PROG:) and an optional MCC_PATCH_PACK wrapper definition for controller-ready patch bundles.",
+  "$comment": "DESIGN POLICY: Schema enforces type safety, identity fields, and permission gates. Business logic (frequency rules, pattern balance thresholds, route saturation) is runtime-enforced to enable DCC evolution without schema breaking changes. All experimental/future metadata MUST use extensions objects.\nUpdated 2026-01-25: PatchPack + namespaced target identity additions.",
+  "$comment_portability": "The $runtime_enforcement_boundary keyword is a custom extension permitted by JSON Schema 2020-12. Most validators accept it; strict meta-schema validators may warn. If tooling rejects it, move content to $comment or external documentation.",
+  "$runtime_enforcement_boundary": {
+    "schema_enforced": [
+      "Type safety (strings are strings, integers are integers)",
+      "Identity fields exist (exercise_id, subject_id, session_id)",
+      "Permission gates (node <= node_max)",
+      "ReasonCode enum stability (append-only, never remove)",
+      "Minimum required fields for audit trail"
+    ],
+    "runtime_enforced": [
+      "Frequency composition rules (3-6 days, DAY_A/B/C/D ratios)",
+      "Route saturation across mesocycles (MAX_STRENGTH_EXPRESSION \u22642 consecutive mesos)",
+      "Family-level axis locking (one axis per movement_family per week)",
+      "Pattern balance percentages (push/pull \u226540%, horizontal/vertical \u226535%, frontal \u226520%)",
+      "Density ledger thresholds (BAND2+NODE3 \u226420 green, 21-30 yellow, >30 red)",
+      "Volume landmarks (major 10-20 sets/week, minor 8-16, postural 6-12)",
+      "H3 aggregate caps (\u22643 sessions per week, \u22642 archetypes per session)",
+      "D-minimum rules (\u22651 DAY_D at 5x, \u22652 at 6x)",
+      "Session Fatigue Index (SFI) advisory thresholds",
+      "Readiness-driven BAND/volume downgrades (YELLOW: -1 BAND, 0.8x volume)",
+      "C-day mesocycle rotation (same tissue focus \u22642 consecutive weeks)",
+      "Adjacency rules (forbidden patterns: B\u2192B, A(BAND3)\u2192B, B\u2192C(NODE3), 3+ consecutive NODE3 days)",
+      "Unique slot_id enforcement in day_slots"
+    ],
+    "extension_policy": "All future metadata, experimental features, and version-specific additions MUST use 'extensions' objects at Context, Session, or Exercise level. Top-level schema changes require formal schema version increment."
+  },
+  "$defs": {
+    "PopulationOverlay": {
+      "type": "string",
+      "enum": [
+        "adult_physique",
+        "adult_physique_40plus"
+      ],
+      "description": "DCC-Physique population profile. Append-only: new profiles added via schema releases, never ad-hoc strings."
+    },
+    "Phase": {
+      "type": "string",
+      "enum": [
+        "accumulation",
+        "intensification",
+        "realization",
+        "deload",
+        "consolidation"
+      ],
+      "description": "Training phase intent. Append-only enum. Experimental phases use context.extensions.phase_experiment."
+    },
+    "Band": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 3,
+      "description": "Load magnitude: 0=bodyweight/activation, 1=25-60%1RM, 2=60-80%1RM, 3=80%+1RM"
+    },
+    "Node": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 3,
+      "description": "Density tier: 1=low(4-6rpm, 3-5min rest), 2=moderate(8-12rpm, 2-3min rest), 3=high(15+rpm, <90sec rest)"
+    },
+    "HNode": {
+      "type": "string",
+      "enum": [
+        "H0",
+        "H1",
+        "H2",
+        "H3",
+        "H4"
+      ],
+      "description": "Hypertrophy complexity: H0=isometric/tempo, H1=bilateral compound, H2=unilateral, H3=hybrid/density, H4=advanced techniques"
+    },
+    "DayRole": {
+      "type": "string",
+      "enum": [
+        "DAY_A",
+        "DAY_B",
+        "DAY_C",
+        "DAY_D"
+      ],
+      "description": "Fixed intent contract. Composition rules (A\u22641, B\u22641, D-minimum) runtime-enforced."
+    },
+    "TrainingRoute": {
+      "type": "string",
+      "enum": [
+        "MAX_STRENGTH_EXPRESSION",
+        "SUBMAX_HYPERTROPHY_VOLUME",
+        "CAPACITY_ACCUMULATION",
+        "REGENERATION"
+      ],
+      "description": "Stimulus intent. Route saturation rules runtime-enforced."
+    },
+    "ReadinessState": {
+      "type": "string",
+      "enum": [
+        "GREEN",
+        "YELLOW",
+        "RED"
+      ],
+      "description": "Subject readiness. Downgrade rules runtime-enforced."
+    },
+    "MovementFamily": {
+      "type": "string",
+      "enum": [
+        "squat",
+        "hinge",
+        "press",
+        "pull",
+        "carry",
+        "isolate",
+        "trunk"
+      ],
+      "description": "ECA movement archetype. Family-level axis locking runtime-enforced."
+    },
+    "PushPull": {
+      "type": "string",
+      "enum": [
+        "push",
+        "pull",
+        "mixed",
+        "none"
+      ],
+      "description": "Force direction for pattern balance. Split-counting runtime-applied."
+    },
+    "HorizVert": {
+      "type": "string",
+      "enum": [
+        "horizontal",
+        "vertical",
+        "sagittal",
+        "frontal"
+      ],
+      "description": "Primary plane of motion for pattern balance."
+    },
+    "VolumeClass": {
+      "type": "string",
+      "enum": [
+        "PRIMARY",
+        "ASSISTANCE",
+        "ACCESSORY"
+      ],
+      "description": "Immutable ECA classification: PRIMARY=1.0x, ASSISTANCE=0.5x, ACCESSORY=0.25x toward landmarks"
+    },
+    "ProgressionAxis": {
+      "type": "string",
+      "enum": [
+        "volume",
+        "load",
+        "density",
+        "complexity",
+        "none"
+      ],
+      "description": "EPA ONE_AXIS enforcement. Family-level locking runtime-enforced."
+    },
+    "CDayFocus": {
+      "type": "string",
+      "enum": [
+        "lower_posterior",
+        "upper_posterior",
+        "frontal_chain",
+        "shoulders_postural",
+        "trunk_anti_rotation",
+        "misc_corrective"
+      ],
+      "description": "Primary tissue focus for DAY_C. Mesocycle rotation rules runtime-enforced."
+    },
+    "ReasonCode": {
+      "type": "string",
+      "enum": [
+        "MCC_BAND_NODE_ILLEGAL_COMBINATION",
+        "MCC_SESSION_VOLUME_EXCEEDED",
+        "MCC_BAND3_PATTERN_EXCEEDED",
+        "MCC_DAY_A_PATTERN_GUARANTEE_VIOLATED",
+        "MCC_READINESS_VIOLATION",
+        "MCC_READINESS_BAND_MISMATCH",
+        "MCC_SESSION_DURATION_EXCEEDED",
+        "MCC_WORK_BLOCK_INSUFFICIENT",
+        "MCC_MULTI_AXIS_PROGRESSION_VIOLATION",
+        "MCC_FAMILY_MULTI_AXIS_VIOLATION",
+        "MCC_H4_FREQUENCY_EXCEEDED",
+        "MCC_H3_AGGREGATE_EXCEEDED",
+        "MCC_NODE_PERMISSION_VIOLATION",
+        "MCC_DENSITY_LEDGER_EXCEEDED",
+        "MCC_PATTERN_BALANCE_VIOLATED",
+        "MCC_DAY_D_INTENT_VIOLATION",
+        "MCC_DAY_C_PATTERN_REPETITION",
+        "MCC_C_DAY_MESO_ROTATION_VIOLATION",
+        "MCC_PRIME_SCOPE_VIOLATION",
+        "MCC_FREQUENCY_NOT_SUPPORTED",
+        "MCC_DAY_A_FREQUENCY_EXCEEDED",
+        "MCC_DAY_B_FREQUENCY_EXCEEDED",
+        "MCC_D_MINIMUM_VIOLATED",
+        "MCC_ADJACENCY_VIOLATION",
+        "MCC_CONSECUTIVE_NODE3_EXCEEDED",
+        "MCC_ECA_COVERAGE_MISSING",
+        "MCC_ECA_PATTERN_INCOMPLETE",
+        "MCC_VOLUME_CLASS_OVERRIDE_ATTEMPT",
+        "MCC_CHRONIC_YELLOW_GUARD_TRIGGERED",
+        "MCC_COLLAPSE_ESCALATION_TRIGGERED",
+        "MCC_ROUTE_SATURATION_VIOLATION",
+        "MCC_SFI_ELEVATED_WARNING",
+        "MCC_SFI_EXCESSIVE_WARNING",
+        "MCC_LONG_HORIZON_DELOAD_RECOMMENDED",
+        "MCC_ROUTE_40PLUS_SAFETY_WARNING"
+      ],
+      "description": "STABLE CONTRACT: Append-only enum. Never remove or rename codes. MCC engine, validators, and reports depend on this stability."
+    },
+    "H3Archetype": {
+      "type": "string",
+      "enum": [
+        "superset_antagonist",
+        "superset_same_muscle",
+        "pre_exhaust",
+        "density_circuit",
+        "drop_set",
+        "myo_rep",
+        "rest_pause",
+        "cluster_set"
+      ],
+      "description": "H3/H4 behavioral archetypes. Aggregate caps runtime-enforced."
+    },
+    "MCC_CONTEXT": {
+      "type": "object",
+      "required": [
+        "population_overlay",
+        "phase",
+        "frequency_per_week",
+        "meso_start_date",
+        "current_week"
+      ],
+      "properties": {
+        "population_overlay": {
+          "$ref": "#/$defs/PopulationOverlay"
+        },
+        "phase": {
+          "$ref": "#/$defs/Phase"
+        },
+        "frequency_per_week": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 8,
+          "description": "Training frequency. DCC-Physique v1.2 supports 3-6; other values runtime-flagged but schema-legal for future DCC versions."
+        },
+        "day_slots": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "slot_id",
+              "day_role"
+            ],
+            "properties": {
+              "slot_id": {
+                "type": "string",
+                "pattern": "^(Week[1-8]_)?Day[1-7]$",
+                "description": "Unique session slot identifier (e.g., Day1, Week2_Day3). Pattern enforced. Runtime MUST enforce unique slot_ids."
+              },
+              "day_role": {
+                "$ref": "#/$defs/DayRole"
+              },
+              "route": {
+                "$ref": "#/$defs/TrainingRoute"
+              }
+            },
+            "additionalProperties": false,
+            "unevaluatedProperties": false
+          },
+          "minItems": 1,
+          "description": "Session slots. Composition rules (A\u22641, B\u22641, D-minimum) runtime-enforced."
+        },
+        "meso_start_date": {
+          "type": "string",
+          "format": "date"
+        },
+        "current_week": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 8,
+          "description": "Current week within mesocycle. DCC-Physique v1.2 uses 4-week mesos; schema allows 1-8 for future flexibility."
+        },
+        "route_history": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "meso_number",
+              "day_role",
+              "primary_route"
+            ],
+            "properties": {
+              "meso_number": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "day_role": {
+                "$ref": "#/$defs/DayRole"
+              },
+              "primary_route": {
+                "$ref": "#/$defs/TrainingRoute"
+              }
+            },
+            "additionalProperties": false,
+            "unevaluatedProperties": false
+          },
+          "description": "Route exposure ledger for saturation detection (runtime-enforced)"
+        },
+        "c_day_focus_history": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "week",
+              "c_focus"
+            ],
+            "properties": {
+              "week": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "c_focus": {
+                "$ref": "#/$defs/CDayFocus"
+              }
+            },
+            "additionalProperties": false,
+            "unevaluatedProperties": false
+          },
+          "description": "C-day tissue focus tracking for mesocycle rotation (runtime-enforced)"
+        },
+        "prohibitions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "type",
+              "target"
+            ],
+            "properties": {
+              "type": {
+                "type": "string",
+                "oneOf": [
+                  {
+                    "enum": [
+                      "exercise",
+                      "pattern",
+                      "band",
+                      "node",
+                      "day_role",
+                      "route"
+                    ]
+                  },
+                  {
+                    "pattern": "^x_"
+                  }
+                ],
+                "description": "Type of prohibition. Standard types enumerated; experimental types prefixed with 'x_'. Explicit string typing enforced. oneOf prevents accidental overlap."
+              },
+              "target": {
+                "type": "string"
+              },
+              "reason": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false,
+            "unevaluatedProperties": false
+          }
+        },
+        "extensions": {
+          "type": "object",
+          "additionalProperties": true,
+          "description": "EXTENSION SANDBOX: Future DCC metadata, experimental features, version-specific fields. Validators MAY ignore unknown properties here."
+        }
+      },
+      "additionalProperties": false,
+      "unevaluatedProperties": false,
+      "description": "MCC operational context"
+    },
+    "EXERCISE": {
+      "type": "object",
+      "required": [
+        "exercise_id",
+        "name",
+        "movement_family",
+        "band",
+        "node",
+        "node_max",
+        "role"
+      ],
+      "properties": {
+        "exercise_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "movement_family": {
+          "$ref": "#/$defs/MovementFamily"
+        },
+        "push_pull": {
+          "$ref": "#/$defs/PushPull"
+        },
+        "horiz_vert": {
+          "$ref": "#/$defs/HorizVert"
+        },
+        "volume_class": {
+          "$ref": "#/$defs/VolumeClass"
+        },
+        "band": {
+          "$ref": "#/$defs/Band"
+        },
+        "node": {
+          "$ref": "#/$defs/Node"
+        },
+        "h_node": {
+          "$ref": "#/$defs/HNode"
+        },
+        "role": {
+          "type": "string",
+          "enum": [
+            "PRIME",
+            "PREP",
+            "WORK",
+            "CLEAR"
+          ]
+        },
+        "node_max": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 3,
+          "default": 2,
+          "description": "SAFETY GATE: NODE 3 opt-in permission. REQUIRED field; 'default' is documentation-only (validators may not apply defaults). Omitted node_max is a validation error, not an implicit 2."
+        },
+        "day_role_allowed": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/DayRole"
+          }
+        },
+        "dose": {
+          "type": "object",
+          "properties": {
+            "sets": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "reps": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "intensity": {
+              "type": "object",
+              "properties": {
+                "percent_1rm": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 100
+                },
+                "rpe": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 10
+                }
+              },
+              "minProperties": 1,
+              "additionalProperties": false,
+              "unevaluatedProperties": false,
+              "description": "Intensity specification. Must provide at least one of percent_1rm or rpe."
+            },
+            "tempo": {
+              "type": "string",
+              "pattern": "^[0-9A-Za-z\\-]+$",
+              "description": "Tempo notation (permissive pattern allows flexibility: '3010', '2-0-1-0', 'slow', etc.)"
+            },
+            "rest_seconds": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "additionalProperties": false,
+          "unevaluatedProperties": false
+        },
+        "progression_axis": {
+          "$ref": "#/$defs/ProgressionAxis"
+        },
+        "h3_archetypes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/H3Archetype"
+          }
+        },
+        "eccentric_bias": {
+          "type": "boolean",
+          "default": false
+        },
+        "split_count_coefficients": {
+          "type": "object",
+          "properties": {
+            "push": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "pull": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "frontal": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            }
+          },
+          "additionalProperties": false,
+          "unevaluatedProperties": false
+        },
+        "extensions": {
+          "type": "object",
+          "additionalProperties": true,
+          "description": "EXTENSION SANDBOX: Future ECA metadata, exercise-specific experimental tags."
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "node_max": {
+                "const": 1
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "node": {
+                "maximum": 1
+              }
+            }
+          },
+          "description": "SAFETY GATE: node_max=1 restricts to NODE 1 only"
+        },
+        {
+          "if": {
+            "properties": {
+              "node_max": {
+                "const": 2
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "node": {
+                "maximum": 2
+              }
+            }
+          },
+          "description": "SAFETY GATE: node_max=2 restricts to NODE 1-2 (NODE 3 illegal)"
+        }
+      ],
+      "additionalProperties": false,
+      "unevaluatedProperties": false,
+      "description": "Exercise with minimal required fields. Optional tags enable pattern balance / volume tracking when present."
+    },
+    "SESSION_PROPOSED": {
+      "type": "object",
+      "required": [
+        "session_id",
+        "date",
+        "day_role",
+        "route",
+        "exercises"
+      ],
+      "properties": {
+        "session_id": {
+          "type": "string"
+        },
+        "date": {
+          "type": "string",
+          "format": "date"
+        },
+        "day_role": {
+          "$ref": "#/$defs/DayRole"
+        },
+        "route": {
+          "$ref": "#/$defs/TrainingRoute"
+        },
+        "c_day_focus": {
+          "$ref": "#/$defs/CDayFocus"
+        },
+        "exercises": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/EXERCISE"
+          },
+          "minItems": 1
+        },
+        "session_blocks": {
+          "type": "object",
+          "properties": {
+            "PRIME_minutes": {
+              "type": "number",
+              "minimum": 0,
+              "description": "DCC v2.2 target: 8-10 min"
+            },
+            "PREP_minutes": {
+              "type": "number",
+              "minimum": 0,
+              "description": "DCC v2.2 target: 10-12 min"
+            },
+            "WORK_minutes": {
+              "type": "number",
+              "minimum": 0,
+              "description": "DCC v2.2 target: 24-30 min (\u226524 min required)"
+            },
+            "CLEAR_minutes": {
+              "type": "number",
+              "minimum": 0,
+              "description": "DCC v2.2 target: 5-8 min"
+            }
+          },
+          "additionalProperties": false,
+          "unevaluatedProperties": false,
+          "description": "DCC v2.2 session block structure. Specific duration rules (50-60 min total, WORK \u226524 min) runtime-enforced."
+        },
+        "readiness_state": {
+          "$ref": "#/$defs/ReadinessState"
+        },
+        "readiness_inputs": {
+          "type": "object",
+          "properties": {
+            "joint_pain": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 10
+            },
+            "muscle_soreness": {
+              "type": "string",
+              "oneOf": [
+                {
+                  "enum": [
+                    "none",
+                    "doms",
+                    "acute"
+                  ]
+                },
+                {
+                  "pattern": "^x_"
+                }
+              ],
+              "description": "Muscle soreness state. Standard states enumerated; experimental states prefixed with 'x_'. Explicit string typing enforced. oneOf prevents accidental overlap."
+            },
+            "sleep_hours": {
+              "type": "number"
+            },
+            "sleep_quality": {
+              "type": "number"
+            }
+          },
+          "additionalProperties": false,
+          "unevaluatedProperties": false
+        },
+        "extensions": {
+          "type": "object",
+          "additionalProperties": true,
+          "description": "EXTENSION SANDBOX: Future session metadata (e.g., HR data, fatigue markers, environmental factors)."
+        }
+      },
+      "if": {
+        "properties": {
+          "day_role": {
+            "const": "DAY_C"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "c_day_focus"
+        ],
+        "description": "DAY_C sessions require c_day_focus for mesocycle rotation tracking"
+      },
+      "additionalProperties": false,
+      "unevaluatedProperties": false
+    },
+    "EXPOSURE_LEDGER": {
+      "type": "object",
+      "required": [
+        "subject_id",
+        "last_updated",
+        "windows"
+      ],
+      "properties": {
+        "subject_id": {
+          "type": "string"
+        },
+        "last_updated": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "windows": {
+          "type": "object",
+          "required": [
+            "7_day",
+            "14_day",
+            "28_day"
+          ],
+          "properties": {
+            "7_day": {
+              "$ref": "#/$defs/EXPOSURE_WINDOW"
+            },
+            "14_day": {
+              "$ref": "#/$defs/EXPOSURE_WINDOW"
+            },
+            "28_day": {
+              "$ref": "#/$defs/EXPOSURE_WINDOW"
+            }
+          },
+          "additionalProperties": false,
+          "unevaluatedProperties": false
+        },
+        "chronic_yellow_counter": {
+          "type": "object",
+          "properties": {
+            "yellow_days_in_7": {
+              "type": "integer"
+            },
+            "red_days_in_7": {
+              "type": "integer"
+            }
+          },
+          "additionalProperties": false,
+          "unevaluatedProperties": false
+        },
+        "collapse_counter": {
+          "type": "object",
+          "properties": {
+            "collapses_in_7_days": {
+              "type": "integer"
+            },
+            "collapses_in_14_days": {
+              "type": "integer"
+            }
+          },
+          "additionalProperties": false,
+          "unevaluatedProperties": false
+        }
+      },
+      "additionalProperties": false,
+      "unevaluatedProperties": false,
+      "description": "Subject exposure history. Ledger is audit artifact; no extensions allowed."
+    },
+    "EXPOSURE_WINDOW": {
+      "type": "object",
+      "required": [
+        "window_days"
+      ],
+      "properties": {
+        "window_days": {
+          "type": "integer",
+          "enum": [
+            7,
+            14,
+            28
+          ]
+        },
+        "pattern_totals": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "number"
+          }
+        },
+        "volume_totals": {
+          "type": "object",
+          "properties": {
+            "major_muscle_groups": {
+              "type": "number"
+            },
+            "minor_muscle_groups": {
+              "type": "number"
+            },
+            "postural_stability": {
+              "type": "number"
+            }
+          },
+          "additionalProperties": false,
+          "unevaluatedProperties": false
+        },
+        "density_metrics": {
+          "type": "object",
+          "properties": {
+            "band2_node3_sets": {
+              "type": "integer"
+            },
+            "total_node3_sets": {
+              "type": "integer"
+            },
+            "h3_sessions": {
+              "type": "integer"
+            },
+            "h4_blocks": {
+              "type": "integer"
+            }
+          },
+          "additionalProperties": false,
+          "unevaluatedProperties": false
+        },
+        "pattern_balance": {
+          "type": "object",
+          "properties": {
+            "push_percent": {
+              "type": "number"
+            },
+            "pull_percent": {
+              "type": "number"
+            },
+            "horizontal_percent": {
+              "type": "number"
+            },
+            "vertical_percent": {
+              "type": "number"
+            },
+            "frontal_percent": {
+              "type": "number"
+            },
+            "primary_percent": {
+              "type": "number"
+            },
+            "corrective_percent": {
+              "type": "number"
+            }
+          },
+          "additionalProperties": false,
+          "unevaluatedProperties": false
+        },
+        "progression_axes": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "sessions_count": {
+          "type": "integer"
+        }
+      },
+      "additionalProperties": false,
+      "unevaluatedProperties": false
+    },
+    "SESSION_FATIGUE_INDEX": {
+      "type": "object",
+      "required": [
+        "sfi_value",
+        "components",
+        "threshold_status"
+      ],
+      "properties": {
+        "sfi_value": {
+          "type": "number"
+        },
+        "components": {
+          "type": "object",
+          "required": [
+            "unilateral_sets",
+            "node3_sets",
+            "h3_archetypes",
+            "h4_archetypes"
+          ],
+          "properties": {
+            "unilateral_sets": {
+              "type": "integer"
+            },
+            "node3_sets": {
+              "type": "integer"
+            },
+            "h3_archetypes": {
+              "type": "integer"
+            },
+            "h4_archetypes": {
+              "type": "integer"
+            }
+          },
+          "additionalProperties": false,
+          "unevaluatedProperties": false
+        },
+        "threshold_status": {
+          "type": "string",
+          "enum": [
+            "normal",
+            "elevated",
+            "excessive"
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "unevaluatedProperties": false
+    },
+    "MCC_FLAG": {
+      "type": "object",
+      "required": [
+        "reason_code",
+        "severity",
+        "description"
+      ],
+      "properties": {
+        "reason_code": {
+          "$ref": "#/$defs/ReasonCode"
+        },
+        "severity": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5
+        },
+        "description": {
+          "type": "string"
+        },
+        "metric_value": {
+          "type": "number"
+        },
+        "threshold_value": {
+          "type": "number"
+        },
+        "affected_exercises": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "patch_required": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false,
+      "unevaluatedProperties": false
+    },
+    "MCC_PATCH": {
+      "type": "object",
+      "required": [
+        "patch_id",
+        "target_exercise_id",
+        "directive"
+      ],
+      "properties": {
+        "patch_id": {
+          "type": "string"
+        },
+        "target_exercise_id": {
+          "type": "string",
+          "pattern": "^(ECA|SES|MESO|PROG):[A-Za-z0-9_\\-:.]+$",
+          "description": "Namespaced target identity. Prefix must be one of: ECA:, SES:, MESO:, PROG:. This field remains schema-level but supports non-exercise targets via namespace."
+        },
+        "directive": {
+          "type": "object",
+          "required": [
+            "action",
+            "reason"
+          ],
+          "properties": {
+            "action": {
+              "type": "string",
+              "oneOf": [
+                {
+                  "enum": [
+                    "reduce_sets",
+                    "reduce_band",
+                    "reduce_node",
+                    "change_role",
+                    "swap_exercise",
+                    "shift_to_day",
+                    "remove",
+                    "change_route"
+                  ]
+                },
+                {
+                  "pattern": "^x_"
+                }
+              ],
+              "description": "Patch action directive. Standard actions enumerated; experimental actions prefixed with 'x_'. Explicit string typing enforced. oneOf prevents accidental overlap."
+            },
+            "new_value": {
+              "type": [
+                "string",
+                "number",
+                "object",
+                "array",
+                "boolean",
+                "null"
+              ]
+            },
+            "reason": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false,
+          "unevaluatedProperties": false
+        },
+        "whitelist_options": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "exercise_id",
+              "name"
+            ],
+            "properties": {
+              "exercise_id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "rationale": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false,
+            "unevaluatedProperties": false
+          }
+        }
+      },
+      "additionalProperties": false,
+      "unevaluatedProperties": false
+    },
+    "MCC_DECISION": {
+      "type": "object",
+      "required": [
+        "decision_id",
+        "session_id",
+        "timestamp",
+        "status",
+        "fss_total"
+      ],
+      "properties": {
+        "decision_id": {
+          "type": "string"
+        },
+        "session_id": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "PASS",
+            "PASS_WITH_FLAGS",
+            "FAIL"
+          ]
+        },
+        "fss_total": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "flags": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/MCC_FLAG"
+          }
+        },
+        "required_patches": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/MCC_PATCH"
+          }
+        },
+        "sfi": {
+          "$ref": "#/$defs/SESSION_FATIGUE_INDEX"
+        },
+        "approved_session": {
+          "$ref": "#/$defs/SESSION_PROPOSED"
+        },
+        "dashboard_summary": {
+          "type": "object",
+          "properties": {
+            "density_status": {
+              "type": "string",
+              "enum": [
+                "GREEN",
+                "YELLOW",
+                "RED"
+              ],
+              "description": "Density ledger health (BAND2+NODE3, total NODE3)"
+            },
+            "pattern_balance_status": {
+              "type": "string",
+              "enum": [
+                "PASS",
+                "FLAG",
+                "FAIL"
+              ],
+              "description": "Pattern balance validation result"
+            },
+            "route_exposure_status": {
+              "type": "string",
+              "enum": [
+                "PASS",
+                "WARNING",
+                "VIOLATION"
+              ],
+              "description": "Route saturation check (Patch R)"
+            },
+            "c_day_rotation_status": {
+              "type": "string",
+              "enum": [
+                "PASS",
+                "WARNING",
+                "VIOLATION"
+              ],
+              "description": "C-day mesocycle rotation check (Patch T)"
+            }
+          },
+          "additionalProperties": false,
+          "unevaluatedProperties": false
+        }
+      },
+      "additionalProperties": false,
+      "unevaluatedProperties": false,
+      "description": "MCC decision is audit artifact; no extensions allowed."
+    },
+    "MCC_WEEKLY_REPORT": {
+      "type": "object",
+      "required": [
+        "subject_id",
+        "week_start_date",
+        "week_end_date",
+        "week_number",
+        "sessions",
+        "overall_status"
+      ],
+      "properties": {
+        "subject_id": {
+          "type": "string"
+        },
+        "week_start_date": {
+          "type": "string",
+          "format": "date"
+        },
+        "week_end_date": {
+          "type": "string",
+          "format": "date"
+        },
+        "week_number": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "sessions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "session_id",
+              "date",
+              "day_role",
+              "route",
+              "status"
+            ],
+            "properties": {
+              "session_id": {
+                "type": "string"
+              },
+              "date": {
+                "type": "string",
+                "format": "date"
+              },
+              "day_role": {
+                "$ref": "#/$defs/DayRole"
+              },
+              "route": {
+                "$ref": "#/$defs/TrainingRoute"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "PASS",
+                  "PASS_WITH_FLAGS",
+                  "FAIL"
+                ]
+              },
+              "fss": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "sfi": {
+                "type": "number",
+                "minimum": 0
+              }
+            },
+            "additionalProperties": false,
+            "unevaluatedProperties": false
+          }
+        },
+        "ledger_snapshot": {
+          "$ref": "#/$defs/EXPOSURE_LEDGER"
+        },
+        "overall_status": {
+          "type": "string",
+          "enum": [
+            "GREEN",
+            "YELLOW",
+            "RED"
+          ]
+        },
+        "weekly_metrics": {
+          "type": "object",
+          "properties": {
+            "total_working_sets": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "band2_node3_sets": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "total_node3_sets": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "h3_sessions": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "h4_blocks": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "avg_sfi": {
+              "type": "number",
+              "minimum": 0
+            }
+          },
+          "additionalProperties": false,
+          "unevaluatedProperties": false
+        },
+        "action_items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "priority",
+              "action"
+            ],
+            "properties": {
+              "priority": {
+                "type": "string",
+                "enum": [
+                  "high",
+                  "medium",
+                  "low"
+                ]
+              },
+              "action": {
+                "type": "string"
+              },
+              "target_session": {
+                "type": "string"
+              },
+              "reason": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false,
+            "unevaluatedProperties": false
+          }
+        }
+      },
+      "additionalProperties": false,
+      "unevaluatedProperties": false
+    },
+    "MCC_PATCH_PACK": {
+      "type": "object",
+      "required": [
+        "mcc_patch_pack_version",
+        "program_id",
+        "meso_id",
+        "week_scope",
+        "generated_at",
+        "patches"
+      ],
+      "properties": {
+        "mcc_patch_pack_version": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+(-[A-Za-z0-9._-]+)?$"
+        },
+        "program_id": {
+          "type": "string"
+        },
+        "meso_id": {
+          "type": "string",
+          "pattern": "^MESO:[A-Za-z0-9_\\-:.]+$"
+        },
+        "week_scope": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^W[1-9]\\d*$"
+          },
+          "minItems": 1
+        },
+        "generated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "x_apply_order": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "META",
+              "MESO",
+              "SESSION",
+              "EXERCISE"
+            ]
+          },
+          "description": "Optional controller hint for deterministic patch application order. Not interpreted by MCC legality; runtime-only."
+        },
+        "patches": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/MCC_PATCH"
+          },
+          "minItems": 1
+        }
+      },
+      "additionalProperties": false,
+      "unevaluatedProperties": false,
+      "description": "Optional wrapper for bundling MCC_PATCH objects into a controller-ready patch pack. Not required by MCC core; provided for PCC tooling interoperability."
+    }
+  },
+  "type": "object",
+  "required": [
+    "mcc_version",
+    "dcc_physique_version",
+    "context",
+    "proposed_sessions",
+    "ledger"
+  ],
+  "properties": {
+    "mcc_version": {
+      "type": "string",
+      "const": "1.0.0-PRODUCTION",
+      "description": "MCC schema version (SINGLE SOURCE OF TRUTH). PRODUCTION = all type-safety audits passed, all release-management validation complete, ready for deployment."
+    },
+    "dcc_physique_version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+(\\+)?$",
+      "description": "DCC-Physique specification version this evaluation targets (e.g., '1.2', '1.3', '2.0'). Semver-style pattern enforced without locking business rules."
+    },
+    "context": {
+      "$ref": "#/$defs/MCC_CONTEXT"
+    },
+    "proposed_sessions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/SESSION_PROPOSED"
+      },
+      "minItems": 1
+    },
+    "ledger": {
+      "$ref": "#/$defs/EXPOSURE_LEDGER"
+    },
+    "decisions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/MCC_DECISION"
+      }
+    },
+    "weekly_report": {
+      "$ref": "#/$defs/MCC_WEEKLY_REPORT"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "required": [
+          "decisions"
+        ]
+      },
+      "then": {
+        "properties": {
+          "decisions": {
+            "minItems": 1
+          }
+        }
+      },
+      "description": "If decisions array exists, must contain at least 1 decision"
+    },
+    {
+      "if": {
+        "required": [
+          "weekly_report"
+        ]
+      },
+      "then": {
+        "required": [
+          "decisions"
+        ]
+      },
+      "description": "weekly_report cannot exist without decisions"
+    }
+  ],
+  "additionalProperties": false,
+  "unevaluatedProperties": false
+}

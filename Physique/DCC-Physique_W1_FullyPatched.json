@@ -1,0 +1,1134 @@
+{
+  "meta": {
+    "week_id": "DCC-PHY-W1",
+    "frequency_per_week": 6,
+    "sequence": [
+      "A",
+      "D",
+      "B",
+      "C",
+      "B",
+      "D"
+    ],
+    "block_time_minutes": {
+      "prime": 8,
+      "prep": 10,
+      "work": 28,
+      "clear": 6
+    },
+    "session_time_minutes_total": 52,
+    "rep_accounting": {
+      "working_rep_budget_definition": "Sum of reps for WORK exercises where counts_toward_working_rep_budget=true. If rep_mode=per_side, reps*sets*2 sides. If rep_mode=reps, reps*sets. Time/distance modes contribute 0.",
+      "density_rep_definition": "Sum of reps for WORK exercises with rep_mode in {reps, per_side} (including those not counted toward working budget). Time/distance contribute 0."
+    },
+    "mcc_pass2_required": true,
+    "mcc_pass2_rules_enforced": [
+      "NO_B_TO_B_ADJACENCY",
+      "NO_A_BAND3_TO_B_ADJACENCY",
+      "NO_3_CONSECUTIVE_NODE3_DAYS",
+      "NODE3_WEEKLY_CAPS_GREEN",
+      "BAND2_PLUS_NODE3_WEEKLY_CAP_GREEN"
+    ]
+  },
+  "days": [
+    {
+      "day_name": "Monday",
+      "day_role": "A",
+      "blocks": {
+        "prime_minutes": 8,
+        "prep_minutes": 10,
+        "work_minutes": 28,
+        "clear_minutes": 6
+      },
+      "prime": [
+        "Hip CARs flow",
+        "Shoulder dislocates (PVC)",
+        "Band scap retraction pulses"
+      ],
+      "prep": [
+        "Ramp sets on Deadlift and Front Squat (not counted)"
+      ],
+      "work": [
+        {
+          "exercise_id": "ECA-PHY-0004",
+          "exercise_name": "Conventional Deadlift",
+          "movement_family": "Hinge",
+          "pattern_plane": "Sagittal",
+          "push_pull": NaN,
+          "horiz_vert": NaN,
+          "volume_class": "Primary",
+          "compound_isolation": "Compound",
+          "uni_bi": "Bilateral",
+          "equipment": "Barbell",
+          "band": 2,
+          "node": 1,
+          "h_node": "H1",
+          "sets": 4,
+          "reps": 4,
+          "rep_mode": "reps",
+          "sides": null,
+          "distance_m": null,
+          "duration_min": null,
+          "rest_sec": 240,
+          "counts_toward_working_rep_budget": true,
+          "rpe_cap": 9,
+          "notes": null,
+          "constraints": {
+            "band_max": 3,
+            "node_max": 1,
+            "day_role_allowed": [
+              "A"
+            ]
+          }
+        },
+        {
+          "exercise_id": "ECA-PHY-0002",
+          "exercise_name": "Front Squat",
+          "movement_family": "Squat",
+          "pattern_plane": "Sagittal",
+          "push_pull": NaN,
+          "horiz_vert": NaN,
+          "volume_class": "Primary",
+          "compound_isolation": "Compound",
+          "uni_bi": "Bilateral",
+          "equipment": "Barbell",
+          "band": 2,
+          "node": 1,
+          "h_node": "H1",
+          "sets": 3,
+          "reps": 5,
+          "rep_mode": "reps",
+          "sides": null,
+          "distance_m": null,
+          "duration_min": null,
+          "rest_sec": 210,
+          "counts_toward_working_rep_budget": true,
+          "rpe_cap": 9,
+          "notes": null,
+          "constraints": {
+            "band_max": 3,
+            "node_max": 2,
+            "day_role_allowed": [
+              "A",
+              "C"
+            ]
+          }
+        },
+        {
+          "exercise_id": "ECA-PHY-0012",
+          "exercise_name": "Barbell Bent-Over Row",
+          "movement_family": "Pull",
+          "pattern_plane": "Horizontal",
+          "push_pull": "Pull",
+          "horiz_vert": "Horizontal",
+          "volume_class": "Primary",
+          "compound_isolation": "Compound",
+          "uni_bi": "Bilateral",
+          "equipment": "Barbell",
+          "band": 2,
+          "node": 2,
+          "h_node": "H1",
+          "sets": 3,
+          "reps": 7,
+          "rep_mode": "reps",
+          "sides": null,
+          "distance_m": null,
+          "duration_min": null,
+          "rest_sec": 150,
+          "counts_toward_working_rep_budget": true,
+          "rpe_cap": 9,
+          "notes": null,
+          "constraints": {
+            "band_max": 3,
+            "node_max": 2,
+            "day_role_allowed": [
+              "A",
+              "C"
+            ]
+          }
+        },
+        {
+          "exercise_id": "ECA-PHY-0020",
+          "exercise_name": "Hip Thrust",
+          "movement_family": "Hinge",
+          "pattern_plane": "Sagittal",
+          "push_pull": NaN,
+          "horiz_vert": NaN,
+          "volume_class": "Assistance",
+          "compound_isolation": "Compound",
+          "uni_bi": "Bilateral",
+          "equipment": "Barbell",
+          "band": 2,
+          "node": 2,
+          "h_node": "H1",
+          "sets": 3,
+          "reps": 20,
+          "rep_mode": "reps",
+          "sides": null,
+          "distance_m": null,
+          "duration_min": null,
+          "rest_sec": 120,
+          "counts_toward_working_rep_budget": false,
+          "rpe_cap": 8,
+          "notes": null,
+          "constraints": {
+            "band_max": 3,
+            "node_max": 2,
+            "day_role_allowed": [
+              "A",
+              "C"
+            ]
+          }
+        }
+      ],
+      "clear": [
+        "Easy walk 4 min",
+        "Hip flexor + lat stretch 2 min"
+      ],
+      "computed": {
+        "work_exercise_count": 4,
+        "work_sets_total": 13,
+        "working_rep_budget_total": 52,
+        "density_reps_total": 112,
+        "density_reps_per_min_est": 4.0
+      }
+    },
+    {
+      "day_name": "Tuesday",
+      "day_role": "D",
+      "blocks": {
+        "prime_minutes": 8,
+        "prep_minutes": 10,
+        "work_minutes": 28,
+        "clear_minutes": 6
+      },
+      "prime": [
+        "Easy bike 6 min",
+        "Spine segmentation / cat-camel 2 min"
+      ],
+      "prep": [
+        "Gentle hip flexor + ankle mobility 10 min total (not counted)"
+      ],
+      "work": [
+        {
+          "exercise_id": "ECA-PHY-0024",
+          "exercise_name": "Sled Drag (Light)",
+          "movement_family": "Carry/Sled",
+          "pattern_plane": "Sagittal",
+          "push_pull": NaN,
+          "horiz_vert": NaN,
+          "volume_class": "Assistance",
+          "compound_isolation": "Compound",
+          "uni_bi": "Bilateral",
+          "equipment": "Sled",
+          "band": 1,
+          "node": 1,
+          "h_node": "H1",
+          "sets": 8,
+          "reps": null,
+          "rep_mode": "distance_m",
+          "sides": null,
+          "distance_m": 20,
+          "duration_min": null,
+          "rest_sec": 60,
+          "counts_toward_working_rep_budget": false,
+          "rpe_cap": 4,
+          "notes": "Easy pace; nasal breathing; circulation.",
+          "constraints": {
+            "band_max": 1,
+            "node_max": 2,
+            "day_role_allowed": [
+              "D"
+            ]
+          }
+        },
+        {
+          "exercise_id": "ECA-PHY-0021",
+          "exercise_name": "Face Pull",
+          "movement_family": "Scapular/Rear Delt",
+          "pattern_plane": "Horizontal",
+          "push_pull": "Pull",
+          "horiz_vert": "Horizontal",
+          "volume_class": "Accessory",
+          "compound_isolation": "Isolation",
+          "uni_bi": "Bilateral",
+          "equipment": "Cable/Band",
+          "band": 1,
+          "node": 1,
+          "h_node": "H1",
+          "sets": 1,
+          "reps": 15,
+          "rep_mode": "reps",
+          "sides": null,
+          "distance_m": null,
+          "duration_min": null,
+          "rest_sec": 60,
+          "counts_toward_working_rep_budget": true,
+          "rpe_cap": 4,
+          "notes": null,
+          "constraints": {
+            "band_max": 1,
+            "node_max": 3,
+            "day_role_allowed": [
+              "C",
+              "D"
+            ]
+          }
+        },
+        {
+          "exercise_id": "ECA-PHY-0022",
+          "exercise_name": "Band External Rotation",
+          "movement_family": "Rotator Cuff",
+          "pattern_plane": "Transverse",
+          "push_pull": NaN,
+          "horiz_vert": NaN,
+          "volume_class": "Accessory",
+          "compound_isolation": "Isolation",
+          "uni_bi": "Unilateral",
+          "equipment": "Band",
+          "band": 1,
+          "node": 1,
+          "h_node": "H0",
+          "sets": 1,
+          "reps": 10,
+          "rep_mode": "per_side",
+          "sides": 2,
+          "distance_m": null,
+          "duration_min": null,
+          "rest_sec": 60,
+          "counts_toward_working_rep_budget": true,
+          "rpe_cap": 4,
+          "notes": "10/side",
+          "constraints": {
+            "band_max": 1,
+            "node_max": 2,
+            "day_role_allowed": [
+              "C",
+              "D",
+              "PRIME"
+            ]
+          }
+        }
+      ],
+      "clear": [
+        "Breathing (4-7-8) 3 min",
+        "Gentle stretch 3 min"
+      ],
+      "computed": {
+        "work_exercise_count": 3,
+        "work_sets_total": 10,
+        "working_rep_budget_total": 35,
+        "density_reps_total": 35,
+        "density_reps_per_min_est": 1.25
+      }
+    },
+    {
+      "day_name": "Wednesday",
+      "day_role": "B",
+      "blocks": {
+        "prime_minutes": 8,
+        "prep_minutes": 10,
+        "work_minutes": 28,
+        "clear_minutes": 6
+      },
+      "prime": [
+        "Shoulder/T-spine prep 8 min"
+      ],
+      "prep": [
+        "Ramp sets on Bench + Incline DB Press (not counted)"
+      ],
+      "work": [
+        {
+          "exercise_id": "ECA-PHY-0008",
+          "exercise_name": "Barbell Bench Press",
+          "movement_family": "Press",
+          "pattern_plane": "Horizontal",
+          "push_pull": "Push",
+          "horiz_vert": "Horizontal",
+          "volume_class": "Primary",
+          "compound_isolation": "Compound",
+          "uni_bi": "Bilateral",
+          "equipment": "Barbell",
+          "band": 2,
+          "node": 2,
+          "h_node": "H1",
+          "sets": 3,
+          "reps": 8,
+          "rep_mode": "reps",
+          "sides": null,
+          "distance_m": null,
+          "duration_min": null,
+          "rest_sec": 150,
+          "counts_toward_working_rep_budget": true,
+          "rpe_cap": 9,
+          "notes": null,
+          "constraints": {
+            "band_max": 3,
+            "node_max": 2,
+            "day_role_allowed": [
+              "A",
+              "B"
+            ]
+          }
+        },
+        {
+          "exercise_id": "ECA-PHY-0013",
+          "exercise_name": "Seated Cable Row",
+          "movement_family": "Pull",
+          "pattern_plane": "Horizontal",
+          "push_pull": "Pull",
+          "horiz_vert": "Horizontal",
+          "volume_class": "Assistance",
+          "compound_isolation": "Compound",
+          "uni_bi": "Bilateral",
+          "equipment": "Cable",
+          "band": 2,
+          "node": 2,
+          "h_node": "H1",
+          "sets": 3,
+          "reps": 10,
+          "rep_mode": "reps",
+          "sides": null,
+          "distance_m": null,
+          "duration_min": null,
+          "rest_sec": 120,
+          "counts_toward_working_rep_budget": true,
+          "rpe_cap": 9,
+          "notes": null,
+          "constraints": {
+            "band_max": 2,
+            "node_max": 3,
+            "day_role_allowed": [
+              "B",
+              "C"
+            ]
+          }
+        },
+        {
+          "exercise_id": "ECA-PHY-0011",
+          "exercise_name": "Pull-Up",
+          "movement_family": "Pull",
+          "pattern_plane": "Vertical",
+          "push_pull": "Pull",
+          "horiz_vert": "Vertical",
+          "volume_class": "Primary",
+          "compound_isolation": "Compound",
+          "uni_bi": "Bilateral",
+          "equipment": "Bodyweight",
+          "band": 2,
+          "node": 2,
+          "h_node": "H1",
+          "sets": 3,
+          "reps": 6,
+          "rep_mode": "reps",
+          "sides": null,
+          "distance_m": null,
+          "duration_min": null,
+          "rest_sec": 120,
+          "counts_toward_working_rep_budget": true,
+          "rpe_cap": 9,
+          "notes": null,
+          "constraints": {
+            "band_max": 2,
+            "node_max": 3,
+            "day_role_allowed": [
+              "A",
+              "B",
+              "C"
+            ]
+          }
+        },
+        {
+          "exercise_id": "ECA-PHY-0017",
+          "exercise_name": "Dumbbell Biceps Curl",
+          "movement_family": "Elbow Flexion",
+          "pattern_plane": "Sagittal",
+          "push_pull": NaN,
+          "horiz_vert": NaN,
+          "volume_class": "Accessory",
+          "compound_isolation": "Isolation",
+          "uni_bi": "Bilateral",
+          "equipment": "Dumbbell",
+          "band": 2,
+          "node": 2,
+          "h_node": "H1",
+          "sets": 2,
+          "reps": 9,
+          "rep_mode": "reps",
+          "sides": null,
+          "distance_m": null,
+          "duration_min": null,
+          "rest_sec": 120,
+          "counts_toward_working_rep_budget": true,
+          "rpe_cap": 9,
+          "notes": null,
+          "constraints": {
+            "band_max": 2,
+            "node_max": 3,
+            "day_role_allowed": [
+              "B",
+              "C"
+            ]
+          }
+        },
+        {
+          "exercise_id": "ECA-PHY-0014",
+          "exercise_name": "Lat Pulldown",
+          "movement_family": "Pull",
+          "pattern_plane": "Vertical",
+          "push_pull": "Pull",
+          "horiz_vert": "Vertical",
+          "volume_class": "Assistance",
+          "compound_isolation": "Compound",
+          "uni_bi": "Bilateral",
+          "equipment": "Cable",
+          "band": 1,
+          "node": 2,
+          "h_node": "H1",
+          "sets": 4,
+          "reps": 20,
+          "rep_mode": "reps",
+          "sides": null,
+          "distance_m": null,
+          "duration_min": null,
+          "rest_sec": 75,
+          "counts_toward_working_rep_budget": false,
+          "rpe_cap": 8,
+          "notes": null,
+          "constraints": {
+            "band_max": 2,
+            "node_max": 3,
+            "day_role_allowed": [
+              "B",
+              "C"
+            ]
+          }
+        },
+        {
+          "exercise_id": "ECA-PHY-0015",
+          "exercise_name": "Dumbbell Lateral Raise",
+          "movement_family": "Shoulder Isolation",
+          "pattern_plane": "Frontal",
+          "push_pull": NaN,
+          "horiz_vert": NaN,
+          "volume_class": "Accessory",
+          "compound_isolation": "Isolation",
+          "uni_bi": "Bilateral",
+          "equipment": "Dumbbell",
+          "band": 1,
+          "node": 2,
+          "h_node": "H1",
+          "sets": 4,
+          "reps": 15,
+          "rep_mode": "reps",
+          "sides": null,
+          "distance_m": null,
+          "duration_min": null,
+          "rest_sec": 75,
+          "counts_toward_working_rep_budget": false,
+          "rpe_cap": 8,
+          "notes": null,
+          "constraints": {
+            "band_max": 2,
+            "node_max": 3,
+            "day_role_allowed": [
+              "B",
+              "C"
+            ]
+          }
+        }
+      ],
+      "clear": [
+        "Easy stretch (pec/lat) 6 min"
+      ],
+      "computed": {
+        "work_exercise_count": 6,
+        "work_sets_total": 19,
+        "working_rep_budget_total": 90,
+        "density_reps_total": 230,
+        "density_reps_per_min_est": 8.21
+      }
+    },
+    {
+      "day_name": "Thursday",
+      "day_role": "C",
+      "blocks": {
+        "prime_minutes": 8,
+        "prep_minutes": 10,
+        "work_minutes": 28,
+        "clear_minutes": 6
+      },
+      "prime": [
+        "Glute activation + cuff prep 8 min"
+      ],
+      "prep": [
+        "Movement prep 10 min (not counted)"
+      ],
+      "work": [
+        {
+          "exercise_id": "ECA-PHY-0005",
+          "exercise_name": "Leg Press",
+          "movement_family": "Squat",
+          "pattern_plane": "Sagittal",
+          "push_pull": NaN,
+          "horiz_vert": NaN,
+          "volume_class": "Assistance",
+          "compound_isolation": "Compound",
+          "uni_bi": "Bilateral",
+          "equipment": "Machine",
+          "band": 2,
+          "node": 2,
+          "h_node": "H1",
+          "sets": 3,
+          "reps": 8,
+          "rep_mode": "reps",
+          "sides": null,
+          "distance_m": null,
+          "duration_min": null,
+          "rest_sec": 150,
+          "counts_toward_working_rep_budget": true,
+          "rpe_cap": 9,
+          "notes": null,
+          "constraints": {
+            "band_max": 2,
+            "node_max": 3,
+            "day_role_allowed": [
+              "B",
+              "C"
+            ]
+          }
+        },
+        {
+          "exercise_id": "ECA-PHY-0007",
+          "exercise_name": "Walking Lunge",
+          "movement_family": "Lunge",
+          "pattern_plane": "Sagittal",
+          "push_pull": NaN,
+          "horiz_vert": NaN,
+          "volume_class": "Assistance",
+          "compound_isolation": "Compound",
+          "uni_bi": "Unilateral",
+          "equipment": "DB",
+          "band": 2,
+          "node": 2,
+          "h_node": "H2",
+          "sets": 2,
+          "reps": 6,
+          "rep_mode": "per_side",
+          "sides": 2,
+          "distance_m": null,
+          "duration_min": null,
+          "rest_sec": 120,
+          "counts_toward_working_rep_budget": true,
+          "rpe_cap": 9,
+          "notes": "6/leg",
+          "constraints": {
+            "band_max": 2,
+            "node_max": 3,
+            "day_role_allowed": [
+              "B",
+              "C"
+            ]
+          }
+        },
+        {
+          "exercise_id": "ECA-PHY-0020",
+          "exercise_name": "Hip Thrust",
+          "movement_family": "Hinge",
+          "pattern_plane": "Sagittal",
+          "push_pull": NaN,
+          "horiz_vert": NaN,
+          "volume_class": "Assistance",
+          "compound_isolation": "Compound",
+          "uni_bi": "Bilateral",
+          "equipment": "Barbell",
+          "band": 2,
+          "node": 2,
+          "h_node": "H1",
+          "sets": 2,
+          "reps": 10,
+          "rep_mode": "reps",
+          "sides": null,
+          "distance_m": null,
+          "duration_min": null,
+          "rest_sec": 120,
+          "counts_toward_working_rep_budget": true,
+          "rpe_cap": 8,
+          "notes": null,
+          "constraints": {
+            "band_max": 3,
+            "node_max": 2,
+            "day_role_allowed": [
+              "A",
+              "C"
+            ]
+          }
+        },
+        {
+          "exercise_id": "ECA-PHY-0021",
+          "exercise_name": "Face Pull",
+          "movement_family": "Scapular/Rear Delt",
+          "pattern_plane": "Horizontal",
+          "push_pull": "Pull",
+          "horiz_vert": "Horizontal",
+          "volume_class": "Accessory",
+          "compound_isolation": "Isolation",
+          "uni_bi": "Bilateral",
+          "equipment": "Cable/Band",
+          "band": 1,
+          "node": 2,
+          "h_node": "H1",
+          "sets": 4,
+          "reps": 20,
+          "rep_mode": "reps",
+          "sides": null,
+          "distance_m": null,
+          "duration_min": null,
+          "rest_sec": 75,
+          "counts_toward_working_rep_budget": false,
+          "rpe_cap": 7,
+          "notes": null,
+          "constraints": {
+            "band_max": 1,
+            "node_max": 3,
+            "day_role_allowed": [
+              "C",
+              "D"
+            ]
+          }
+        },
+        {
+          "exercise_id": "ECA-PHY-0026",
+          "exercise_name": "Cable Woodchop",
+          "movement_family": "Core Rotation",
+          "pattern_plane": "Transverse",
+          "push_pull": NaN,
+          "horiz_vert": NaN,
+          "volume_class": "Accessory",
+          "compound_isolation": "Isolation",
+          "uni_bi": "Unilateral",
+          "equipment": "Cable",
+          "band": 1,
+          "node": 2,
+          "h_node": "H3",
+          "sets": 3,
+          "reps": 15,
+          "rep_mode": "per_side",
+          "sides": 2,
+          "distance_m": null,
+          "duration_min": null,
+          "rest_sec": 75,
+          "counts_toward_working_rep_budget": false,
+          "rpe_cap": 7,
+          "notes": "15/side",
+          "constraints": {
+            "band_max": 1,
+            "node_max": 2,
+            "day_role_allowed": [
+              "C"
+            ]
+          }
+        },
+        {
+          "exercise_id": "ECA-PHY-0025",
+          "exercise_name": "Farmer Carry (Light/Moderate)",
+          "movement_family": "Carry",
+          "pattern_plane": "Sagittal",
+          "push_pull": NaN,
+          "horiz_vert": NaN,
+          "volume_class": "Assistance",
+          "compound_isolation": "Compound",
+          "uni_bi": "Bilateral",
+          "equipment": "DB/KB",
+          "band": 1,
+          "node": 2,
+          "h_node": "H1",
+          "sets": 2,
+          "reps": null,
+          "rep_mode": "distance_m",
+          "sides": null,
+          "distance_m": 30,
+          "duration_min": null,
+          "rest_sec": 60,
+          "counts_toward_working_rep_budget": false,
+          "rpe_cap": 5,
+          "notes": "30m/trip; anti-lateral flexion focus",
+          "constraints": {
+            "band_max": 2,
+            "node_max": 2,
+            "day_role_allowed": [
+              "C",
+              "D"
+            ]
+          }
+        }
+      ],
+      "clear": [
+        "Easy walk 3 min",
+        "Stretch 3 min"
+      ],
+      "computed": {
+        "work_exercise_count": 6,
+        "work_sets_total": 16,
+        "working_rep_budget_total": 68,
+        "density_reps_total": 238,
+        "density_reps_per_min_est": 8.5
+      }
+    },
+    {
+      "day_name": "Friday",
+      "day_role": "B",
+      "blocks": {
+        "prime_minutes": 8,
+        "prep_minutes": 10,
+        "work_minutes": 28,
+        "clear_minutes": 6
+      },
+      "prime": [
+        "Shoulder/scap prep 8 min"
+      ],
+      "prep": [
+        "Ramp sets on first two compounds (not counted)"
+      ],
+      "work": [
+        {
+          "exercise_id": "ECA-PHY-0013",
+          "exercise_name": "Seated Cable Row",
+          "movement_family": "Pull",
+          "pattern_plane": "Horizontal",
+          "push_pull": "Pull",
+          "horiz_vert": "Horizontal",
+          "volume_class": "Assistance",
+          "compound_isolation": "Compound",
+          "uni_bi": "Bilateral",
+          "equipment": "Cable",
+          "band": 2,
+          "node": 2,
+          "h_node": "H1",
+          "sets": 4,
+          "reps": 10,
+          "rep_mode": "reps",
+          "sides": null,
+          "distance_m": null,
+          "duration_min": null,
+          "rest_sec": 120,
+          "counts_toward_working_rep_budget": true,
+          "rpe_cap": 9,
+          "notes": "Different bench angle/grip from Wed.",
+          "constraints": {
+            "band_max": 2,
+            "node_max": 3,
+            "day_role_allowed": [
+              "B",
+              "C"
+            ]
+          }
+        },
+        {
+          "exercise_id": "ECA-PHY-0011",
+          "exercise_name": "Pull-Up",
+          "movement_family": "Pull",
+          "pattern_plane": "Vertical",
+          "push_pull": "Pull",
+          "horiz_vert": "Vertical",
+          "volume_class": "Primary",
+          "compound_isolation": "Compound",
+          "uni_bi": "Bilateral",
+          "equipment": "Bodyweight",
+          "band": 2,
+          "node": 2,
+          "h_node": "H1",
+          "sets": 4,
+          "reps": 6,
+          "rep_mode": "reps",
+          "sides": null,
+          "distance_m": null,
+          "duration_min": null,
+          "rest_sec": 120,
+          "counts_toward_working_rep_budget": true,
+          "rpe_cap": 9,
+          "notes": "Alternate grip from Wed.",
+          "constraints": {
+            "band_max": 2,
+            "node_max": 3,
+            "day_role_allowed": [
+              "A",
+              "B",
+              "C"
+            ]
+          }
+        },
+        {
+          "exercise_id": "ECA-PHY-0017",
+          "exercise_name": "Dumbbell Biceps Curl",
+          "movement_family": "Elbow Flexion",
+          "pattern_plane": "Sagittal",
+          "push_pull": NaN,
+          "horiz_vert": NaN,
+          "volume_class": "Accessory",
+          "compound_isolation": "Isolation",
+          "uni_bi": "Bilateral",
+          "equipment": "Dumbbell",
+          "band": 2,
+          "node": 2,
+          "h_node": "H1",
+          "sets": 2,
+          "reps": 10,
+          "rep_mode": "reps",
+          "sides": null,
+          "distance_m": null,
+          "duration_min": null,
+          "rest_sec": 120,
+          "counts_toward_working_rep_budget": true,
+          "rpe_cap": 9,
+          "notes": null,
+          "constraints": {
+            "band_max": 2,
+            "node_max": 3,
+            "day_role_allowed": [
+              "B",
+              "C"
+            ]
+          }
+        },
+        {
+          "exercise_id": "ECA-PHY-0018",
+          "exercise_name": "Leg Extension",
+          "movement_family": "Knee Extension",
+          "pattern_plane": "Sagittal",
+          "push_pull": NaN,
+          "horiz_vert": NaN,
+          "volume_class": "Accessory",
+          "compound_isolation": "Isolation",
+          "uni_bi": "Bilateral",
+          "equipment": "Machine",
+          "band": 2,
+          "node": 2,
+          "h_node": "H1",
+          "sets": 1,
+          "reps": 6,
+          "rep_mode": "reps",
+          "sides": null,
+          "distance_m": null,
+          "duration_min": null,
+          "rest_sec": 120,
+          "counts_toward_working_rep_budget": true,
+          "rpe_cap": 9,
+          "notes": null,
+          "constraints": {
+            "band_max": 2,
+            "node_max": 3,
+            "day_role_allowed": [
+              "B",
+              "C"
+            ]
+          }
+        },
+        {
+          "exercise_id": "ECA-PHY-0014",
+          "exercise_name": "Lat Pulldown",
+          "movement_family": "Pull",
+          "pattern_plane": "Vertical",
+          "push_pull": "Pull",
+          "horiz_vert": "Vertical",
+          "volume_class": "Assistance",
+          "compound_isolation": "Compound",
+          "uni_bi": "Bilateral",
+          "equipment": "Cable",
+          "band": 1,
+          "node": 2,
+          "h_node": "H1",
+          "sets": 4,
+          "reps": 20,
+          "rep_mode": "reps",
+          "sides": null,
+          "distance_m": null,
+          "duration_min": null,
+          "rest_sec": 75,
+          "counts_toward_working_rep_budget": false,
+          "rpe_cap": 8,
+          "notes": null,
+          "constraints": {
+            "band_max": 2,
+            "node_max": 3,
+            "day_role_allowed": [
+              "B",
+              "C"
+            ]
+          }
+        },
+        {
+          "exercise_id": "ECA-PHY-0015",
+          "exercise_name": "Dumbbell Lateral Raise",
+          "movement_family": "Shoulder Isolation",
+          "pattern_plane": "Frontal",
+          "push_pull": NaN,
+          "horiz_vert": NaN,
+          "volume_class": "Accessory",
+          "compound_isolation": "Isolation",
+          "uni_bi": "Bilateral",
+          "equipment": "Dumbbell",
+          "band": 1,
+          "node": 2,
+          "h_node": "H1",
+          "sets": 4,
+          "reps": 15,
+          "rep_mode": "reps",
+          "sides": null,
+          "distance_m": null,
+          "duration_min": null,
+          "rest_sec": 75,
+          "counts_toward_working_rep_budget": false,
+          "rpe_cap": 8,
+          "notes": null,
+          "constraints": {
+            "band_max": 2,
+            "node_max": 3,
+            "day_role_allowed": [
+              "B",
+              "C"
+            ]
+          }
+        }
+      ],
+      "clear": [
+        "Easy stretch 6 min"
+      ],
+      "computed": {
+        "work_exercise_count": 6,
+        "work_sets_total": 19,
+        "working_rep_budget_total": 90,
+        "density_reps_total": 230,
+        "density_reps_per_min_est": 8.21
+      }
+    },
+    {
+      "day_name": "Saturday",
+      "day_role": "D",
+      "blocks": {
+        "prime_minutes": 8,
+        "prep_minutes": 10,
+        "work_minutes": 28,
+        "clear_minutes": 6
+      },
+      "prime": [
+        "Easy walk 8 min"
+      ],
+      "prep": [
+        "Mobility flow 10 min (not counted)"
+      ],
+      "work": [
+        {
+          "exercise_id": "ECA-PHY-0024",
+          "exercise_name": "Sled Drag (Light)",
+          "movement_family": "Carry/Sled",
+          "pattern_plane": "Sagittal",
+          "push_pull": NaN,
+          "horiz_vert": NaN,
+          "volume_class": "Assistance",
+          "compound_isolation": "Compound",
+          "uni_bi": "Bilateral",
+          "equipment": "Sled",
+          "band": 1,
+          "node": 1,
+          "h_node": "H1",
+          "sets": 6,
+          "reps": null,
+          "rep_mode": "distance_m",
+          "sides": null,
+          "distance_m": 20,
+          "duration_min": null,
+          "rest_sec": 60,
+          "counts_toward_working_rep_budget": false,
+          "rpe_cap": 4,
+          "notes": "Easy pace; nasal breathing.",
+          "constraints": {
+            "band_max": 1,
+            "node_max": 2,
+            "day_role_allowed": [
+              "D"
+            ]
+          }
+        },
+        {
+          "exercise_id": "ECA-PHY-0021",
+          "exercise_name": "Face Pull",
+          "movement_family": "Scapular/Rear Delt",
+          "pattern_plane": "Horizontal",
+          "push_pull": "Pull",
+          "horiz_vert": "Horizontal",
+          "volume_class": "Accessory",
+          "compound_isolation": "Isolation",
+          "uni_bi": "Bilateral",
+          "equipment": "Cable/Band",
+          "band": 1,
+          "node": 1,
+          "h_node": "H1",
+          "sets": 1,
+          "reps": 20,
+          "rep_mode": "reps",
+          "sides": null,
+          "distance_m": null,
+          "duration_min": null,
+          "rest_sec": 60,
+          "counts_toward_working_rep_budget": true,
+          "rpe_cap": 4,
+          "notes": null,
+          "constraints": {
+            "band_max": 1,
+            "node_max": 3,
+            "day_role_allowed": [
+              "C",
+              "D"
+            ]
+          }
+        },
+        {
+          "exercise_id": "ECA-PHY-0022",
+          "exercise_name": "Band External Rotation",
+          "movement_family": "Rotator Cuff",
+          "pattern_plane": "Transverse",
+          "push_pull": NaN,
+          "horiz_vert": NaN,
+          "volume_class": "Accessory",
+          "compound_isolation": "Isolation",
+          "uni_bi": "Unilateral",
+          "equipment": "Band",
+          "band": 1,
+          "node": 1,
+          "h_node": "H0",
+          "sets": 1,
+          "reps": 10,
+          "rep_mode": "per_side",
+          "sides": 2,
+          "distance_m": null,
+          "duration_min": null,
+          "rest_sec": 60,
+          "counts_toward_working_rep_budget": true,
+          "rpe_cap": 4,
+          "notes": "10/side",
+          "constraints": {
+            "band_max": 1,
+            "node_max": 2,
+            "day_role_allowed": [
+              "C",
+              "D",
+              "PRIME"
+            ]
+          }
+        }
+      ],
+      "clear": [
+        "Breathing 3 min",
+        "Stretch 3 min"
+      ],
+      "computed": {
+        "work_exercise_count": 3,
+        "work_sets_total": 8,
+        "working_rep_budget_total": 40,
+        "density_reps_total": 40,
+        "density_reps_per_min_est": 1.43
+      }
+    }
+  ]
+}

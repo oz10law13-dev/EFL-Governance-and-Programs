@@ -1,0 +1,68 @@
+{
+  "original_analysis": {
+    "DAY_A": {
+      "band_max": 3,
+      "node_max": 2,
+      "h_nodes_allowed": [
+        "H0",
+        "H1",
+        "H2"
+      ],
+      "h_node_numeric_max": 2
+    },
+    "DAY_B": {
+      "band_max": 2,
+      "node_max": 2,
+      "h_nodes_allowed": [
+        "H0",
+        "H1",
+        "H2",
+        "H3"
+      ],
+      "h_node_numeric_max": 3
+    },
+    "DAY_C": {
+      "band_max": 2,
+      "node_max": 1,
+      "h_nodes_allowed": [
+        "H0",
+        "H1",
+        "H2"
+      ],
+      "h_node_numeric_max": 2
+    },
+    "DAY_D": {
+      "band_max": 1,
+      "node_max": 1,
+      "h_nodes_allowed": [
+        "H0"
+      ],
+      "h_node_numeric_max": 0
+    }
+  },
+  "tempo_ceilings": {
+    "DAY_A": 2,
+    "DAY_B": 3,
+    "DAY_C": 2,
+    "DAY_D": 1
+  },
+  "issues": [
+    "DAY_B: Framework node_max=2 != Tempo h_node_max=3",
+    "DAY_C: Framework node_max=1 != Tempo h_node_max=2"
+  ],
+  "corrected_caps": {
+    "day_role_h_node_max": {
+      "DAY_A": 2,
+      "DAY_B": 3,
+      "DAY_C": 2,
+      "DAY_D": 1
+    },
+    "recommended_update": {
+      "DAY_C_node_max": "Increase to 2 (align Tempo)",
+      "field_rename": "node_max \u2192 day_role_h_node_max everywhere",
+      "dependencies_add": [
+        "Tempo Governance v1.1.2-ENFORCEMENT_CLEAN"
+      ]
+    }
+  }
+}

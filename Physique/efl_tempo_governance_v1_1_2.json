@@ -1,0 +1,615 @@
+{
+  "document_id": "EFL_TEMPO_GOVERNANCE_v1.1.2",
+  "version": "1.1.2",
+  "date_created": "2026-01-25",
+  "authority_level": "CORE",
+  "binding_order": 2,
+  "supersedes": "EFL_TEMPO_GOVERNANCE_v1.1.2",
+  "changelog": {
+    "1.1.1": [
+      "Added complete reason_codes registry (DCC/MCC) with descriptions and ledger fields",
+      "Formalized validator_contracts section with strict Pass 1/2 responsibilities",
+      "Added execution_order specification (PARSE \u2192 CEILING \u2192 MINIMUM \u2192 HNODE \u2192 DAY_ROLE_CAP \u2192 MCC_DOWNGRADE \u2192 LEDGER_WRITE)",
+      "Replaced 'silent clamp' with auditable MCC_TEMPO_ESCALATION_CLAMPED_TO_H3 reason code",
+      "Added day_role_cap_enforcement section with rule, failure actions by readiness, and Framework v2.1 dependency",
+      "Extended mcc_integration with allowed restriction types, deterministic downgrade sequence, and exact transformations",
+      "Added eccentric_minimum rules (class-based enforcement for non-ballistic ECICT)",
+      "Restricted X to C position only (removed from IT to eliminate semantic ambiguity)",
+      "Normalized H-nodes to numeric representation (H0=0, H1=1, H2=2, H3=3) with rendering rule",
+      "Added explicit TUT computation rule: TUT = E + IB + IT + C (C=X treated as 0)"
+    ],
+    "1.1.2": [
+      "Applied TEMPO_GOVERNANCE_PATCH_PACK_v1.1.2 (PATCH_001\u2013PATCH_005) to close enforcement gaps in v1.1.1",
+      "Aligned day-role cap naming to day_role_h_node_max (prevents node vs H-node collision)",
+      "Inserted Pass 1B (TEMPO_STRUCTURAL_SAFETY) into validator pass semantics (LAW-mode)",
+      "Added downgrade revalidation guard (downgrade cannot create Pass 1B violations)",
+      "Added whitelist tempo_class taxonomy requirement (or explicit mapping) for eccentric minimum enforcement",
+      "Appended reason-code registry entries for tempo codes (for integration into global reason_codes.json)"
+    ]
+  },
+  "description": "Canonical authority for tempo prescription, enforcement, and fatigue modulation in EFL adult_physique training programs. v1.1.1 is production-ready with complete validator contracts, reason code registry, and deterministic downgrade rules.",
+  "authority_hierarchy": {
+    "principle": "Tempo Governance operates UNDER DCC-Physique v1.2 authority. Tempo rules may REJECT a DCC-legal prescription if ceilings are exceeded, but cannot LEGALIZE an otherwise illegal prescription.",
+    "cascade": [
+      "1. DCC-Physique v1.2 (training law: band/node/family/day-role legality)",
+      "2. Tempo Governance v1.1.1 (structural safety: tempo ceilings, H-node modulation, eccentric minimums)",
+      "3. MCC v1.0 (accumulation control: TUT limits, tempo downgrade integration)"
+    ],
+    "conflict_resolution": {
+      "DCC_vs_Tempo": "DCC prevails",
+      "Tempo_vs_MCC": "Tempo prevails",
+      "principle": "Higher authority cannot be overridden by lower layers."
+    }
+  },
+  "notation_standard": {
+    "format": "ECICT",
+    "structure": "E:IB:IT:C",
+    "components": {
+      "E": {
+        "name": "Eccentric",
+        "type": "integer >= 0",
+        "description": "Lowering/lengthening phase (seconds)"
+      },
+      "IB": {
+        "name": "Isometric Bottom",
+        "type": "integer >= 0",
+        "description": "Pause at lengthened position (seconds)"
+      },
+      "IT": {
+        "name": "Isometric Top",
+        "type": "integer >= 0",
+        "description": "Pause at shortened position (seconds)",
+        "note": "X not allowed in IT v1.1.1",
+        "examples": [
+          "0",
+          "1"
+        ]
+      },
+      "C": {
+        "name": "Concentric",
+        "type": "integer >= 0 OR 'X'",
+        "description": "Lifting/shortening phase (seconds)",
+        "x_meaning": "Explosive concentric; treated as 0s for TUT"
+      }
+    },
+    "tut_calculation": {
+      "formula": "TUT_per_rep = E + IB + IT + C_effective",
+      "c_effective": "If C=X then C_effective = 0, else C_effective = C",
+      "examples": {
+        "example_1": "3:1:1:0 \u2192 5s",
+        "example_2": "5:2:0:1 \u2192 8s",
+        "example_3": "3:0:0:X \u2192 3s"
+      }
+    },
+    "parsing_rules": {
+      "X_treatment": "Valid only in C position; treated as 0 seconds for arithmetic",
+      "X_position_rule": "If 'X' appears in IT or any non-C position => reject (DCC_TEMPO_X_IN_INVALID_POSITION)"
+    }
+  },
+  "h_node_modulation": {
+    "principle": "h_node_effective = h_node_base + tempo_modifier + (optional escalation)",
+    "h_node_numeric": "H0=0, H1=1, H2=2, H3=3 (internal); render as 'H{n}' for humans",
+    "tempo_modifier_table": {
+      "rules": [
+        {
+          "id": "MOD_001",
+          "condition": "E <= 1",
+          "ISO_constraint": "any",
+          "modifier": -1
+        },
+        {
+          "id": "MOD_002",
+          "condition": "E in {2,3}",
+          "ISO_constraint": "ISO_total <= 2",
+          "modifier": 0
+        },
+        {
+          "id": "MOD_003",
+          "condition": "E == 4",
+          "ISO_constraint": "ISO_total <= 2",
+          "modifier": 1
+        },
+        {
+          "id": "MOD_004",
+          "condition": "E >= 5",
+          "ISO_constraint": "any",
+          "modifier": 2
+        },
+        {
+          "id": "MOD_005",
+          "condition": "E in {2,3}",
+          "ISO_constraint": "ISO_total >= 3",
+          "modifier": 1
+        },
+        {
+          "id": "MOD_006",
+          "condition": "E == 4",
+          "ISO_constraint": "ISO_total >= 3",
+          "modifier": 2
+        }
+      ],
+      "exhaustiveness": "All E values partitioned; each ISO_total checked; no gaps or overlaps"
+    },
+    "escalation_policy": {
+      "default_clamp": 3,
+      "escalation_flag": "tempo_can_escalate_hnode (per exercise in whitelist v1.0.3)",
+      "escalation_gate": "Requires escalation_opt_in=True in ledger context",
+      "rules": [
+        {
+          "condition": "h_effective > 3 AND tempo_can_escalate=False",
+          "action": "CLAMP to 3, emit MCC_TEMPO_ESCALATION_CLAMPED_TO_H3"
+        },
+        {
+          "condition": "h_effective > 3 AND tempo_can_escalate=True AND opt_in=False",
+          "action": "REJECT MCC_TEMPO_ESCALATION_REQUIRES_OPT_IN"
+        },
+        {
+          "condition": "h_effective > 3 AND tempo_can_escalate=True AND opt_in=True",
+          "action": "ACCEPT, emit TEMPO_ESCALATION_APPROVED"
+        }
+      ]
+    }
+  },
+  "eccentric_minimum_rules": {
+    "purpose": "Prevent unsafe zero-eccentric prescriptions for non-ballistic exercises",
+    "requires_taxonomy": true,
+    "taxonomy_field": "tempo_class",
+    "tempo_class_enum": [
+      "PRIMARY_COMPOUND",
+      "ASSISTANCE_COMPOUND",
+      "ACCESSORY_ISOLATION",
+      "BALLISTIC_EXPLOSIVE"
+    ],
+    "class_based_minimums": {
+      "PRIMARY_COMPOUND": 1,
+      "ASSISTANCE_COMPOUND": 1,
+      "ACCESSORY_ISOLATION": 0,
+      "BALLISTIC_EXPLOSIVE": 0
+    },
+    "mapping_fallback": {
+      "enabled": true,
+      "from_field": "volume_class",
+      "mapping_table": {
+        "PRIMARY": "PRIMARY_COMPOUND",
+        "ASSISTANCE": "ASSISTANCE_COMPOUND",
+        "ACCESSORY": "ACCESSORY_ISOLATION",
+        "BALLISTIC": "BALLISTIC_EXPLOSIVE"
+      },
+      "note": "Preferred: explicit tempo_class per exercise in whitelist v1.0.3+. Fallback mapping is provided for transitional compatibility."
+    },
+    "enforcement": "Pass 1B (TEMPO_STRUCTURAL_SAFETY): if E < class minimum and not a ballistic exception => REJECT (DCC_TEMPO_E_BELOW_MINIMUM)"
+  },
+  "tempo_ceilings": {
+    "purpose": "Structural safety limits per exercise",
+    "declared_in": "Whitelist v1.0.3",
+    "enforcement": "DCC Pass 1",
+    "violation_codes": [
+      "DCC_TEMPO_E_EXCEEDS_CEILING",
+      "DCC_TEMPO_IB_EXCEEDS_CEILING",
+      "DCC_TEMPO_IT_EXCEEDS_CEILING"
+    ]
+  },
+  "tempo_mode": {
+    "purpose": "Distinguish ECICT (repbased) from distance/duration movements",
+    "enum": [
+      "ECICT",
+      "N/A_DISTANCE",
+      "N/A_DURATION"
+    ],
+    "ECICT": "Standard rep-based; full validation",
+    "N/A_DISTANCE": "Carries/sleds; skip tempo validation",
+    "N/A_DURATION": "Holds; skip tempo validation, use duration field"
+  },
+  "explosive_concentric_treatment": {
+    "notation": "X in C position only",
+    "meaning": "Maximal intent / ballistic rep",
+    "tut": "Treat C=X as 0 seconds",
+    "h_node": "X in C does NOT elevate h_node (modifier from E + pauses only)",
+    "legality": "Requires explosive_concentric_allowed=True on exercise",
+    "enforcement_code": "DCC_TEMPO_EXPLOSIVE_NOT_ALLOWED_FOR_EXERCISE",
+    "legality_gate": {
+      "enforcement": "If tempo contains C=X and explosive_concentric_allowed=false => REJECT (DCC_TEMPO_EXPLOSIVE_NOT_ALLOWED_FOR_EXERCISE). If X appears outside C => REJECT (DCC_TEMPO_X_IN_INVALID_POSITION)."
+    }
+  },
+  "reason_codes": {
+    "purpose": "Formal registry of all codes emitted by validators",
+    "dcc_codes": {
+      "DCC_TEMPO_FORMAT_INVALID": "Tempo does not parse as E:IB:IT:C",
+      "DCC_TEMPO_E_EXCEEDS_CEILING": "E > exercise eccentric_max",
+      "DCC_TEMPO_IB_EXCEEDS_CEILING": "IB > exercise isometric_bottom_max",
+      "DCC_TEMPO_IT_EXCEEDS_CEILING": "IT > exercise isometric_top_max",
+      "DCC_TEMPO_E_BELOW_MINIMUM": "E < exercise eccentric_minimum AND not (explosive_concentric_allowed=True AND C=X)",
+      "DCC_TEMPO_EXPLOSIVE_NOT_ALLOWED_FOR_EXERCISE": "C=X but explosive_concentric_allowed=False",
+      "DCC_TEMPO_X_IN_INVALID_POSITION": "X in IT or other non-C position"
+    },
+    "mcc_codes": {
+      "MCC_TEMPO_ESCALATION_REQUIRES_OPT_IN": "h_effective > 3, tempo_can_escalate=True, but escalation_opt_in=False",
+      "MCC_TEMPO_ESCALATION_CLAMPED_TO_H3": "h_effective > 3, tempo_can_escalate=False; clamped with reason code emitted (auditable)",
+      "MCC_TEMPO_DOWNGRADED_FOR_NODE_MAX": "h_effective > day_role_node_max; downgrade sequence applied",
+      "MCC_TEMPO_DOWNGRADED_FOR_TUT_CEILING": "TUT_total > mcc_tut_ceiling; downgrade sequence applied",
+      "MCC_TEMPO_DOWNGRADE_CHAIN_EXHAUSTED": "Cannot downgrade further; exercise swap required"
+    },
+    "info_codes": {
+      "TEMPO_ESCALATION_APPROVED": "h_effective > 3, but escalation permitted (opt_in=True)",
+      "TEMPO_MODIFIED_BY_MCC": "DCC-valid tempo modified by MCC context"
+    }
+  },
+  "validator_contracts": {
+    "purpose": "Formal validator specs with input/output contracts",
+    "execution_order": [
+      "1. PARSE",
+      "2. CEILING",
+      "3. MINIMUM",
+      "4. HNODE",
+      "5. DAY_ROLE_CAP",
+      "6. MCC_DOWNGRADE",
+      "7. LEDGER_WRITE"
+    ],
+    "pass_1_dcc": {
+      "name": "DCC Pass 1: Structural Safety & Format",
+      "responsibility": "Reject prescriptions violating format, ceilings, minimums, or explosive gate",
+      "steps": [
+        "If tempo_mode != ECICT: return PASS (skip all checks)",
+        "Parse E:IB:IT:C; if invalid \u2192 REJECT DCC_TEMPO_FORMAT_INVALID",
+        "If X in IT or non-C position \u2192 REJECT DCC_TEMPO_X_IN_INVALID_POSITION",
+        "If E > eccentric_max \u2192 REJECT DCC_TEMPO_E_EXCEEDS_CEILING (same for IB, IT)",
+        "If E < eccentric_minimum AND NOT (explosive_concentric_allowed=True AND C=X) \u2192 REJECT DCC_TEMPO_E_BELOW_MINIMUM",
+        "If C=X AND explosive_concentric_allowed=False \u2192 REJECT DCC_TEMPO_EXPLOSIVE_NOT_ALLOWED_FOR_EXERCISE",
+        "All checks pass \u2192 PASS_DCC_1, proceed to Pass 2"
+      ],
+      "output": "PASS or REJECT with reason_code; parsed E,IB,IT,C"
+    },
+    "pass_2_mcc": {
+      "name": "MCC Pass 2: H-Node Modulation & Accumulation Control",
+      "responsibility": "Compute h_node, apply gates, enforce day-role caps, execute downgrade, emit reason codes",
+      "steps": [
+        "ISO_total = IB + IT",
+        "Apply modifier_table (E, ISO_total) \u2192 modifier",
+        "h_effective = h_base + modifier (numeric)",
+        "If h_effective > 3: apply escalation policy (clamp/reject/accept)",
+        "If h_effective > day_role_node_max: prepare downgrade",
+        "TUT_per_rep = E + IB + IT + (0 if C=X else C)",
+        "TUT_total = TUT_per_rep \u00d7 reps_prescribed",
+        "If TUT_total > tut_ceiling: execute downgrade_sequence",
+        "All constraints satisfied \u2192 final_tempo (original or downgraded)",
+        "Write ledger: final tempo, reason_codes, original/modified, h_numeric + h_render"
+      ],
+      "output": "PASS or REJECT or DOWNGRADED; h_numeric, h_render, final_tempo, tut_per_rep, tut_total, reason_codes"
+    }
+  },
+  "day_role_cap_enforcement": {
+    "rule": "h_node_effective <= day_role_h_node_max",
+    "dependency": "Framework v2.1 day-role H-node ceilings",
+    "day_role_h_node_max_values": {
+      "DAY_A": 2,
+      "DAY_B": 3,
+      "DAY_C": 2,
+      "DAY_D": 1
+    },
+    "failure_action": {
+      "GREEN": "REJECT (MCC_TEMPO_DOWNGRADE_CHAIN_EXHAUSTED if cannot satisfy via tempo downgrade)",
+      "YELLOW": "Attempt deterministic downgrade; if exhausted => REJECT/ESCALATE per MCC policy",
+      "RED": "Restrict further: downgrade or exercise swap required"
+    }
+  },
+  "mcc_integration": {
+    "principle": "Tempo is a constraint variable MCC can downgrade (reduce). ONLY downgrade method for tempo.",
+    "allowed_restriction_types": [
+      "DOWNGRADE_TEMPO (new v1.1.1)",
+      "REDUCE_VOLUME_REPS",
+      "REDUCE_VOLUME_SETS",
+      "SWAP_EXERCISE",
+      "REDUCE_NODE_BASE",
+      "REDUCE_TUT"
+    ],
+    "deterministic_downgrade_sequence": {
+      "purpose": "Apply transformations in strict order to preserve movement quality if tempo must be reduced",
+      "step_1": "REDUCE_PAUSE_IT: If IT > 0, decrement IT by 1; recalculate ISO_total, h_node, TUT. Repeat while IT > 0 and constraints violated.",
+      "step_2": "REDUCE_PAUSE_IB: If IB > 0, decrement IB by 1; recalculate. Repeat while IB > 0 and constraints violated.",
+      "step_3": "REDUCE_ECCENTRIC: If E > eccentric_minimum, decrement E by 1; recalculate. Repeat while E > eccentric_minimum and constraints violated.",
+      "step_4": "ENABLE_EXPLOSIVE: If explosive_concentric_allowed=True AND C != X, set C=X; recalculate TUT (C=0 for arithmetic). Note: Does NOT change h_node. Execute once.",
+      "step_5": "DOWNGRADE_EXHAUSTED: If after steps 1-4 constraints still violated, emit MCC_TEMPO_DOWNGRADE_CHAIN_EXHAUSTED. Exercise swap required."
+    }
+  },
+  "binding_dependencies": [
+    "DCC-Physique v1.2",
+    "Whitelist v1.0.3",
+    "Framework v2.1",
+    "MCC v1.0",
+    "Runtime Shell v1.0"
+  ],
+  "implementation_checklist": {
+    "validators": [
+      "Tempo parser",
+      "Ceiling validator",
+      "Minimum validator",
+      "Explosive gate",
+      "Modifier table matcher (6 rules)",
+      "H-node computer",
+      "Escalation gate",
+      "Day-role cap enforcer",
+      "TUT computer",
+      "Downgrade sequencer",
+      "Reason code emitter",
+      "Ledger writer"
+    ],
+    "test_cases": [
+      "Standard (3:1:1:0) on PRIMARY: passes DCC, no downgrade if within caps",
+      "E=0 on ACCESSORY: DCC rejects unless ballistic exception",
+      "E=5 with ISO_total=3: modifier=+2, h_node computed correctly",
+      "X in IT: DCC rejects (invalid position)",
+      "X in C on non-explosive: DCC rejects",
+      "h_effective=4 on DAY_A (cap=2): downgrade chain executed, final h_node<=2",
+      "TUT_total > ceiling: downgrade applied",
+      "Escalation with opt_in=False: MCC rejects",
+      "Escalation with opt_in=True, tempo_can_escalate=True: h_node allowed >3",
+      "Downgrade exhausted: exercise swap recommended"
+    ]
+  },
+  "status": "Production-ready",
+  "validator_pass_semantics": {
+    "pass_0": {
+      "name": "PARSE",
+      "mode": "PRE-LAW",
+      "responsibilities": [
+        "Parse prescription JSON",
+        "Validate required fields",
+        "Reject malformed input before law enforcement"
+      ]
+    },
+    "pass_1a": {
+      "name": "DCC_LEGALITY",
+      "mode": "LAW",
+      "authority": "DCC-Physique v1.2",
+      "responsibilities": [
+        "Validate band/node/family legality",
+        "Enforce day-role band constraints",
+        "Reject illegal exercise prescriptions per DCC"
+      ]
+    },
+    "pass_1b": {
+      "name": "TEMPO_STRUCTURAL_SAFETY",
+      "mode": "LAW",
+      "authority": "Tempo Governance v1.1.2",
+      "responsibilities": [
+        "Parse tempo string (E:IB:IT:C)",
+        "Validate tempo ceilings (E, IB, IT max per exercise)",
+        "Validate eccentric minimums (per tempo_class)",
+        "Enforce explosive concentric gate (C=X legality)",
+        "Enforce X position (C only)"
+      ],
+      "failure_reason_namespace": "DCC_TEMPO_*"
+    },
+    "pass_2": {
+      "name": "MCC_MODULATION",
+      "mode": "CONTEXT",
+      "authorities": [
+        "MCC v1.0",
+        "Tempo Governance v1.1.2"
+      ],
+      "responsibilities": [
+        "Compute tempo_modifier and h_node_effective",
+        "Apply escalation policy gate (approve / clamp with audit / reject)",
+        "Enforce day_role_h_node_max caps",
+        "Compute TUT and enforce MCC TUT ceilings",
+        "Execute deterministic tempo downgrade with revalidation",
+        "Write final prescription + reason codes to ledger"
+      ],
+      "failure_reason_namespace": "MCC_*"
+    },
+    "pass_3": {
+      "name": "ADVISORY",
+      "mode": "INFORMATIONAL",
+      "responsibilities": [
+        "Emit explanatory notes and advisory codes (non-binding)"
+      ]
+    },
+    "execution_order": [
+      "0. PARSE",
+      "1A. DCC_LEGALITY",
+      "1B. TEMPO_STRUCTURAL_SAFETY",
+      "2. MCC_MODULATION",
+      "3. ADVISORY"
+    ]
+  },
+  "deterministic_downgrade_sequence": {
+    "goal": "Reduce tempo-derived magnitude (H-node/TUT) without violating Pass 1B structural safety constraints.",
+    "steps": [
+      {
+        "step": 1,
+        "name": "REDUCE_PAUSE_IT",
+        "action": "While IT > 0 and constraints violated: IT -= 1; recompute ISO_total, h_node_effective, TUT",
+        "revalidation": [
+          "IT_ceiling"
+        ]
+      },
+      {
+        "step": 2,
+        "name": "REDUCE_PAUSE_IB",
+        "action": "While IB > 0 and constraints violated: IB -= 1; recompute ISO_total, h_node_effective, TUT",
+        "revalidation": [
+          "IB_ceiling"
+        ]
+      },
+      {
+        "step": 3,
+        "name": "REDUCE_ECCENTRIC",
+        "action": "While E > eccentric_minimum and constraints violated: E -= 1; recompute modifier, h_node_effective, TUT",
+        "revalidation": [
+          "E_minimum",
+          "E_ceiling"
+        ]
+      },
+      {
+        "step": 4,
+        "name": "ENABLE_EXPLOSIVE_CONCENTRIC",
+        "action": "If explosive_concentric_allowed=true and C != X: set C = X (treat as 0s for TUT)",
+        "revalidation": [
+          "explosive_gate",
+          "day_role_intent_gate_optional"
+        ]
+      },
+      {
+        "step": 5,
+        "name": "DOWNGRADE_EXHAUSTED",
+        "action": "If constraints still violated after steps 1-4 => emit MCC_TEMPO_DOWNGRADE_CHAIN_EXHAUSTED and require exercise swap."
+      }
+    ],
+    "revalidation_contract": {
+      "rule": "After each transformation, re-run the subset of Pass 1B checks relevant to the modified field.",
+      "checks_to_rerun": [
+        "Tempo ceilings (E_max, IB_max, IT_max)",
+        "Tempo minimums (eccentric_minimum per tempo_class)",
+        "Explosive gate (C=X legality)",
+        "X position rule (C only)"
+      ],
+      "failure_action": "Stop immediately and emit MCC_TEMPO_DOWNGRADE_REVALIDATION_FAILED with violated_constraint."
+    }
+  },
+  "reason_code_appendix_for_global_registry": {
+    "severity_scale": {
+      "NOTE": 1,
+      "INFO": 2,
+      "WARN": 3,
+      "ALERT": 4,
+      "REJECT": 5
+    },
+    "entries": [
+      {
+        "code": "DCC_TEMPO_FORMAT_INVALID",
+        "namespace": "DCC",
+        "allowed_passes": [
+          1
+        ],
+        "severity": 5,
+        "description": "Tempo string does not parse as E:IB:IT:C"
+      },
+      {
+        "code": "DCC_TEMPO_E_EXCEEDS_CEILING",
+        "namespace": "DCC",
+        "allowed_passes": [
+          1
+        ],
+        "severity": 5,
+        "description": "Eccentric duration E exceeds exercise-specific eccentric_max"
+      },
+      {
+        "code": "DCC_TEMPO_IB_EXCEEDS_CEILING",
+        "namespace": "DCC",
+        "allowed_passes": [
+          1
+        ],
+        "severity": 5,
+        "description": "Isometric bottom IB exceeds exercise-specific isometric_bottom_max"
+      },
+      {
+        "code": "DCC_TEMPO_IT_EXCEEDS_CEILING",
+        "namespace": "DCC",
+        "allowed_passes": [
+          1
+        ],
+        "severity": 5,
+        "description": "Isometric top IT exceeds exercise-specific isometric_top_max"
+      },
+      {
+        "code": "DCC_TEMPO_E_BELOW_MINIMUM",
+        "namespace": "DCC",
+        "allowed_passes": [
+          1
+        ],
+        "severity": 5,
+        "description": "Eccentric duration E below class-based minimum and not a ballistic exception"
+      },
+      {
+        "code": "DCC_TEMPO_EXPLOSIVE_NOT_ALLOWED_FOR_EXERCISE",
+        "namespace": "DCC",
+        "allowed_passes": [
+          1
+        ],
+        "severity": 5,
+        "description": "Tempo contains C=X but exercise.explosive_concentric_allowed=false"
+      },
+      {
+        "code": "DCC_TEMPO_X_IN_INVALID_POSITION",
+        "namespace": "DCC",
+        "allowed_passes": [
+          1
+        ],
+        "severity": 5,
+        "description": "Tempo contains X in IT or other non-C position (v1.1.1+ restriction)"
+      },
+      {
+        "code": "MCC_TEMPO_ESCALATION_REQUIRES_OPT_IN",
+        "namespace": "MCC",
+        "allowed_passes": [
+          2
+        ],
+        "severity": 5,
+        "description": "h_node_effective > 3, escalation allowed but escalation_opt_in=false"
+      },
+      {
+        "code": "MCC_TEMPO_ESCALATION_CLAMPED_TO_H3",
+        "namespace": "MCC",
+        "allowed_passes": [
+          2
+        ],
+        "severity": 3,
+        "description": "h_node_effective > 3, exercise does not allow escalation; clamped to H3 with audit trail"
+      },
+      {
+        "code": "MCC_TEMPO_DOWNGRADED_FOR_H_NODE_MAX",
+        "namespace": "MCC",
+        "allowed_passes": [
+          2
+        ],
+        "severity": 2,
+        "description": "h_node_effective exceeds day_role_h_node_max; tempo downgraded via deterministic sequence"
+      },
+      {
+        "code": "MCC_TEMPO_DOWNGRADED_FOR_TUT_CEILING",
+        "namespace": "MCC",
+        "allowed_passes": [
+          2
+        ],
+        "severity": 2,
+        "description": "Total TUT exceeds MCC TUT ceiling; tempo downgraded"
+      },
+      {
+        "code": "MCC_TEMPO_DOWNGRADE_CHAIN_EXHAUSTED",
+        "namespace": "MCC",
+        "allowed_passes": [
+          2
+        ],
+        "severity": 4,
+        "description": "Downgrade sequence exhausted; exercise swap required"
+      },
+      {
+        "code": "MCC_TEMPO_ESCALATION_APPROVED",
+        "namespace": "MCC",
+        "allowed_passes": [
+          2
+        ],
+        "severity": 2,
+        "description": "h_node_effective > 3, escalation permitted and approved"
+      },
+      {
+        "code": "MCC_TEMPO_MODIFIED_BY_MCC",
+        "namespace": "MCC",
+        "allowed_passes": [
+          2
+        ],
+        "severity": 2,
+        "description": "Tempo was DCC-legal but modified by MCC context"
+      },
+      {
+        "code": "MCC_TEMPO_DOWNGRADE_REVALIDATION_FAILED",
+        "namespace": "MCC",
+        "allowed_passes": [
+          2
+        ],
+        "severity": 4,
+        "description": "Downgrade transformation created a tempo that violates Pass 1B constraints; exercise swap required"
+      }
+    ]
+  }
+}

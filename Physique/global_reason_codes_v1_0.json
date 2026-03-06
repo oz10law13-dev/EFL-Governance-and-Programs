@@ -1,0 +1,762 @@
+{
+  "schema": "https://json-schema.org/draft/2020-12/schema",
+  "id": "https://elitefitlab.com/schemas/global-reason-codes-registry-v1.0.json",
+  "title": "EFL Global Reason Codes Registry v1.0",
+  "description": "Centralized registry of all reason codes emitted by EFL validators across DCC-Physique, Tempo Governance, MCC, and R2P systems. Defines namespace, allowed validation passes, severity, and ledger requirements for deterministic enforcement.",
+  "version": "1.0.0",
+  "date_created": "2026-01-25",
+  "enforcement_contract": {
+    "rule": "Runtime Shell MUST reject any reason code emitted from a validation pass not in its allowed_passes array.",
+    "namespace_enforcement": "All codes are namespaced (DCC/MCC/ADVISORY/R2P). Cross-namespace violations trigger validator bugs.",
+    "append_only_policy": "This registry is APPEND-ONLY. Never remove or rename existing codes. Add new codes via formal patch process only.",
+    "severity_scale": {
+      "1": "NOTE - Informational only, no action required",
+      "2": "INFO - Logged for audit trail, may inform future decisions",
+      "3": "WARN - Advisory flag, requires attention but not blocking",
+      "4": "ALERT - Requires immediate attention, may block or escalate",
+      "5": "REJECT - Hard rejection, prescription is illegal"
+    }
+  },
+  "validation_pass_structure": {
+    "pass_0": {
+      "name": "PARSE",
+      "mode": "PRE_LAW"
+    },
+    "pass_1a": {
+      "name": "DCC_LEGALITY",
+      "mode": "LAW",
+      "authority": "DCC-Physique v1.2"
+    },
+    "pass_1b": {
+      "name": "TEMPO_STRUCTURAL_SAFETY",
+      "mode": "LAW",
+      "authority": "Tempo Governance v1.1.2"
+    },
+    "pass_2": {
+      "name": "MCC_MODULATION",
+      "mode": "CONTEXT",
+      "authorities": [
+        "MCC v1.0",
+        "Tempo Governance v1.1.2"
+      ]
+    },
+    "pass_3": {
+      "name": "ADVISORY",
+      "mode": "INFORMATIONAL"
+    }
+  },
+  "reason_codes": [
+    {
+      "code": "ADVISORY_DEFAULT_APPLIED",
+      "namespace": "ADVISORY",
+      "allowed_passes": [
+        0,
+        3
+      ],
+      "severity": 1,
+      "severity_label": "NOTE",
+      "description": "Safe default value applied for missing optional input field",
+      "authority": "Global Input Gate Policy",
+      "ledger_fields": [
+        "field_name",
+        "default_value",
+        "reason",
+        "reason_code"
+      ],
+      "introduced_version": "1.0.0"
+    },
+    {
+      "code": "ADVISORY_PSYCH_READINESS_LOW",
+      "namespace": "ADVISORY",
+      "allowed_passes": [
+        3
+      ],
+      "severity": 1,
+      "severity_label": "NOTE",
+      "description": "ACL-RSI score <40 or TSK-11 >35; consider psychological support (non-blocking)",
+      "authority": "R2P-ACL Input Gate v1.0",
+      "ledger_fields": [
+        "acl_rsi",
+        "tsk_11",
+        "reason_code"
+      ],
+      "introduced_version": "1.0.0"
+    },
+    {
+      "code": "DCC_TEMPO_EXPLOSIVE_NOT_ALLOWED_FOR_EXERCISE",
+      "namespace": "DCC",
+      "allowed_passes": [
+        1
+      ],
+      "severity": 5,
+      "severity_label": "REJECT",
+      "description": "Tempo contains C=X (explosive concentric) but exercise.explosive_concentric_allowed=false",
+      "authority": "Tempo Governance v1.1.2",
+      "ledger_fields": [
+        "tempo_prescribed",
+        "exercise_id",
+        "explosive_concentric_allowed",
+        "reason_code"
+      ],
+      "introduced_version": "1.1.2"
+    },
+    {
+      "code": "DCC_TEMPO_E_BELOW_MINIMUM",
+      "namespace": "DCC",
+      "allowed_passes": [
+        1
+      ],
+      "severity": 5,
+      "severity_label": "REJECT",
+      "description": "Eccentric duration E below class-based minimum and not a ballistic exception (explosive_concentric_allowed=True AND C=X)",
+      "authority": "Tempo Governance v1.1.2",
+      "ledger_fields": [
+        "tempo_prescribed",
+        "E_value",
+        "E_minimum",
+        "tempo_class",
+        "exercise_id",
+        "reason_code"
+      ],
+      "introduced_version": "1.1.2"
+    },
+    {
+      "code": "DCC_TEMPO_E_EXCEEDS_CEILING",
+      "namespace": "DCC",
+      "allowed_passes": [
+        1
+      ],
+      "severity": 5,
+      "severity_label": "REJECT",
+      "description": "Eccentric duration E exceeds exercise-specific eccentric_max ceiling",
+      "authority": "Tempo Governance v1.1.2",
+      "ledger_fields": [
+        "tempo_prescribed",
+        "E_value",
+        "E_max",
+        "exercise_id",
+        "reason_code"
+      ],
+      "introduced_version": "1.1.2"
+    },
+    {
+      "code": "DCC_TEMPO_FORMAT_INVALID",
+      "namespace": "DCC",
+      "allowed_passes": [
+        1
+      ],
+      "severity": 5,
+      "severity_label": "REJECT",
+      "description": "Tempo string does not parse as E:IB:IT:C format",
+      "authority": "Tempo Governance v1.1.2",
+      "ledger_fields": [
+        "tempo_original",
+        "parse_error",
+        "reason_code"
+      ],
+      "introduced_version": "1.1.2"
+    },
+    {
+      "code": "DCC_TEMPO_IB_EXCEEDS_CEILING",
+      "namespace": "DCC",
+      "allowed_passes": [
+        1
+      ],
+      "severity": 5,
+      "severity_label": "REJECT",
+      "description": "Isometric bottom IB exceeds exercise-specific isometric_bottom_max ceiling",
+      "authority": "Tempo Governance v1.1.2",
+      "ledger_fields": [
+        "tempo_prescribed",
+        "IB_value",
+        "IB_max",
+        "exercise_id",
+        "reason_code"
+      ],
+      "introduced_version": "1.1.2"
+    },
+    {
+      "code": "DCC_TEMPO_IT_EXCEEDS_CEILING",
+      "namespace": "DCC",
+      "allowed_passes": [
+        1
+      ],
+      "severity": 5,
+      "severity_label": "REJECT",
+      "description": "Isometric top IT exceeds exercise-specific isometric_top_max ceiling",
+      "authority": "Tempo Governance v1.1.2",
+      "ledger_fields": [
+        "tempo_prescribed",
+        "IT_value",
+        "IT_max",
+        "exercise_id",
+        "reason_code"
+      ],
+      "introduced_version": "1.1.2"
+    },
+    {
+      "code": "DCC_TEMPO_X_IN_INVALID_POSITION",
+      "namespace": "DCC",
+      "allowed_passes": [
+        1
+      ],
+      "severity": 5,
+      "severity_label": "REJECT",
+      "description": "Tempo contains X in IT or other non-C position (v1.1.1+ restriction: X valid only in C position)",
+      "authority": "Tempo Governance v1.1.2",
+      "ledger_fields": [
+        "tempo_prescribed",
+        "X_position",
+        "reason_code"
+      ],
+      "introduced_version": "1.1.2"
+    },
+    {
+      "code": "MCC_ADJACENCY_VIOLATION",
+      "namespace": "MCC",
+      "allowed_passes": [
+        2
+      ],
+      "severity": 5,
+      "severity_label": "REJECT",
+      "description": "Forbidden adjacency pattern detected (B\u2192B, A_BAND3\u2192B, B\u2192C_NODE3, 3\u00d7 consecutive NODE3)",
+      "authority": "MCC v1.0",
+      "ledger_fields": [
+        "pattern_detected",
+        "day_sequence",
+        "reason_code"
+      ],
+      "introduced_version": "1.0.0"
+    },
+    {
+      "code": "MCC_BAND_NODE_ILLEGAL_COMBINATION",
+      "namespace": "MCC",
+      "allowed_passes": [
+        2
+      ],
+      "severity": 5,
+      "severity_label": "REJECT",
+      "description": "Band/Node combination violates DCC-Physique v1.2 legal pairings",
+      "authority": "MCC v1.0",
+      "ledger_fields": [
+        "band",
+        "node",
+        "exercise_id",
+        "reason_code"
+      ],
+      "introduced_version": "1.0.0"
+    },
+    {
+      "code": "MCC_DAY_A_PATTERN_GUARANTEE_VIOLATED",
+      "namespace": "MCC",
+      "allowed_passes": [
+        2
+      ],
+      "severity": 5,
+      "severity_label": "REJECT",
+      "description": "Frequency composition violates DAY_A minimum guarantee (\u22651 DAY_A required)",
+      "authority": "MCC v1.0",
+      "ledger_fields": [
+        "day_a_count",
+        "frequency",
+        "reason_code"
+      ],
+      "introduced_version": "1.0.0"
+    },
+    {
+      "code": "MCC_D_MINIMUM_VIOLATED",
+      "namespace": "MCC",
+      "allowed_passes": [
+        2
+      ],
+      "severity": 5,
+      "severity_label": "REJECT",
+      "description": "DAY_D minimum frequency requirement violated (\u22651 DAY_D at 5\u00d7/week, \u22652 at 6\u00d7/week)",
+      "authority": "MCC v1.0",
+      "ledger_fields": [
+        "frequency",
+        "day_d_count",
+        "d_minimum_required",
+        "reason_code"
+      ],
+      "introduced_version": "1.0.0"
+    },
+    {
+      "code": "MCC_MULTI_AXIS_PROGRESSION_VIOLATION",
+      "namespace": "MCC",
+      "allowed_passes": [
+        2
+      ],
+      "severity": 5,
+      "severity_label": "REJECT",
+      "description": "Exercise violates ONE_AXIS_AT_A_TIME progression rule (EPA v1.0.2)",
+      "authority": "MCC v1.0",
+      "ledger_fields": [
+        "exercise_id",
+        "axes_modified",
+        "reason_code"
+      ],
+      "introduced_version": "1.0.0"
+    },
+    {
+      "code": "MCC_NODE_PERMISSION_VIOLATION",
+      "namespace": "MCC",
+      "allowed_passes": [
+        2
+      ],
+      "severity": 5,
+      "severity_label": "REJECT",
+      "description": "NODE assignment exceeds exercise nodemax permission gate",
+      "authority": "MCC v1.0",
+      "ledger_fields": [
+        "node_prescribed",
+        "node_max",
+        "exercise_id",
+        "reason_code"
+      ],
+      "introduced_version": "1.0.0"
+    },
+    {
+      "code": "MCC_TEMPO_ESCALATION_REQUIRES_OPT_IN",
+      "namespace": "MCC",
+      "allowed_passes": [
+        2
+      ],
+      "severity": 5,
+      "severity_label": "REJECT",
+      "description": "h_node_effective > 3, exercise allows tempo escalation (tempo_can_escalate_hnode=True) but client has not opted in (escalation_opt_in=false)",
+      "authority": "Tempo Governance v1.1.2",
+      "ledger_fields": [
+        "h_node_effective",
+        "tempo_can_escalate_hnode",
+        "escalation_opt_in",
+        "exercise_id",
+        "reason_code"
+      ],
+      "introduced_version": "1.1.2"
+    },
+    {
+      "code": "MCC_BAND3_PATTERN_EXCEEDED",
+      "namespace": "MCC",
+      "allowed_passes": [
+        2
+      ],
+      "severity": 4,
+      "severity_label": "ALERT",
+      "description": "BAND 3 exposure exceeds pattern limits within evaluation window",
+      "authority": "MCC v1.0",
+      "ledger_fields": [
+        "band3_sets",
+        "pattern_limit",
+        "window_days",
+        "reason_code"
+      ],
+      "introduced_version": "1.0.0"
+    },
+    {
+      "code": "MCC_H3_AGGREGATE_EXCEEDED",
+      "namespace": "MCC",
+      "allowed_passes": [
+        2
+      ],
+      "severity": 4,
+      "severity_label": "ALERT",
+      "description": "H3 aggregate cap exceeded (>3 H3 sessions per week OR >2 H3 archetypes per session)",
+      "authority": "MCC v1.0",
+      "ledger_fields": [
+        "h3_sessions_week",
+        "h3_archetypes_session",
+        "reason_code"
+      ],
+      "introduced_version": "1.0.0"
+    },
+    {
+      "code": "MCC_READINESS_BAND_MISMATCH",
+      "namespace": "MCC",
+      "allowed_passes": [
+        2
+      ],
+      "severity": 4,
+      "severity_label": "ALERT",
+      "description": "BAND assignment incompatible with readiness state (e.g., BAND 3 on YELLOW/RED)",
+      "authority": "MCC v1.0",
+      "ledger_fields": [
+        "band",
+        "readiness_state",
+        "reason_code"
+      ],
+      "introduced_version": "1.0.0"
+    },
+    {
+      "code": "MCC_READINESS_VIOLATION",
+      "namespace": "MCC",
+      "allowed_passes": [
+        2
+      ],
+      "severity": 4,
+      "severity_label": "ALERT",
+      "description": "Session prescription exceeds readiness-adjusted envelopes",
+      "authority": "MCC v1.0",
+      "ledger_fields": [
+        "readiness_state",
+        "constraint_violated",
+        "reason_code"
+      ],
+      "introduced_version": "1.0.0"
+    },
+    {
+      "code": "MCC_ROUTE_SATURATION_VIOLATION",
+      "namespace": "MCC",
+      "allowed_passes": [
+        2
+      ],
+      "severity": 4,
+      "severity_label": "ALERT",
+      "description": "Training route saturation limit exceeded (e.g., MAX_STRENGTH_EXPRESSION >2 consecutive mesos)",
+      "authority": "MCC v1.0",
+      "ledger_fields": [
+        "route",
+        "consecutive_mesos",
+        "saturation_limit",
+        "reason_code"
+      ],
+      "introduced_version": "1.0.0"
+    },
+    {
+      "code": "MCC_SESSION_VOLUME_EXCEEDED",
+      "namespace": "MCC",
+      "allowed_passes": [
+        2
+      ],
+      "severity": 4,
+      "severity_label": "ALERT",
+      "description": "Session total working sets exceed MCC session volume ceiling",
+      "authority": "MCC v1.0",
+      "ledger_fields": [
+        "session_sets",
+        "session_ceiling",
+        "reason_code"
+      ],
+      "introduced_version": "1.0.0"
+    },
+    {
+      "code": "MCC_SFI_EXCESSIVE_WARNING",
+      "namespace": "MCC",
+      "allowed_passes": [
+        2
+      ],
+      "severity": 4,
+      "severity_label": "ALERT",
+      "description": "Session Fatigue Index (SFI) in excessive range",
+      "authority": "MCC v1.0",
+      "ledger_fields": [
+        "sfi_value",
+        "threshold_status",
+        "reason_code"
+      ],
+      "introduced_version": "1.0.0"
+    },
+    {
+      "code": "MCC_TEMPO_DOWNGRADE_CHAIN_EXHAUSTED",
+      "namespace": "MCC",
+      "allowed_passes": [
+        2
+      ],
+      "severity": 4,
+      "severity_label": "ALERT",
+      "description": "Downgrade sequence exhausted (all steps applied but constraints still violated); exercise swap required",
+      "authority": "Tempo Governance v1.1.2",
+      "ledger_fields": [
+        "constraint_violated",
+        "tempo_final",
+        "h_node_final",
+        "TUT_final",
+        "downgrade_steps_applied",
+        "reason_code"
+      ],
+      "introduced_version": "1.1.2"
+    },
+    {
+      "code": "MCC_TEMPO_DOWNGRADE_REVALIDATION_FAILED",
+      "namespace": "MCC",
+      "allowed_passes": [
+        2
+      ],
+      "severity": 4,
+      "severity_label": "ALERT",
+      "description": "Downgrade transformation created a tempo that violates Pass 1B structural safety constraints; exercise swap required (fail-closed enforcement)",
+      "authority": "Tempo Governance v1.1.2",
+      "ledger_fields": [
+        "tempo_after_transformation",
+        "violated_constraint",
+        "downgrade_step",
+        "reason_code"
+      ],
+      "introduced_version": "1.1.2"
+    },
+    {
+      "code": "MCC_C_DAY_MESO_ROTATION_VIOLATION",
+      "namespace": "MCC",
+      "allowed_passes": [
+        2
+      ],
+      "severity": 3,
+      "severity_label": "WARN",
+      "description": "DAY_C tissue focus repeated for >2 consecutive weeks (meso rotation rule)",
+      "authority": "MCC v1.0",
+      "ledger_fields": [
+        "c_day_focus",
+        "consecutive_weeks",
+        "reason_code"
+      ],
+      "introduced_version": "1.0.0"
+    },
+    {
+      "code": "MCC_DENSITY_LEDGER_EXCEEDED",
+      "namespace": "MCC",
+      "allowed_passes": [
+        2
+      ],
+      "severity": 3,
+      "severity_label": "WARN",
+      "description": "Density ledger thresholds exceeded (BAND2\u00d7NODE3 or total NODE3 sets)",
+      "authority": "MCC v1.0",
+      "ledger_fields": [
+        "band2_node3_sets",
+        "total_node3_sets",
+        "threshold_status",
+        "reason_code"
+      ],
+      "introduced_version": "1.0.0"
+    },
+    {
+      "code": "MCC_PATTERN_BALANCE_VIOLATED",
+      "namespace": "MCC",
+      "allowed_passes": [
+        2
+      ],
+      "severity": 3,
+      "severity_label": "WARN",
+      "description": "Pattern balance thresholds violated (push/pull, horizontal/vertical, frontal percentages)",
+      "authority": "MCC v1.0",
+      "ledger_fields": [
+        "push_percent",
+        "pull_percent",
+        "horizontal_percent",
+        "vertical_percent",
+        "frontal_percent",
+        "reason_code"
+      ],
+      "introduced_version": "1.0.0"
+    },
+    {
+      "code": "MCC_SFI_ELEVATED_WARNING",
+      "namespace": "MCC",
+      "allowed_passes": [
+        2
+      ],
+      "severity": 3,
+      "severity_label": "WARN",
+      "description": "Session Fatigue Index (SFI) in elevated range",
+      "authority": "MCC v1.0",
+      "ledger_fields": [
+        "sfi_value",
+        "threshold_status",
+        "reason_code"
+      ],
+      "introduced_version": "1.0.0"
+    },
+    {
+      "code": "MCC_TEMPO_ESCALATION_CLAMPED_TO_H3",
+      "namespace": "MCC",
+      "allowed_passes": [
+        2
+      ],
+      "severity": 3,
+      "severity_label": "WARN",
+      "description": "h_node_effective > 3, but exercise does not allow escalation (tempo_can_escalate_hnode=False); clamped to H3 with audit trail",
+      "authority": "Tempo Governance v1.1.2",
+      "ledger_fields": [
+        "h_node_computed",
+        "h_node_clamped",
+        "tempo_can_escalate_hnode",
+        "exercise_id",
+        "reason_code"
+      ],
+      "introduced_version": "1.1.2"
+    },
+    {
+      "code": "MCC_TEMPO_DOWNGRADED_FOR_H_NODE_MAX",
+      "namespace": "MCC",
+      "allowed_passes": [
+        2
+      ],
+      "severity": 2,
+      "severity_label": "INFO",
+      "description": "h_node_effective exceeds day_role_h_node_max ceiling; tempo downgraded via deterministic sequence",
+      "authority": "Tempo Governance v1.1.2",
+      "ledger_fields": [
+        "h_node_original",
+        "h_node_final",
+        "day_role_h_node_max",
+        "day_role",
+        "tempo_original",
+        "tempo_final",
+        "downgrade_steps",
+        "reason_code"
+      ],
+      "introduced_version": "1.1.2"
+    },
+    {
+      "code": "MCC_TEMPO_DOWNGRADED_FOR_TUT_CEILING",
+      "namespace": "MCC",
+      "allowed_passes": [
+        2
+      ],
+      "severity": 2,
+      "severity_label": "INFO",
+      "description": "Total TUT (time under tension) exceeds MCC TUT ceiling; tempo downgraded via deterministic sequence",
+      "authority": "Tempo Governance v1.1.2",
+      "ledger_fields": [
+        "TUT_original",
+        "TUT_final",
+        "TUT_ceiling",
+        "tempo_original",
+        "tempo_final",
+        "downgrade_steps",
+        "reason_code"
+      ],
+      "introduced_version": "1.1.2"
+    },
+    {
+      "code": "MCC_TEMPO_ESCALATION_APPROVED",
+      "namespace": "MCC",
+      "allowed_passes": [
+        2
+      ],
+      "severity": 2,
+      "severity_label": "INFO",
+      "description": "h_node_effective > 3, escalation permitted (tempo_can_escalate_hnode=True) and client opted in (escalation_opt_in=True)",
+      "authority": "Tempo Governance v1.1.2",
+      "ledger_fields": [
+        "h_node_effective",
+        "tempo_can_escalate_hnode",
+        "escalation_opt_in",
+        "reason_code"
+      ],
+      "introduced_version": "1.1.2"
+    },
+    {
+      "code": "MCC_TEMPO_MODIFIED_BY_MCC",
+      "namespace": "MCC",
+      "allowed_passes": [
+        2
+      ],
+      "severity": 2,
+      "severity_label": "INFO",
+      "description": "Tempo was DCC-legal but modified by MCC context (readiness, accumulation, or day-role constraints)",
+      "authority": "Tempo Governance v1.1.2",
+      "ledger_fields": [
+        "tempo_original",
+        "tempo_final",
+        "modification_reason",
+        "reason_code"
+      ],
+      "introduced_version": "1.1.2"
+    },
+    {
+      "code": "R2P_HARDSTOP_TRIGGERED",
+      "namespace": "R2P",
+      "allowed_passes": [
+        0
+      ],
+      "severity": 5,
+      "severity_label": "REJECT",
+      "description": "ACL hardstop symptom detected (pain\u22654, effusion, giving way, limp, sharp pain, or pain spike)",
+      "authority": "R2P-ACL Input Gate v1.0",
+      "ledger_fields": [
+        "hardstop_symptoms",
+        "symptom_assessment_date",
+        "reason_code"
+      ],
+      "introduced_version": "1.0.0"
+    },
+    {
+      "code": "R2P_MISSING_CRITICAL_INPUTS",
+      "namespace": "R2P",
+      "allowed_passes": [
+        0
+      ],
+      "severity": 5,
+      "severity_label": "REJECT",
+      "description": "Required input fields missing (athlete context, medical context, or training context)",
+      "authority": "R2P-ACL Input Gate v1.0",
+      "ledger_fields": [
+        "missing_fields",
+        "reason_code"
+      ],
+      "introduced_version": "1.0.0"
+    },
+    {
+      "code": "R2P_PROVIDER_CLEARANCE_MISSING",
+      "namespace": "R2P",
+      "allowed_passes": [
+        0
+      ],
+      "severity": 5,
+      "severity_label": "REJECT",
+      "description": "Session includes exposure (running/COD/full sport) without explicit provider clearance",
+      "authority": "R2P-ACL Input Gate v1.0",
+      "ledger_fields": [
+        "exposure_type",
+        "clearance_status",
+        "reason_code"
+      ],
+      "introduced_version": "1.0.0"
+    },
+    {
+      "code": "R2P_STAGE_CEILING_EXCEEDED",
+      "namespace": "R2P",
+      "allowed_passes": [
+        2
+      ],
+      "severity": 5,
+      "severity_label": "REJECT",
+      "description": "Prescription exceeds stage-specific envelope (Band/Node/E-node ceiling)",
+      "authority": "R2P-ACL Wrapper v1.1",
+      "ledger_fields": [
+        "stage",
+        "ceiling_type",
+        "prescribed_value",
+        "ceiling_value",
+        "reason_code"
+      ],
+      "introduced_version": "1.1.0"
+    },
+    {
+      "code": "R2P_YOUTH_RTS_ADVISORY",
+      "namespace": "R2P",
+      "allowed_passes": [
+        3
+      ],
+      "severity": 3,
+      "severity_label": "WARN",
+      "description": "Youth athlete (<18) entering S5 before 52 weeks post-op (advisory, non-blocking)",
+      "authority": "R2P-ACL Wrapper v1.1",
+      "ledger_fields": [
+        "age",
+        "weeks_post_op",
+        "stage",
+        "reason_code"
+      ],
+      "introduced_version": "1.1.0"
+    }
+  ],
+  "total_codes": 39,
+  "codes_by_namespace": {
+    "DCC": 7,
+    "MCC": 25,
+    "R2P": 5,
+    "ADVISORY": 2
+  }
+}
