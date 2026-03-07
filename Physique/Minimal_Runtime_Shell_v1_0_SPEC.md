@@ -7,8 +7,10 @@
 **Authority Dependencies:**
 - DCC-Physique v1.2.1 (immutable law)
 - ECA v1.2 (exercise catalog authority)
+- efl_tempo_governance_v1_1_2_ENFORCEMENT_CLEAN.json (active tempo authority under DCC)
 - MCC v1.0.0/v1.0.1-PATCHPACK (meso constraint controller)
 - LLM Execution Protocol v1.0 (runtime behavior contract)
+**Authority Boundary Note:** This runtime shell is enforcement infrastructure, not a competing law source. It is subordinate to controlling `Physique/DCC-Physique-v1.2.1-PATCHED.md` and active tempo authority `Physique/efl_tempo_governance_v1_1_2_ENFORCEMENT_CLEAN.json`.
 
 ---
 

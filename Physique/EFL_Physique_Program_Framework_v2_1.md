@@ -9,6 +9,7 @@
 - MCC v1.0.0/v1.0.1-PATCHPACK (meso constraint controller)
 - ECA v1.2 (exercise catalog)
 - Minimal Runtime Shell v1.0 (enforcement infrastructure)
+**Authority Boundary Note:** This framework is subordinate support guidance. Controlling law is `Physique/DCC-Physique-v1.2.1-PATCHED.md`; active tempo authority under DCC is `Physique/efl_tempo_governance_v1_1_2_ENFORCEMENT_CLEAN.json`.
 
 ---
 

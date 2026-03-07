@@ -1013,8 +1013,6 @@ The following movement families **must have complete ECA coverage** to support c
 
 **Runtime Boundary Clarification (Whitelist/ECA → MCC):** Law-level runtime `horiz_vert` taxonomy for pattern-balance enforcement remains `horizontal|vertical|sagittal|frontal`. Whitelist/ECA authoring may retain richer labels (e.g., `Incline`) but those labels are not injected directly into MCC schema fields; runtime must apply an explicit, deterministic normalization adapter before MCC validation. If no mapping is defined, validation fails closed (no implicit collapse/defaulting).
 
-**Runtime Boundary Clarification (Whitelist/ECA → MCC):** Law-level runtime `horiz_vert` taxonomy for pattern-balance enforcement remains `horizontal|vertical|sagittal|frontal`. Whitelist/ECA authoring may retain richer labels (e.g., `Incline`) but those labels are not injected directly into MCC schema fields; runtime must apply an explicit, deterministic normalization adapter before MCC validation. If no mapping is defined, validation fails closed (no implicit collapse/defaulting).
-
 ---
 
 #### L-02 Dual-Tagged Exercises: Explicit Split-Counting
