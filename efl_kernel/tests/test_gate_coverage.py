@@ -52,6 +52,7 @@
 # MCC_SESSION_DURATION_EXCEEDED
 # MCC_VOLUME_CLASS_OVERRIDE_ATTEMPT
 # MCC_WORK_BLOCK_INSUFFICIENT
+# MCC_ECA_SLOT_UNRESOLVABLE
 
 from efl_kernel.kernel.registry import validate_bidirectional_coverage
 
@@ -59,3 +60,50 @@ from efl_kernel.kernel.registry import validate_bidirectional_coverage
 def test_registry_coverage_markers_present():
     missing = validate_bidirectional_coverage()
     assert missing == {}
+
+
+def test_slot_unknown_eca_id_emits_unresolvable(tmp_path):
+    from datetime import date, timedelta
+    from fastapi.testclient import TestClient
+    from efl_kernel.kernel.ral import RAL_SPEC
+    from efl_kernel.service import create_app
+
+    PHY_REG = RAL_SPEC["moduleRegistration"]["PHYSIQUE"]
+    _ANCHOR = date(2026, 1, 1)
+    app = create_app(str(tmp_path / "test.db"))
+    app.state.op_store.upsert_athlete({
+        "athlete_id": "ATH-UNRESOLVABLE",
+        "max_daily_contact_load": 9999.0,
+        "minimum_rest_interval_hours": 0.0,
+        "e4_clearance": 1,
+    })
+    client = TestClient(app)
+    payload = {
+        "moduleVersion": PHY_REG["moduleVersion"],
+        "moduleViolationRegistryVersion": PHY_REG["moduleViolationRegistryVersion"],
+        "registryHash": PHY_REG["registryHash"],
+        "objectID": "obj-unresolvable-test",
+        "evaluationContext": {"athleteID": "ATH-UNRESOLVABLE", "sessionID": "S-UNRESOLVABLE"},
+        "windowContext": [
+            {"windowType": "ROLLING7DAYS", "anchorDate": _ANCHOR.isoformat(),
+             "startDate": (_ANCHOR - timedelta(days=7)).isoformat(),
+             "endDate": _ANCHOR.isoformat(), "timezone": "UTC"},
+            {"windowType": "ROLLING28DAYS", "anchorDate": _ANCHOR.isoformat(),
+             "startDate": (_ANCHOR - timedelta(days=28)).isoformat(),
+             "endDate": _ANCHOR.isoformat(), "timezone": "UTC"},
+        ],
+        "physique_session": {"exercises": [{"exercise_id": "ECA-PHY-0001", "tempo": "3:0:1:0"}]},
+        "context": {"athlete_id": "ATH-UNRESOLVABLE"},
+        "day_slots": [{"day_role": "DAY_C", "exercises": [{
+            "eca_id": "ECA-NONEXISTENT-999",
+            "band": 1, "node": 1, "role": "WORK", "set_count": 3,
+        }]}],
+    }
+    resp = client.post("/evaluate/physique", json=payload)
+    codes = [v["code"] for v in resp.json().get("violations", [])]
+    assert "MCC_ECA_SLOT_UNRESOLVABLE" in codes
+    assert "MCC_NODE_PERMISSION_VIOLATION" not in codes
+    assert "MCC_DAY_D_INTENT_VIOLATION" not in codes
+    assert "MCC_TEMPO_DOWNGRADED_FOR_H_NODE_MAX" not in codes
+    assert "MCC_TEMPO_DOWNGRADE_CHAIN_EXHAUSTED" not in codes
+    assert "MCC_TEMPO_DOWNGRADE_REVALIDATION_FAILED" not in codes

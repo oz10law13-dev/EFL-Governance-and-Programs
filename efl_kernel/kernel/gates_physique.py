@@ -182,6 +182,16 @@ def run_physique_mcc_gates(
     def max_band_work(slot: dict) -> int:
         return max((ex.get("band", 0) for ex in work(slot)), default=0)
 
+    # Pre-scan: emit MCC_ECA_SLOT_UNRESOLVABLE once per unresolvable slot exercise
+    _unresolvable_seen: set[int] = set()
+    for _slot in day_slots:
+        for _ex in _slot.get("exercises", []):
+            if _ex.get("_resolution_error"):
+                _ex_key = id(_ex)
+                if _ex_key not in _unresolvable_seen:
+                    violations.append(_mcc_v("MCC_ECA_SLOT_UNRESOLVABLE"))
+                    _unresolvable_seen.add(_ex_key)
+
     # ─── Derived counts ────────────────────────────────────────────────────────
     freq = context.get("frequency_per_week", 0)
     day_a_count = sum(1 for s in day_slots if s.get("day_role") == "DAY_A")
@@ -217,9 +227,14 @@ def run_physique_mcc_gates(
         if slot.get("day_role") != "DAY_D":
             continue
         for ex in work(slot):
+            if ex.get("_resolution_error"):
+                continue
+            h_node_str = ex.get("_resolved_h_node")
+            if h_node_str is None:
+                continue  # Non-ECA slot exercise: skip B2 h_node check
+            h_rank = H_NODE_NUMERIC.get(h_node_str, 0)
             eid = ex.get("exercise_id", "")
             wl = whitelist.get(eid)
-            h_rank = H_NODE_NUMERIC.get(ex.get("h_node", "H0"), 0)
             band = ex.get("band", 0)
             if wl is not None:
                 allowed = [r.strip() for r in wl.get("day_role_allowed", "").split(",")]
@@ -280,14 +295,18 @@ def run_physique_mcc_gates(
         for ex in work(slot):
             node = ex.get("node", 0)
             band = ex.get("band", 0)
-            node_max_ex = ex.get("node_max", 2)
             set_count = ex.get("set_count", 0)
 
+            if ex.get("_resolution_error"):
+                continue
+
             # D1: NODE_PERMISSION_VIOLATION — node==3 but node_max < 3
-            if node == 3 and node_max_ex < 3:
-                if not d1_fired:
-                    violations.append(_mcc_v("MCC_NODE_PERMISSION_VIOLATION"))
-                    d1_fired = True
+            node_max_ex = ex.get("_resolved_node_max")
+            if node_max_ex is not None:
+                if node == 3 and node_max_ex < 3:
+                    if not d1_fired:
+                        violations.append(_mcc_v("MCC_NODE_PERMISSION_VIOLATION"))
+                        d1_fired = True
 
             # D3: BAND_NODE_ILLEGAL_COMBINATION — band==3 AND node==3 simultaneously
             if band == 3 and node == 3:
@@ -609,6 +628,11 @@ def _run_n_cluster(
         role_max = DAY_ROLE_H_NODE_MAX.get(day_role, 3)
 
         for ex in [e for e in slot.get("exercises", []) if e.get("role") == "WORK"]:
+            if ex.get("_resolution_error"):
+                continue
+            base_h = ex.get("_resolved_h_node")
+            if base_h is None:
+                continue  # Non-ECA slot exercise: skip N-cluster check
             eid = ex.get("exercise_id", "")
             wl = whitelist.get(eid)
             if wl is None:
@@ -622,7 +646,6 @@ def _run_n_cluster(
             E = parsed["E"]
             IB = parsed["IB"]
             IT = parsed["IT"]
-            base_h = ex.get("h_node") or wl.get("h_node") or "H0"
             h_eff = _h_effective(base_h, E, IB, IT)
             tempo_can_escalate = wl.get("tempo_can_escalate_hnode", False)
 
@@ -705,7 +728,7 @@ def run_physique_gates(raw_input: dict, dep_provider) -> list[dict]:
     else:
         violations += run_physique_mcc_gates(
             adapter_result.context,
-            adapter_result.day_slots,
+            adapter_result.resolved_slot_exercises,
             dep_provider,
             WHITELIST_INDEX,
             TEMPO_GOV,

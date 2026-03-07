@@ -30,6 +30,7 @@ class PhysiqueAdapterResult:
     adapter_version: str
     context: dict = dataclasses.field(default_factory=dict)
     day_slots: list[dict] = dataclasses.field(default_factory=list)
+    resolved_slot_exercises: list[dict] = dataclasses.field(default_factory=list)
 
 
 def _parse_tempo(tempo_str: str) -> tuple[bool, dict | None, bool, bool]:
@@ -76,6 +77,38 @@ def _classify_tempo_mode(movement_family: str) -> str:
     return "ECICT"
 
 
+def _resolve_slot_exercises(day_slots: list[dict], whitelist_index: dict) -> list[dict]:
+    """For each exercise in each day_slot, attempt whitelist resolution.
+
+    Injects _resolved_node_max, _resolved_h_node, _resolved_volume_class,
+    _resolved_movement_family from the whitelist (prefix _resolved_ makes the
+    source unambiguous). If exercise_id or eca_id is present but not found in
+    whitelist_index, marks the exercise with _resolution_error=True. If neither
+    field is present, skips injection (non-ECA slot exercise).
+    Returns a new list (shallow copy of slots, deep copy of exercise lists only).
+    """
+    result = []
+    for slot in day_slots:
+        new_slot = dict(slot)
+        new_exs = []
+        for ex in slot.get("exercises", []):
+            new_ex = dict(ex)
+            eid = ex.get("exercise_id") or ex.get("eca_id")
+            if eid is not None:
+                wl = whitelist_index.get(eid)
+                if wl is None:
+                    new_ex["_resolution_error"] = True
+                else:
+                    new_ex["_resolved_node_max"] = wl.get("node_max")
+                    new_ex["_resolved_h_node"] = wl.get("h_node")
+                    new_ex["_resolved_volume_class"] = wl.get("volume_class")
+                    new_ex["_resolved_movement_family"] = wl.get("movement_family")
+            new_exs.append(new_ex)
+        new_slot["exercises"] = new_exs
+        result.append(new_slot)
+    return result
+
+
 def run_physique_adapter(payload: dict) -> PhysiqueAdapterResult:
     """Normalize a physique payload for DCC/MCC gate evaluation.
 
@@ -100,6 +133,7 @@ def run_physique_adapter(payload: dict) -> PhysiqueAdapterResult:
                 adapter_version=ADAPTER_VERSION,
                 context=context,
                 day_slots=raw_day_slots,
+                resolved_slot_exercises=[],
             )
 
         # horiz_vert normalization
@@ -156,10 +190,12 @@ def run_physique_adapter(payload: dict) -> PhysiqueAdapterResult:
         norm_slot["exercises"] = norm_exs
         normalized_slots.append(norm_slot)
 
+    resolved_slots = _resolve_slot_exercises(normalized_slots, WHITELIST_INDEX)
     return PhysiqueAdapterResult(
         normalized_exercises=normalized,
         halt_codes=[],
         adapter_version=ADAPTER_VERSION,
         context=context,
         day_slots=normalized_slots,
+        resolved_slot_exercises=resolved_slots,
     )

@@ -71,6 +71,16 @@ def enforce_kernel_owned_fields(violation: dict, module_id: str) -> dict:
     return violation
 
 
+VIOLATION_REGISTRY[("PHYSIQUE", "MCC_ECA_SLOT_UNRESOLVABLE")] = {
+    "severity": "HARDFAIL",
+    "overridePossible": False,
+    "allowedOverrideReasonCodes": [],
+    "violationCap": None,
+    "reviewOverrideThreshold28D": None,
+    "clampBehavior": None,
+}
+
+
 def validate_bidirectional_coverage() -> dict[str, list[str]]:
     coverage_file = Path(__file__).resolve().parent.parent / "tests" / "test_gate_coverage.py"
     text = coverage_file.read_text(encoding="utf-8") if coverage_file.exists() else ""
