@@ -80,9 +80,9 @@ def test_list_exercises_filter_by_movement_family(cat):
     assert all(ex["movement_family"] == "Squat" for ex in results)
 
 
-def test_list_exercises_filter_by_node(cat):
-    # node=3 → exercises with node_max >= 3
-    results = cat.list_exercises({"node": 3})
+def test_list_exercises_filter_by_node_max(cat):
+    # node_max=3 → exercises with node_max >= 3
+    results = cat.list_exercises({"node_max": 3})
     assert len(results) > 0
     assert all(ex["node_max"] >= 3 for ex in results)
     # ECA-PHY-0004 Deadlift has node_max=1 → must not appear
@@ -219,6 +219,31 @@ def test_check_exercise_not_found(cat):
 # ------------------------------------------------------------------ #
 # check_exercise — SFI contribution                                  #
 # ------------------------------------------------------------------ #
+
+def test_list_exercises_filter_by_band_max(cat):
+    # band_max=2 → exercises capable of at least band 2
+    results = cat.list_exercises({"band_max": 2})
+    assert len(results) > 0
+    assert all(ex["band_max"] >= 2 for ex in results)
+    # ECA-PHY-0021 Face Pull (band_max=1) must not appear
+    ids = {ex["canonical_id"] for ex in results}
+    assert "ECA-PHY-0021" not in ids
+
+
+def test_list_exercises_filter_by_volume_class(cat):
+    results = cat.list_exercises({"volume_class": "PRIMARY"})
+    assert len(results) > 0
+    assert all(ex["volume_class"].lower() == "primary" for ex in results)
+    # Case-insensitive: lowercase input returns same count
+    results_lower = cat.list_exercises({"volume_class": "primary"})
+    assert len(results_lower) == len(results)
+
+
+def test_list_exercises_filter_by_equipment(cat):
+    results = cat.list_exercises({"equipment": "Barbell"})
+    assert len(results) > 0
+    assert all("barbell" in ex["equipment"].lower() for ex in results)
+
 
 def test_check_exercise_sfi_zero_when_bilateral_h1_node1(cat):
     # ECA-PHY-0001: bilateral, H1 (h_rank=1<3), node=1 → sfi=0

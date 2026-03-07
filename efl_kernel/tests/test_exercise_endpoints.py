@@ -60,8 +60,8 @@ def test_get_exercises_filter_movement_family(client):
     assert all(ex["movement_family"] == "Squat" for ex in data)
 
 
-def test_get_exercises_filter_node(client):
-    resp = client.get("/exercises?node=3")
+def test_get_exercises_filter_node_max(client):
+    resp = client.get("/exercises?node_max=3")
     assert resp.status_code == 200
     data = resp.json()
     assert len(data) > 0
@@ -122,6 +122,22 @@ def test_check_exercise_not_found_exercise(client):
     assert data["exercise"] is None
     codes = [v["code"] for v in data["violations"]]
     assert "EXERCISE_NOT_FOUND" in codes
+
+
+def test_list_filter_band_max(client):
+    resp = client.get("/exercises?band_max=2")
+    assert resp.status_code == 200
+    data = resp.json()
+    assert len(data) > 0
+    assert all(ex["band_max"] >= 2 for ex in data)
+
+
+def test_list_filter_volume_class(client):
+    resp = client.get("/exercises?volume_class=PRIMARY")
+    assert resp.status_code == 200
+    data = resp.json()
+    assert len(data) > 0
+    assert all(ex["volume_class"] == "PRIMARY" for ex in data)
 
 
 def test_check_exercise_returns_sfi_contribution(client):

@@ -35,7 +35,10 @@ class ExerciseCatalog:
           h_node          — exact match on h_node field
           day_role        — membership check: day_role must be in exercise's day_roles list
           movement_family — exact match on movement_family field
-          node            — exercises where node_max >= node (can operate at that node)
+          node_max        — exercises where node_max >= value (can operate at that node)
+          band_max        — exercises where band_max >= value (can use at least that band)
+          volume_class    — case-insensitive exact match
+          equipment       — case-insensitive substring match against exercise.equipment
         """
         result = list(self._exercises)
         if not filters:
@@ -46,8 +49,14 @@ class ExerciseCatalog:
             result = [ex for ex in result if day_role in ex["day_roles"]]
         if movement_family := filters.get("movement_family"):
             result = [ex for ex in result if ex.get("movement_family") == movement_family]
-        if (node := filters.get("node")) is not None:
-            result = [ex for ex in result if ex.get("node_max", 0) >= node]
+        if (node_max := filters.get("node_max")) is not None:
+            result = [ex for ex in result if ex.get("node_max", 0) >= node_max]
+        if (band_max := filters.get("band_max")) is not None:
+            result = [ex for ex in result if ex.get("band_max", 0) >= band_max]
+        if volume_class := filters.get("volume_class"):
+            result = [ex for ex in result if (ex.get("volume_class") or "").lower() == volume_class.lower()]
+        if equipment := filters.get("equipment"):
+            result = [ex for ex in result if equipment.lower() in (ex.get("equipment") or "").lower()]
         return result
 
     def get_exercise(self, canonical_id: str) -> dict | None:

@@ -176,10 +176,13 @@ def _register_routes(app: FastAPI) -> None:
     @app.get("/exercises")
     def list_exercises(
         request: Request,
+        movement_family: str | None = None,
         h_node: str | None = None,
         day_role: str | None = None,
-        movement_family: str | None = None,
-        node: int | None = None,
+        node_max: int | None = None,
+        band_max: int | None = None,
+        volume_class: str | None = None,
+        equipment: str | None = None,
     ):
         filters: dict = {}
         if h_node is not None:
@@ -188,8 +191,14 @@ def _register_routes(app: FastAPI) -> None:
             filters["day_role"] = day_role
         if movement_family is not None:
             filters["movement_family"] = movement_family
-        if node is not None:
-            filters["node"] = node
+        if node_max is not None:
+            filters["node_max"] = node_max
+        if band_max is not None:
+            filters["band_max"] = band_max
+        if volume_class is not None:
+            filters["volume_class"] = volume_class
+        if equipment is not None:
+            filters["equipment"] = equipment
         return request.app.state.catalog.list_exercises(filters or None)
 
     @app.get("/exercises/{canonical_id}")
