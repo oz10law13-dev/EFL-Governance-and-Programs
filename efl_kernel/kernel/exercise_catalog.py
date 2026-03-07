@@ -23,7 +23,7 @@ class ExerciseCatalog:
     """Read-only exercise catalog backed by the whitelist JSON."""
 
     def __init__(self, whitelist_path: str | Path | None = None) -> None:
-        path = Path(whitelist_path) if whitelist_path else _PHYSIQUE_DIR / "efl_whitelist_v1_0_3.json"
+        path = Path(whitelist_path) if whitelist_path else _PHYSIQUE_DIR / "efl_whitelist_v1_0_4.json"
         data = json.loads(path.read_text(encoding="utf-8"))
         self._exercises: list[dict] = [_normalize(ex) for ex in data["exercises"]]
         self._index: dict[str, dict] = {ex["canonical_id"]: ex for ex in self._exercises}

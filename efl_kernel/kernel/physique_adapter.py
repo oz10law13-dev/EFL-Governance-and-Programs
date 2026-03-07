@@ -5,7 +5,7 @@ import json
 from pathlib import Path
 
 _PHYSIQUE_DIR = Path(__file__).resolve().parent.parent.parent / "Physique"
-_WHITELIST = json.loads((_PHYSIQUE_DIR / "efl_whitelist_v1_0_3.json").read_text(encoding="utf-8"))
+_WHITELIST = json.loads((_PHYSIQUE_DIR / "efl_whitelist_v1_0_4.json").read_text(encoding="utf-8"))
 _TEMPO_GOV = json.loads(
     (_PHYSIQUE_DIR / "efl_tempo_governance_v1_1_2_ENFORCEMENT_CLEAN.json").read_text(encoding="utf-8")
 )
@@ -28,6 +28,7 @@ class PhysiqueAdapterResult:
     normalized_exercises: list[dict]
     halt_codes: list[str]
     adapter_version: str
+    athlete_id: str = ""
     context: dict = dataclasses.field(default_factory=dict)
     day_slots: list[dict] = dataclasses.field(default_factory=list)
     resolved_slot_exercises: list[dict] = dataclasses.field(default_factory=list)
@@ -66,14 +67,18 @@ def _parse_tempo(tempo_str: str) -> tuple[bool, dict | None, bool, bool]:
     return True, values, x_invalid, c_explosive
 
 
-def _classify_tempo_mode(movement_family: str) -> str:
-    """Classify tempo validation mode from movement family.
+def _classify_tempo_mode(movement_family: str, pattern_plane: str | None) -> str:
+    """Classify tempo validation mode from movement family and pattern plane.
 
     Carry/Sled exercises use distance-based prescription → N/A_DISTANCE.
+    Isometric exercises use duration-based prescription → N/A_DURATION.
     All other resistance exercises use rep-based ECICT → ECICT.
     """
-    if "carry" in movement_family.lower():
+    mf = movement_family.lower()
+    if "carry" in mf:
         return "N/A_DISTANCE"
+    if pattern_plane and pattern_plane.lower() == "isometric":
+        return "N/A_DURATION"
     return "ECICT"
 
 
@@ -103,6 +108,7 @@ def _resolve_slot_exercises(day_slots: list[dict], whitelist_index: dict) -> lis
                     new_ex["_resolved_h_node"] = wl.get("h_node")
                     new_ex["_resolved_volume_class"] = wl.get("volume_class")
                     new_ex["_resolved_movement_family"] = wl.get("movement_family")
+                    new_ex["_resolved_e4_requires_clearance"] = wl.get("e4_requires_clearance", False)
             new_exs.append(new_ex)
         new_slot["exercises"] = new_exs
         result.append(new_slot)
@@ -119,6 +125,7 @@ def run_physique_adapter(payload: dict) -> PhysiqueAdapterResult:
     physique_session = payload.get("physique_session", {})
     raw_day_slots = payload.get("day_slots", [])
     context = payload.get("context", {})
+    athlete_id = (payload.get("evaluationContext") or {}).get("athleteID", "")
 
     exercises = physique_session.get("exercises", [])
     normalized: list[dict] = []
@@ -131,20 +138,34 @@ def run_physique_adapter(payload: dict) -> PhysiqueAdapterResult:
                 normalized_exercises=[],
                 halt_codes=["UNKNOWN_EXERCISE_ID"],
                 adapter_version=ADAPTER_VERSION,
+                athlete_id=athlete_id,
                 context=context,
                 day_slots=raw_day_slots,
                 resolved_slot_exercises=[],
             )
 
-        # horiz_vert normalization
+        # horiz_vert normalization (F5 fix: unknown labels halt instead of lowercasing)
         horiz_vert_raw = wl_entry.get("horiz_vert")
         if horiz_vert_raw is None:
             horiz_vert_normalized = None
+        elif horiz_vert_raw in HORIZ_VERT_MAP:
+            horiz_vert_normalized = HORIZ_VERT_MAP[horiz_vert_raw]
+        elif horiz_vert_raw in ("horizontal", "vertical", "sagittal", "frontal"):
+            horiz_vert_normalized = horiz_vert_raw
         else:
-            horiz_vert_normalized = HORIZ_VERT_MAP.get(horiz_vert_raw, horiz_vert_raw.lower())
+            return PhysiqueAdapterResult(
+                normalized_exercises=[],
+                halt_codes=["UNKNOWN_HORIZ_VERT_LABEL"],
+                adapter_version=ADAPTER_VERSION,
+                athlete_id=athlete_id,
+                context=context,
+                day_slots=raw_day_slots,
+                resolved_slot_exercises=[],
+            )
 
         movement_family = wl_entry.get("movement_family", "")
-        tempo_mode = _classify_tempo_mode(movement_family)
+        pattern_plane = wl_entry.get("pattern_plane")
+        tempo_mode = _classify_tempo_mode(movement_family, pattern_plane)
 
         # Tempo parsing (record state; DCC gates fire violations, not adapter)
         tempo_str = ex_input.get("tempo", "")
@@ -172,11 +193,13 @@ def run_physique_adapter(payload: dict) -> PhysiqueAdapterResult:
             "tempo_can_escalate_hnode": wl_entry.get("tempo_can_escalate_hnode"),
             "band_max": wl_entry.get("band_max"),
             "node_max": wl_entry.get("node_max"),
-            "h_node": wl_entry.get("h_node"),
+            "h_node_base": wl_entry.get("h_node"),
+            "push_pull": wl_entry.get("push_pull"),
+            "e4_requires_clearance": wl_entry.get("e4_requires_clearance", False),
             "day_role_allowed": wl_entry.get("day_role_allowed"),
         })
 
-    # Normalize day_slots: apply HORIZ_VERT_MAP to each exercise's horiz_vert field.
+    # Normalize day_slots: apply horiz_vert mapping; unknown labels halt (F5 fix).
     normalized_slots: list[dict] = []
     for slot in raw_day_slots:
         norm_slot = dict(slot)
@@ -185,7 +208,20 @@ def run_physique_adapter(payload: dict) -> PhysiqueAdapterResult:
             norm_ex = dict(ex)
             raw_hv = ex.get("horiz_vert")
             if raw_hv is not None:
-                norm_ex["horiz_vert"] = HORIZ_VERT_MAP.get(raw_hv, raw_hv.lower())
+                if raw_hv in HORIZ_VERT_MAP:
+                    norm_ex["horiz_vert"] = HORIZ_VERT_MAP[raw_hv]
+                elif raw_hv in ("horizontal", "vertical", "sagittal", "frontal"):
+                    norm_ex["horiz_vert"] = raw_hv
+                else:
+                    return PhysiqueAdapterResult(
+                        normalized_exercises=[],
+                        halt_codes=["UNKNOWN_HORIZ_VERT_LABEL"],
+                        adapter_version=ADAPTER_VERSION,
+                        athlete_id=athlete_id,
+                        context=context,
+                        day_slots=raw_day_slots,
+                        resolved_slot_exercises=[],
+                    )
             norm_exs.append(norm_ex)
         norm_slot["exercises"] = norm_exs
         normalized_slots.append(norm_slot)
@@ -195,6 +231,7 @@ def run_physique_adapter(payload: dict) -> PhysiqueAdapterResult:
         normalized_exercises=normalized,
         halt_codes=[],
         adapter_version=ADAPTER_VERSION,
+        athlete_id=athlete_id,
         context=context,
         day_slots=normalized_slots,
         resolved_slot_exercises=resolved_slots,

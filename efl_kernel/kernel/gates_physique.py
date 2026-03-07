@@ -707,19 +707,32 @@ def _run_n_cluster(
                     n3_fired = True
 
 
-def _run_clearance_gate(raw_input: dict, dep_provider) -> list[dict]:
-    """PHYSIQUE-GATE-GAP-001 closure.
+def _clearance_violation(exercise_id: str, athlete_id: str) -> dict:
+    return {
+        "code": "PHYSIQUE.CLEARANCEMISSING",
+        "moduleID": "PHYSIQUE",
+        "severity": "HARDFAIL",
+        "overridePossible": False,
+        "allowedOverrideReasonCodes": [],
+        "violationCap": None,
+        "reviewOverrideThreshold28D": None,
+        "details": {
+            "exercise_id": exercise_id,
+            "athlete_id": athlete_id,
+            "e4_clearance": False,
+        },
+    }
 
-    Emits PHYSIQUE.CLEARANCEMISSING (HARDFAIL, no override) for each exercise
-    in physique_session.exercises that has e4_requires_clearance=True when the
-    athlete profile does not carry e4_clearance=True.
 
-    Fail-closed: absent e4_clearance in profile = False.
-    Non-ECA exercises (no exercise_id) are skipped.
-    Day-slot exercises not checked (Phase 9 decision).
+def _run_clearance_gate(adapter_result, dep_provider) -> list[dict]:
+    """Checks physique_session exercises and day_slot exercises.
+
+    Reads e4_requires_clearance from adapter_result (whitelist-injected).
+    Deduplicates by exercise_id across both lists.
+    Closes GAP-003 and GAP-005.
     """
-    violations = []
-    athlete_id = (raw_input.get("evaluationContext") or {}).get("athleteID")
+    violations: list[dict] = []
+    athlete_id = adapter_result.athlete_id
     if not athlete_id:
         return violations
 
@@ -728,11 +741,9 @@ def _run_clearance_gate(raw_input: dict, dep_provider) -> list[dict]:
     if has_clearance:
         return violations
 
-    exercises = (raw_input.get("physique_session") or {}).get("exercises") or []
     seen_ids: set = set()
-    for ex in exercises:
-        if not isinstance(ex, dict):
-            continue
+
+    for ex in adapter_result.normalized_exercises:
         exercise_id = ex.get("exercise_id")
         if not exercise_id:
             continue
@@ -741,43 +752,51 @@ def _run_clearance_gate(raw_input: dict, dep_provider) -> list[dict]:
         if exercise_id in seen_ids:
             continue
         seen_ids.add(exercise_id)
-        violations.append({
-            "code": "PHYSIQUE.CLEARANCEMISSING",
-            "moduleID": "PHYSIQUE",
-            "severity": "HARDFAIL",
-            "overridePossible": False,
-            "allowedOverrideReasonCodes": [],
-            "violationCap": None,
-            "reviewOverrideThreshold28D": None,
-            "details": {
-                "exercise_id": exercise_id,
-                "athlete_id": athlete_id,
-                "e4_clearance": False,
-            },
-        })
+        violations.append(_clearance_violation(exercise_id, athlete_id))
+
+    for slot in adapter_result.resolved_slot_exercises:
+        for ex in slot.get("exercises", []):
+            if ex.get("_resolution_error"):
+                continue
+            exercise_id = ex.get("exercise_id") or ex.get("eca_id")
+            if not exercise_id:
+                continue
+            if not ex.get("_resolved_e4_requires_clearance", False):
+                continue
+            if exercise_id in seen_ids:
+                continue
+            seen_ids.add(exercise_id)
+            violations.append(_clearance_violation(exercise_id, athlete_id))
+
     return violations
 
 
 def run_physique_gates(raw_input: dict, dep_provider) -> list[dict]:
     """Top-level PHYSIQUE gate function called by kernel Step 6 dispatch.
 
-    Runs the clearance gate first (reads raw input + dep_provider directly),
-    then the pre-pass adapter, then DCC and MCC gate layers in order.
-    If the adapter halts, appends RAL.MISSINGORUNDEFINEDREQUIREDSTATE and
-    returns without invoking any LAW-mode pass.
+    Execution order (Phase 9):
+    1. Adapter runs first — clearance reads whitelist-resolved fields.
+    2. If adapter halts, return halt violation only (clearance cannot be assessed).
+    3. Clearance gate — whitelist-authoritative (closes GAP-003 and GAP-005).
+    4. DCC gates.
+    5. O1 guard or MCC gates.
     """
-    # Clearance gate — PHYSIQUE-GATE-GAP-001
-    violations = list(_run_clearance_gate(raw_input, dep_provider))
+    violations: list[dict] = []
 
+    # Step 6.A — adapter first (clearance reads whitelist-resolved fields)
     adapter_result = run_physique_adapter(raw_input)
 
     if adapter_result.halt_codes:
         violations.append(_syn("RAL.MISSINGORUNDEFINEDREQUIREDSTATE"))
         return violations
 
+    # Step 6.B — clearance gate (whitelist-authoritative, GAP-003/005)
+    violations.extend(_run_clearance_gate(adapter_result, dep_provider))
+
+    # Step 6.C — DCC gates
     violations += run_physique_dcc_gates(adapter_result, dep_provider)
 
-    # O1: MCC_PASS2_MISSING_OR_FAILED — day_slots provided but context absent
+    # Step 6.D — O1 guard (MCC_PASS2_MISSING_OR_FAILED now registered in v1.0.3)
     if adapter_result.day_slots and not adapter_result.context:
         violations.append(_mcc_v("MCC_PASS2_MISSING_OR_FAILED"))
     else:
