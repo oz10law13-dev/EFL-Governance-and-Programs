@@ -6,6 +6,9 @@
 **Date:** 2026-01-25  
 **Parent Document:** Minimal Runtime Shell v1.0 Specification
 
+> **DECLARED ARCHITECTURE — NOT CURRENT IMPLEMENTATION**
+> This document defines target-state invariants. As of Phase 9 (2026-03-06), no `runtime/` module path exists in the repository. Enforcement locations referenced in each invariant (e.g., `trace/hash.py`, `ledger/commit.py`) describe the intended implementation target, not deployed code. All invariants remain architecturally valid as Phase 10+ implementation contracts. Phase 10 is the first implementation phase.
+
 ---
 
 ## Purpose

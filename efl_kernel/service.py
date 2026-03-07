@@ -25,7 +25,7 @@ def create_app(db_path: str | None = None) -> FastAPI:
     """
     resolved_path = db_path or os.environ.get("EFL_DB_PATH", "efl_audit.db")
 
-    app = FastAPI(title="EFL Kernel Service", version="14.0.0")
+    app = FastAPI(title="EFL Kernel Service", version="18.0.0")
     app.state.db_path = resolved_path
     app.state.op_store = OperationalStore(resolved_path)
     app.state.audit_store = AuditStore(resolved_path)
@@ -97,6 +97,15 @@ def _register_routes(app: FastAPI) -> None:
             "MACRO",
         )
 
+    @app.post("/evaluate/physique")
+    def evaluate_physique(payload: dict, request: Request):
+        return _evaluate_and_commit(
+            request.app.state.runner,
+            request.app.state.audit_store,
+            payload,
+            "PHYSIQUE",
+        )
+
     @app.post("/artifacts", status_code=201)
     def commit_artifact(payload: dict, request: Request):
         result = request.app.state.artifact_store.commit_artifact_version(
@@ -109,6 +118,8 @@ def _register_routes(app: FastAPI) -> None:
 
     @app.post("/artifacts/{version_id}/link-kdo")
     def link_artifact_kdo(version_id: str, payload: dict, request: Request):
+        if request.app.state.artifact_store.get_version(version_id) is None:
+            raise HTTPException(status_code=404, detail=f"version {version_id!r} not found")
         result = request.app.state.artifact_store.link_kdo(
             version_id=version_id,
             decision_hash=payload["decision_hash"],
@@ -141,6 +152,10 @@ def _register_routes(app: FastAPI) -> None:
             raise HTTPException(status_code=409, detail=str(e))
         return result
 
+    @app.get("/artifacts")
+    def list_artifact_versions(artifact_id: str, request: Request):
+        return request.app.state.artifact_store.get_versions_by_artifact_id(artifact_id)
+
     @app.get("/artifacts/{version_id}")
     def get_artifact_version(version_id: str, request: Request):
         result = request.app.state.artifact_store.get_version(version_id)
@@ -155,6 +170,67 @@ def _register_routes(app: FastAPI) -> None:
         except ValueError as e:
             raise HTTPException(status_code=409, detail=str(e))
         return result
+
+    @app.post("/author/session")
+    def author_session(payload: dict, request: Request):
+        try:
+            artifact_store = request.app.state.artifact_store
+            audit_store = request.app.state.audit_store
+            runner = request.app.state.runner
+
+            # 1. Commit artifact version
+            version_result = artifact_store.commit_artifact_version(
+                artifact_id=payload["artifact_id"],
+                module_id="SESSION",
+                object_id=payload["object_id"],
+                content=payload["content"],
+            )
+            version_id = version_result["version_id"]
+            content_hash = version_result["content_hash"]
+
+            # 2. Evaluate and commit KDO
+            kdo_dict = _evaluate_and_commit(runner, audit_store, payload["evaluation_payload"], "SESSION")
+            decision_hash = kdo_dict["audit"]["decisionHash"]
+            final_publish_state = kdo_dict["resolution"]["finalPublishState"]
+
+            # 3. Route by publish state
+            if final_publish_state in ("BLOCKED", "ILLEGALQUARANTINED"):
+                # Do NOT link — no ILLEGALQUARANTINED/BLOCKED KDO may be linked to an artifact
+                return {
+                    "version_id": version_id,
+                    "lifecycle": "DRAFT",
+                    "publish_state": final_publish_state,
+                    "decision_hash": decision_hash,
+                    "promoted": False,
+                    "requires_review": False,
+                }
+            elif final_publish_state == "LEGALREADY":
+                artifact_store.link_kdo(version_id, decision_hash, content_hash)
+                artifact_store.promote_to_live(version_id, audit_store.get_kdo)
+                return {
+                    "version_id": version_id,
+                    "lifecycle": "LIVE",
+                    "publish_state": final_publish_state,
+                    "decision_hash": decision_hash,
+                    "promoted": True,
+                    "requires_review": False,
+                }
+            elif final_publish_state in ("REQUIRESREVIEW", "LEGALOVERRIDE"):
+                artifact_store.link_kdo(version_id, decision_hash, content_hash)
+                return {
+                    "version_id": version_id,
+                    "lifecycle": "DRAFT",
+                    "publish_state": final_publish_state,
+                    "decision_hash": decision_hash,
+                    "promoted": False,
+                    "requires_review": True,
+                }
+            else:
+                raise ValueError(f"Unexpected publish state: {final_publish_state!r}")
+        except HTTPException:
+            raise
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
 
 
 # Module-level app for uvicorn: create_app() with no args

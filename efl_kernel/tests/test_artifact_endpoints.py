@@ -319,3 +319,174 @@ def test_retire_endpoint(svc):
     r = client.post(f"/artifacts/{version_id}/retire")
     assert r.status_code == 200
     assert r.json()["lifecycle"] == "RETIRED"
+
+
+# --- Gap tests ---
+
+def test_review_invalid_decision_returns_422(svc):
+    client, _, _, _, _ = svc
+
+    r = client.post("/artifacts", json={
+        "artifact_id": "ART-INV-DEC-01",
+        "module_id": "SESSION",
+        "object_id": "OBJ-INV-DEC",
+        "content": {"x": 99},
+    })
+    assert r.status_code == 201
+    version_id = r.json()["version_id"]
+
+    r = client.post(f"/artifacts/{version_id}/review", json={
+        "decision_hash": "somehash",
+        "reviewer_id": "coach",
+        "reason": "testing",
+        "decision": "MAYBE",
+    })
+    assert r.status_code == 422
+
+
+def test_retire_already_retired_returns_409(svc):
+    client, _, _, _, _ = svc
+
+    r = client.post("/artifacts", json={
+        "artifact_id": "ART-DBL-RETIRE-01",
+        "module_id": "SESSION",
+        "object_id": "OBJ-DBL-RETIRE",
+        "content": {"x": 1},
+    })
+    assert r.status_code == 201
+    version_id = r.json()["version_id"]
+
+    r = client.post(f"/artifacts/{version_id}/retire")
+    assert r.status_code == 200
+
+    r = client.post(f"/artifacts/{version_id}/retire")
+    assert r.status_code == 409
+
+
+def test_link_kdo_nonexistent_version(svc):
+    client, _, _, _, _ = svc
+
+    r = client.post("/artifacts/00000000-0000-0000-0000-000000000000/link-kdo", json={
+        "decision_hash": "fakehash",
+        "content_hash_at_eval": "fakecontent",
+    })
+    assert r.status_code == 404
+
+
+def test_promote_legaloverride_requires_review(svc):
+    client, _, audit_store, _, _ = svc
+
+    # Create artifact
+    r = client.post("/artifacts", json={
+        "artifact_id": "ART-LO-01",
+        "module_id": "SESSION",
+        "object_id": "OBJ-LO-01",
+        "content": {"type": "session_plan", "lo_test": True},
+    })
+    assert r.status_code == 201
+    version_id = r.json()["version_id"]
+    content_hash = r.json()["content_hash"]
+
+    # Inject a crafted LEGALOVERRIDE KDO directly into kdo_log
+    crafted_kdo = {"resolution": {"finalPublishState": "LEGALOVERRIDE"}}
+    kdo_json_str = jsonlib.dumps(crafted_kdo, sort_keys=True, separators=(",", ":"))
+    import hashlib as _hashlib
+    dh = _hashlib.sha256(kdo_json_str.encode()).hexdigest()
+    audit_store._conn.execute(
+        "INSERT OR IGNORE INTO kdo_log "
+        "(decision_hash, timestamp_normalized, module_id, object_id, kdo_json) "
+        "VALUES (?, ?, ?, ?, ?)",
+        (dh, "2026-01-01T00:00:00+00:00", "SESSION", "OBJ-LO-01", kdo_json_str),
+    )
+    audit_store._conn.commit()
+
+    # Link KDO
+    r = client.post(f"/artifacts/{version_id}/link-kdo", json={
+        "decision_hash": dh,
+        "content_hash_at_eval": content_hash,
+    })
+    assert r.status_code == 200
+
+    # Promote without review → 409 (INV-4)
+    r = client.post(f"/artifacts/{version_id}/promote")
+    assert r.status_code == 409
+
+    # Add APPROVE review
+    r = client.post(f"/artifacts/{version_id}/review", json={
+        "decision_hash": dh,
+        "reviewer_id": "coach-lo",
+        "reason": "verified-lo",
+        "decision": "APPROVE",
+    })
+    assert r.status_code == 200
+
+    # Promote with APPROVE → 200, LIVE
+    r = client.post(f"/artifacts/{version_id}/promote")
+    assert r.status_code == 200
+    assert r.json()["lifecycle"] == "LIVE"
+
+
+def test_promote_already_live_is_idempotent(svc):
+    client, op_store, _, _, _ = svc
+
+    op_store.upsert_athlete({
+        "athlete_id": "ATH-IDEM-01",
+        "max_daily_contact_load": 999.0,
+        "minimum_rest_interval_hours": 0.0,
+        "e4_clearance": 1,
+    })
+
+    # Create artifact
+    r = client.post("/artifacts", json={
+        "artifact_id": "ART-IDEM-01",
+        "module_id": "SESSION",
+        "object_id": "OBJ-IDEM-01",
+        "content": {"idem_test": True},
+    })
+    assert r.status_code == 201
+    version_id = r.json()["version_id"]
+    content_hash = r.json()["content_hash"]
+
+    # Get a LEGALREADY KDO
+    r_eval = client.post(
+        "/evaluate/session",
+        json=_clean_session_payload("ATH-IDEM-01", "S-IDEM-01"),
+    )
+    assert r_eval.status_code == 200
+    assert r_eval.json()["resolution"]["finalPublishState"] == "LEGALREADY"
+    decision_hash = r_eval.json()["audit"]["decisionHash"]
+
+    # Link and promote once
+    client.post(f"/artifacts/{version_id}/link-kdo", json={
+        "decision_hash": decision_hash,
+        "content_hash_at_eval": content_hash,
+    })
+    r = client.post(f"/artifacts/{version_id}/promote")
+    assert r.status_code == 200
+    assert r.json()["lifecycle"] == "LIVE"
+
+    # Promote again → 200, still LIVE (idempotent)
+    r = client.post(f"/artifacts/{version_id}/promote")
+    assert r.status_code == 200
+    assert r.json()["lifecycle"] == "LIVE"
+
+
+def test_promote_retired_returns_409(svc):
+    client, _, _, _, _ = svc
+
+    r = client.post("/artifacts", json={
+        "artifact_id": "ART-RET-PROM-01",
+        "module_id": "SESSION",
+        "object_id": "OBJ-RET-PROM",
+        "content": {"x": 42},
+    })
+    assert r.status_code == 201
+    version_id = r.json()["version_id"]
+
+    # Retire
+    r = client.post(f"/artifacts/{version_id}/retire")
+    assert r.status_code == 200
+
+    # Promote retired → 409
+    r = client.post(f"/artifacts/{version_id}/promote")
+    assert r.status_code == 409

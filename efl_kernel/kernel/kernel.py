@@ -6,6 +6,7 @@ from .dependency_provider import KernelDependencyProvider
 from .gates_cl import run_cl_gates
 from .gates_macro import run_macro_gates
 from .gates_meso import run_meso_gates
+from .gates_physique import run_physique_gates
 from .gates_scm import run_scm_gates
 from .kdo import KDO
 from .ral import (
@@ -75,7 +76,7 @@ class KernelRunner:
 
     def evaluate(self, raw_input: dict, module_id: str) -> KDO:
         # Step 0 - module identity
-        if module_id not in ["SESSION", "MESO", "MACRO", "GOVERNANCE"]:
+        if module_id not in RAL_SPEC.get("moduleRegistration", {}):
             return self._build_kdo(module_id, raw_input, [self._syn_violation("RAL.MODULEREGISTRATIONINCOMPLETE", module_id)])
 
         # Step 1 - required fields (must precede registry version check)
@@ -119,6 +120,8 @@ class KernelRunner:
             violations = run_meso_gates(raw_input, self.dep_provider)
         elif module_id == "MACRO":
             violations = run_macro_gates(raw_input, self.dep_provider)
+        elif module_id == "PHYSIQUE":
+            violations = run_physique_gates(raw_input, self.dep_provider)
         else:
             violations = []
 

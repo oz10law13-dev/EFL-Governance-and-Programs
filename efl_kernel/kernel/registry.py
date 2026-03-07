@@ -16,18 +16,25 @@ def _load(path: str) -> dict:
 SCM_SPEC = _load("EFL_SCM_v1_1_1_frozen.json")
 MESO_SPEC = _load("EFL_MESO_v1_0_2_frozen.json")
 MACRO_SPEC = _load("EFL_MACRO_v1_0_2_frozen.json")
-CL_SPEC = _load("EFL_Canonical_Law_v1_2_1.json")
+PHYSIQUE_SPEC = _load("EFL_PHYSIQUE_v1_0_0_frozen.json")
+CL_SPEC = _load("EFL_Canonical_Law_v1_2_2_frozen.json")
 
-for spec in (SCM_SPEC, MESO_SPEC, MACRO_SPEC):
+for spec in (SCM_SPEC, MESO_SPEC, MACRO_SPEC, PHYSIQUE_SPEC):
     reg = copy.deepcopy(spec["violationRegistry"])
     expected = reg.get("registryHash")
     reg["registryHash"] = ""
     if canonicalize_and_hash(reg) != expected:
         raise RuntimeError(f"registry hash verification failed for {spec.get('moduleID')}")
 
+_cl_reg = copy.deepcopy(CL_SPEC["CLVIOLATIONREGISTRY"])
+_cl_reg_expected = _cl_reg.get("registryHash")
+_cl_reg["registryHash"] = ""
+if canonicalize_and_hash(_cl_reg) != _cl_reg_expected:
+    raise RuntimeError("registry hash verification failed for CL_SPEC")
+
 VIOLATION_REGISTRY: dict[tuple[str, str], dict] = {}
 
-for spec in (SCM_SPEC, MESO_SPEC, MACRO_SPEC):
+for spec in (SCM_SPEC, MESO_SPEC, MACRO_SPEC, PHYSIQUE_SPEC):
     for v in spec["violationRegistry"]["violations"]:
         VIOLATION_REGISTRY[(v["moduleID"], v["code"])] = {
             "severity": v["severity"],
@@ -38,7 +45,7 @@ for spec in (SCM_SPEC, MESO_SPEC, MACRO_SPEC):
             "clampBehavior": v.get("clampBehavior"),
         }
 
-for v in CL_SPEC["CLVIOLATIONREGISTRY"]:
+for v in CL_SPEC["CLVIOLATIONREGISTRY"]["violations"]:
     VIOLATION_REGISTRY[(v["moduleID"], v["code"])] = {
         "severity": v["severity"],
         "overridePossible": v["overridePossible"],

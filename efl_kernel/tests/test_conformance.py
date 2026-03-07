@@ -326,3 +326,59 @@ def test_gate_violations_in_payload_are_completely_ignored():
     payload["gateViolations"] = [{"code": "CL.CLEARANCEMISSING", "moduleID": "SESSION"}]
     kdo = _runner().evaluate(payload, "SESSION")
     assert kdo.violations == []
+
+
+# Phase 10 tests: PHYSIQUE module registration, spec hash verification, CL_SPEC hash
+
+def test_physique_module_registered_in_ral():
+    """PHYSIQUE must appear in RAL_SPEC moduleRegistration; an unknown module triggers RAL.MODULEREGISTRATIONINCOMPLETE."""
+    assert "PHYSIQUE" in RAL_SPEC["moduleRegistration"]
+    phy_reg = RAL_SPEC["moduleRegistration"]["PHYSIQUE"]
+    assert phy_reg["moduleVersion"] == "1.0.0"
+    assert phy_reg["moduleViolationRegistryVersion"] == "1.0.0"
+    assert phy_reg["registryHash"] == "e32807ef6c060dc8464b629c86f00f394ed5a0bac96a8716e2689fcc115c51bb"
+    # An unknown module still quarantines with RAL.MODULEREGISTRATIONINCOMPLETE
+    kdo = _runner().evaluate(_session_input(), "UNKNOWN_MODULE")
+    assert kdo.violations[0]["code"] == "RAL.MODULEREGISTRATIONINCOMPLETE"
+
+
+def test_physique_spec_hash_verification_at_import():
+    """PHYSIQUE_SPEC is loaded and hash-verified at registry import time — same pattern as SCM/MESO/MACRO."""
+    import copy
+    from efl_kernel.kernel.registry import PHYSIQUE_SPEC
+
+    # documentHash round-trip
+    assert canonicalize_and_hash(PHYSIQUE_SPEC, "documentHash") == PHYSIQUE_SPEC["documentHash"]
+
+    # registryHash round-trip
+    vr = copy.deepcopy(PHYSIQUE_SPEC["violationRegistry"])
+    expected = vr["registryHash"]
+    vr["registryHash"] = ""
+    assert canonicalize_and_hash(vr) == expected
+
+    # PHYSIQUE violations are in VIOLATION_REGISTRY
+    from efl_kernel.kernel.registry import lookup_violation
+    assert lookup_violation("PHYSIQUE", "DCC_TEMPO_FORMAT_INVALID") is not None
+    assert lookup_violation("PHYSIQUE", "MCC_ADJACENCY_VIOLATION") is not None
+    assert lookup_violation("PHYSIQUE", "MCC_TEMPO_ESCALATION_APPROVED") is not None
+
+
+def test_cl_spec_hash_verification_enforced():
+    """CL_SPEC (v1.2.2) now carries registryHash — verify it round-trips correctly and load fails if corrupt."""
+    import copy
+    from efl_kernel.kernel.registry import CL_SPEC
+
+    # documentHash round-trip
+    assert canonicalize_and_hash(CL_SPEC, "documentHash") == CL_SPEC["documentHash"]
+
+    # registryHash round-trip on CLVIOLATIONREGISTRY wrapper
+    vr = copy.deepcopy(CL_SPEC["CLVIOLATIONREGISTRY"])
+    expected = vr["registryHash"]
+    vr["registryHash"] = ""
+    assert canonicalize_and_hash(vr) == expected
+
+    # CL.CLEARANCEMISSING is still in VIOLATION_REGISTRY via the new path
+    from efl_kernel.kernel.registry import lookup_violation
+    entry = lookup_violation("SESSION", "CL.CLEARANCEMISSING")
+    assert entry is not None
+    assert entry["severity"] == "HARDFAIL"

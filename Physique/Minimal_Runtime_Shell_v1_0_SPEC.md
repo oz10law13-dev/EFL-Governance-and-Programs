@@ -12,6 +12,9 @@
 - LLM Execution Protocol v1.0 (runtime behavior contract)
 **Authority Boundary Note:** This runtime shell is enforcement infrastructure, not a competing law source. It is subordinate to controlling `Physique/DCC-Physique-v1.2.1-PATCHED.md` and active tempo authority `Physique/efl_tempo_governance_v1_1_2_ENFORCEMENT_CLEAN.json`.
 
+> **DECLARED ARCHITECTURE — NOT CURRENT IMPLEMENTATION**
+> This document describes a target-state runtime architecture. As of Phase 9 (2026-03-06), no `runtime/` module path exists in the repository. The pre-pass validator, orchestrator, commit/rollback service, trace layer, and all module references in Section 12 are declared implementation contracts, not currently deployed code. The authoring artifact (`adult_physique_v1_0_2.json`) and the runtime-adjacent whitelist (`efl_whitelist_v1_0_3.json`) are distinct artifacts with different roles; see `Physique_Project_State_Memo_Post_Phase6.md` §Best governance answer and `Physique_Runtime_Binding_Spec_v1_0.md` §4.3 for the canonical distinction. Phase 10 is the first implementation phase.
+
 ---
 
 ## Table of Contents

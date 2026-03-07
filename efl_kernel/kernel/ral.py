@@ -6,7 +6,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-SPEC_PATH = Path(__file__).resolve().parent.parent / "specs" / "EFL_RAL_v1_2_0_frozen.json"
+SPEC_PATH = Path(__file__).resolve().parent.parent / "specs" / "EFL_RAL_v1_3_0_frozen.json"
 
 
 def canonicalize_and_hash(doc: dict, self_hash_field: str | None = None) -> str:
@@ -98,6 +98,8 @@ def derive_lineage_key(module_id: str, context: dict) -> str:
     if module_id == "GOVERNANCE":
         left = context.get("policyCheckID") or context.get("evaluationDate", "")
         return f"{left}|{context.get('scopeKey','')}"
+    if module_id == "PHYSIQUE":
+        return f"{context.get('athleteID','')}|{context.get('sessionID','')}"
     raise RuntimeError("Unknown moduleID for lineage")
 
 

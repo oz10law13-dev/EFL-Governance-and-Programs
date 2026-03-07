@@ -1,0 +1,24 @@
+{
+  "specID": "EFL-CL",
+  "version": "1.2.2",
+  "moduleID": "SESSION",
+  "documentHash": "7f6bea2d651c084ee3f82ba802e690360c94f5cfcdde8aab239d41fee38c25c0",
+  "CLVIOLATIONREGISTRY": {
+    "registryVersion": "1.2.2",
+    "registryHash": "9227fe1490a67694e0d9db6fbc89a94bc426ce8812cf59d75a3554c4a430cff3",
+    "violations": [
+      {
+        "code": "CL.CLEARANCEMISSING",
+        "moduleID": "SESSION",
+        "severity": "HARDFAIL",
+        "overridePossible": false,
+        "allowedOverrideReasonCodes": [],
+        "violationCap": null,
+        "reviewOverrideThreshold28D": 0,
+        "clampBehavior": {
+          "action": "NONE"
+        }
+      }
+    ]
+  }
+}

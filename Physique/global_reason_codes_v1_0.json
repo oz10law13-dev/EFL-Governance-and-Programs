@@ -34,7 +34,7 @@
     },
     "pass_2": {
       "name": "MCC_MODULATION",
-      "mode": "CONTEXT",
+      "mode": "CONTROL",
       "authorities": [
         "MCC v1.0",
         "Tempo Governance v1.1.2"
@@ -42,7 +42,7 @@
     },
     "pass_3": {
       "name": "ADVISORY",
-      "mode": "INFORMATIONAL"
+      "mode": "INFO"
     }
   },
   "reason_codes": [

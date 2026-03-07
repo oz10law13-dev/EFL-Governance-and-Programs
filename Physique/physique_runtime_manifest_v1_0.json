@@ -1,0 +1,335 @@
+{
+  "document_id": "EFL_PHYSIQUE_RUNTIME_MANIFEST_v1.0",
+  "version": "1.0.0",
+  "status": "MANIFEST-DRAFT",
+  "date_created": "2026-03-06",
+  "phase": {
+    "current": 8,
+    "total": 18,
+    "track": "A",
+    "title": "Physique Runtime Manifest",
+    "preceding_spec": "Physique/Physique_Runtime_Binding_Spec_v1_0.md",
+    "preceding_spec_sha256": "1eed572c5aecd469938faec95dc33b27c2a23a5bb80c21e2827cba190186a609"
+  },
+  "purpose": "Pin the intended artifact identity and loading candidacy for all Physique artifacts under consideration for future runtime binding. This manifest does not create runtime coupling. It records artifact versions and hashes as of 2026-03-06 so that Phase 10 loaders can verify they are binding the correct artifacts at the correct versions.",
+  "current_runtime_truth": {
+    "summary": "The EFL Kernel runtime is currently bound exclusively to frozen EFL_* specs in efl_kernel/specs/ and the kernel registry, RAL, and dispatch path. No Physique artifact is currently loaded, imported, validated, or referenced by any file in efl_kernel/.",
+    "currently_runtime_bound": [
+      "efl_kernel/specs/EFL_RAL_v1_2_0_frozen.json",
+      "efl_kernel/specs/EFL_SCM_v1_1_1_frozen.json",
+      "efl_kernel/specs/EFL_MESO_v1_0_2_frozen.json",
+      "efl_kernel/specs/EFL_MACRO_v1_0_2_frozen.json",
+      "efl_kernel/specs/EFL_Canonical_Law_v1_2_1.json",
+      "efl_kernel/specs/EFL_Exercise_Library_100_v1_0_1.json"
+    ],
+    "currently_registered_modules": ["SESSION", "MESO", "MACRO", "GOVERNANCE"],
+    "physique_runtime_status": "No Physique artifact is runtime-bound. DCC-Physique and tempo governance are active policy authorities only. Whitelist and MCC schema are future integration targets. None are loaded by efl_kernel at any point."
+  },
+  "runtime_binding_candidates": [
+    {
+      "file_path": "Physique/DCC-Physique-v1.2.1-PATCHED.md",
+      "artifact_role": "Training law authority. Governs Pass 1A (DCC Legality). Defines legal and illegal session prescriptions, band/node/family/day-role rules, DCC-MCC handshake gates, and authority tie-break clause.",
+      "current_classification": "active_policy_authority_not_runtime_bound",
+      "version_reference": "DCC-PHYSIQUE-v1.2.1",
+      "sha256": "34c04a1f07891d9eb890843ef7a965ba9848b5068c668c5c405eb92268755931",
+      "binding_phase_target": "Phase 10-11",
+      "load_status": "not_runtime_loaded",
+      "binding_blockers": [
+        "Q8: Integration path unresolved — whether DCC rules load as a separate artifact or are compiled into a kernel-loadable spec is not yet specified.",
+        "Q7: Kernel-side violation registry loading path for DCC violation codes not yet specified.",
+        "Phase 9 (Pre-Pass Adapter Spec) must be approved before Phase 10 begins."
+      ]
+    },
+    {
+      "file_path": "Physique/efl_tempo_governance_v1_1_2_ENFORCEMENT_CLEAN.json",
+      "artifact_role": "Tempo structural safety authority. Governs Pass 1B (Tempo Structural Safety). Defines ECICT notation, tempo ceilings, eccentric minimums, H-node modulation, explosive concentric gate, and MCC downgrade revalidation guard. Introduced Pass 1B as a LAW-mode pass distinct from Pass 1A.",
+      "current_classification": "active_policy_authority_not_runtime_bound",
+      "version_reference": "EFL_TEMPO_GOVERNANCE_v1.1.2-ENFORCEMENT_CLEAN",
+      "sha256": "870ea66b75fa0f0d33e2fa69bb530ce63a833f67126926cce6edd432d5e2d1c9",
+      "binding_phase_target": "Phase 10-11",
+      "load_status": "not_runtime_loaded",
+      "binding_blockers": [
+        "Q8: Whether tempo governance loads as a separate runtime artifact or is subsumed into a compiled whitelist or combined authority artifact is unresolved.",
+        "Q7: Kernel-side violation registry loading path not yet specified.",
+        "Phase 9 must be approved before Phase 10 begins."
+      ]
+    },
+    {
+      "file_path": "Physique/efl_whitelist_v1_0_3.json",
+      "artifact_role": "Runtime exercise authority (transitional candidate). Provides per-exercise constraints: band_max, node_max, h_node, day_role_allowed, volume_class, tempo_class, eccentric_max, isometric_bottom_max, isometric_top_max, explosive_concentric_allowed, tempo_can_escalate_hnode. Pre-pass adapter (Phase 9) is designed to normalize authoring-shape data against this artifact before Pass 1A.",
+      "current_classification": "future_integration_target",
+      "version_reference": "EFL_WHITELIST_v1.0.3",
+      "sha256": "0dba74d788501f80e121388f59f52b69600bd4c151c5cf9df9baa84f909cb77d",
+      "binding_phase_target": "Phase 10",
+      "load_status": "not_runtime_loaded",
+      "binding_blockers": [
+        "Q1: Exercise ID namespace unresolved. Three formats exist across Physique artifacts (ECA-PHY-*, ECA-SQUAT-*, and current runtime library plain IDs). One canonical format must be established before this artifact can be bound.",
+        "Phase 9 (Pre-Pass Adapter Spec) must define the normalization contract against this artifact before Phase 10.",
+        "Q8: Relationship between whitelist fields and tempo governance fields must be resolved (precedence when they conflict; whether tempo governance is subsumed here or loaded separately)."
+      ]
+    },
+    {
+      "file_path": "Physique/mcc-v1-0-1-patchpack.json",
+      "artifact_role": "MCC constraint schema. Defines the schema-enforced boundary (type safety, identity fields, permission gates, reason code enum stability) and documents the runtime-enforced boundary (frequency composition, route saturation, density ledger thresholds, adjacency rules, family-axis locking). Governs Pass 2 (MCC Modulation). Restriction-only: may not expand legality beyond DCC.",
+      "current_classification": "future_integration_target",
+      "version_reference": "MCC-DCC-PHYSIQUE-v1.0.1-PATCHPACK",
+      "sha256": "ba2a2e35b9b234e0725e4542fb587e695b03cf2ff8392094fd03500205de67fc",
+      "binding_phase_target": "Phase 11",
+      "load_status": "not_runtime_loaded",
+      "binding_blockers": [
+        "Q7: Kernel-side VIOLATION_REGISTRY loading path for MCC violation codes not yet specified. MCC violation codes must not be added to existing frozen module registries (EFL_SCM_*, EFL_MESO_*, EFL_MACRO_*).",
+        "Phase 11 (Physique Validation Bridge) must be specified before MCC constraint evaluation can be implemented.",
+        "Commit-time density validation (INV-LEDGER-002) requires Phase 12-13 (operational data schema and SQLite store) before it can operate correctly."
+      ]
+    },
+    {
+      "file_path": "Physique/global_reason_codes_v1_0.json",
+      "artifact_role": "Physique-side append-only reason code registry. Contains 55 reason codes across DCC, MCC, R2P, and ADVISORY namespaces. Defines pass ownership (allowed_passes), severity, and ledger fields for each code. Required at runtime for post-pass output validation: unknown reason code in any pass is a hard failure. Must be loaded and integrity-verified before pass evaluation begins.",
+      "current_classification": "future_integration_target",
+      "version_reference": "EFL_GLOBAL_REASON_CODES_v1.0.0",
+      "sha256": "d8c2d81c23d238576a846b83b57315db0aad3f992d5320c7cadd5457310bb747",
+      "binding_phase_target": "Phase 10",
+      "load_status": "not_runtime_loaded",
+      "binding_blockers": [
+        "Q7: Relationship between this Physique-side registry and the kernel's VIOLATION_REGISTRY (which drives enforce_kernel_owned_fields in registry.py) is not yet specified. These are currently separate registries with no integration contract.",
+        "Mode label discrepancy: this file uses CONTEXT for Pass 2 mode and INFORMATIONAL for Pass 3 mode. Phase 7 Section 5.4 uses CONTROL and INFO. Canonical mode label vocabulary must be aligned before Phase 10.",
+        "Hash verification protocol for this file at load time must be specified in Phase 10 (analogous to the documentHash verification in ral.py)."
+      ]
+    }
+  ],
+  "excluded_from_runtime_binding": [
+    {
+      "file_path": "Physique/adult_physique_v1_0_2.json",
+      "artifact_role": "Canonical authoring candidate. Richer authoring shape than whitelist v1.0.3. Best current source for authoring-time exercise metadata.",
+      "current_classification": "support_spec_only",
+      "version_reference": "ADULT_PHYSIQUE_v1.0.2",
+      "sha256": "15f4ae889755ecad2a7d9e55e7046d15b2c1cbd58ae6e2e2823bd92ae82174c1",
+      "binding_phase_target": "not_targeted",
+      "load_status": "not_runtime_loaded",
+      "exclusion_reason": "Authoring-shape artifact only. Must not be flattened into MCC schema shape directly. May inform Phase 9 pre-pass adapter contract design but is not itself a runtime artifact."
+    },
+    {
+      "file_path": "Physique/efl_physique_framework_v2_1_tempo_validated.json",
+      "artifact_role": "Framework reference. Tempo-validated program framework spec.",
+      "current_classification": "support_spec_only",
+      "version_reference": "EFL_PHYSIQUE_FRAMEWORK_v2.1",
+      "sha256": "b7a4ab6add915aed1086c1d257cb372ec4717678e1a70f63c17fd86a3e3c21fc",
+      "binding_phase_target": "not_targeted",
+      "load_status": "not_runtime_loaded",
+      "exclusion_reason": "Framework reference only. Not a runtime artifact. Non-authoritative per DCC-Physique v1.2.1 authority tie-break clause."
+    },
+    {
+      "file_path": "Physique/Minimal_Runtime_Shell_v1_0_SPEC.md",
+      "artifact_role": "Declared runtime shell architecture specification.",
+      "current_classification": "support_spec_only",
+      "version_reference": "MINIMAL_RUNTIME_SHELL_v1.0.0",
+      "sha256": "232c7b266d3093c2914c0022e41b45dff38ba5c758c06b81c9df72c5bfacc533",
+      "binding_phase_target": "not_targeted",
+      "load_status": "not_runtime_loaded",
+      "exclusion_reason": "Architecture specification document, not a loadable runtime artifact. Review outcome from Phase 7 is CONDITIONAL. Required patch (header note distinguishing declared vs implemented architecture) must be applied before Phase 10. The runtime/ module paths described in this document do not currently exist."
+    },
+    {
+      "file_path": "Physique/Minimal_Runtime_Shell_v1_0_INVARIANTS.md",
+      "artifact_role": "Declared runtime invariants specification.",
+      "current_classification": "support_spec_only",
+      "version_reference": "MINIMAL_RUNTIME_SHELL_INVARIANTS_v1.0.0",
+      "sha256": "c247dbf75166970034c57805a7a6213feb4d3ba2e5fc926c7b6ea658769aad18",
+      "binding_phase_target": "not_targeted",
+      "load_status": "not_runtime_loaded",
+      "exclusion_reason": "Invariants specification document, not a loadable runtime artifact. All 18 invariants remain architecturally valid as target-state contracts per Phase 7 review. Same conditional patch requirement as Shell v1 SPEC applies."
+    },
+    {
+      "file_path": "Physique/EFL_Physique_Program_Framework_v2_1.md",
+      "artifact_role": "Program design reference document.",
+      "current_classification": "support_spec_only",
+      "version_reference": "EFL_PHYSIQUE_PROGRAM_FRAMEWORK_v2.1",
+      "sha256": "7f4ef3783ffb8306823018186e9b82cc00f89442edb316c2f1ee1a0f230cc3a0",
+      "binding_phase_target": "not_targeted",
+      "load_status": "not_runtime_loaded",
+      "exclusion_reason": "Program design reference only. Non-authoritative per DCC-Physique v1.2.1 authority tie-break clause. Framework templates do not override DCC law."
+    }
+  ],
+  "authority_dependencies": {
+    "description": "The authority chain governing Physique evaluation once runtime-bound. Distinction: current policy authority = governs decisions now but not yet kernel-enforced. Current runtime authority = currently loaded and enforced by efl_kernel.",
+    "chain": [
+      {
+        "rank": 1,
+        "authority": "DCC-Physique v1.2.1",
+        "artifact": "Physique/DCC-Physique-v1.2.1-PATCHED.md",
+        "domain": "Training law: legal/illegal session prescription",
+        "current_status": "current_policy_authority",
+        "runtime_status": "not_yet_kernel_enforced"
+      },
+      {
+        "rank": 2,
+        "authority": "EFL RAL v1.2.0",
+        "artifact": "efl_kernel/specs/EFL_RAL_v1_2_0_frozen.json",
+        "domain": "Kernel violation governance: severity, override policy, publish state derivation, KDO structure",
+        "current_status": "current_runtime_authority",
+        "runtime_status": "loaded_and_hash_verified_at_startup"
+      },
+      {
+        "rank": 3,
+        "authority": "Tempo Governance v1.1.2",
+        "artifact": "Physique/efl_tempo_governance_v1_1_2_ENFORCEMENT_CLEAN.json",
+        "domain": "Tempo structural safety: ceilings, minimums, H-node modulation, explosive concentric gate. Governs Pass 1B. Subordinate to DCC; cannot expand DCC legality.",
+        "current_status": "current_policy_authority",
+        "runtime_status": "not_yet_kernel_enforced"
+      },
+      {
+        "rank": 4,
+        "authority": "MCC v1.0.1",
+        "artifact": "Physique/mcc-v1-0-1-patchpack.json",
+        "domain": "Mesocycle-level restriction: route saturation, density ledger, adjacency, family-axis locking. Governs Pass 2. Restriction-only.",
+        "current_status": "future_integration_target",
+        "runtime_status": "not_yet_kernel_enforced"
+      },
+      {
+        "rank": 5,
+        "authority": "Whitelist v1.0.3",
+        "artifact": "Physique/efl_whitelist_v1_0_3.json",
+        "domain": "Per-exercise identity and constraints: band_max, node_max, h_node, tempo_class, day_role_allowed, tempo ceilings.",
+        "current_status": "future_integration_target",
+        "runtime_status": "not_yet_kernel_enforced"
+      },
+      {
+        "rank": 6,
+        "authority": "Global Reason Codes v1.0",
+        "artifact": "Physique/global_reason_codes_v1_0.json",
+        "domain": "Physique-side append-only reason code registry. Defines 55 codes across DCC, MCC, ADVISORY, R2P namespaces with pass ownership and severity. Required for post-pass output validation.",
+        "current_status": "future_integration_target",
+        "runtime_status": "not_yet_kernel_enforced"
+      }
+    ]
+  },
+  "module_registration_intent": {
+    "working_module_id": "PHYSIQUE",
+    "status": "unconfirmed_intent",
+    "rationale": "Phase 7 Section 9.1 established PHYSIQUE as the working designation. Inspection of efl_kernel/specs/EFL_RAL_v1_2_0_frozen.json confirms it is not registered: RALRequiredWindowsByModule, KDOSCHEMA.requiredContextByModule, and moduleRegistration contain only SESSION, MESO, MACRO, and GOVERNANCE. The working designation is supportable from Phase 7 but cannot be finalized without a new frozen RAL spec version.",
+    "registration_requirements": [
+      "New frozen RAL spec version (e.g. EFL_RAL_v1_3_0_frozen.json) per CLAUDE.md Section 3 protocol",
+      "Add PHYSIQUE to RALRequiredWindowsByModule with required window types (TBD)",
+      "Add PHYSIQUE to KDOSCHEMA.constraints.requiredContextByModule with required context fields (TBD)",
+      "Add moduleRegistration entry for PHYSIQUE with moduleVersion, moduleViolationRegistryVersion, registryHash",
+      "Recompute documentHash using canonicalize_and_hash from efl_kernel/kernel/ral.py",
+      "Update SPEC_PATH in ral.py to point to new frozen spec"
+    ],
+    "blockers": [
+      "Q5: Module ID must be confirmed as canonical before RAL spec version bump is written.",
+      "Required window types and required context fields for PHYSIQUE module are not yet defined.",
+      "Physique violation registry (and its registryHash) must exist before moduleRegistration can be written.",
+      "This work is the subject of Phase 9 (Pre-Pass Adapter Spec) and the RAL version bump that follows it."
+    ]
+  },
+  "violation_registry_strategy": {
+    "physique_side_registry": {
+      "artifact": "Physique/global_reason_codes_v1_0.json",
+      "status": "exists_append_only",
+      "description": "55-code append-only reason code registry. Contains DCC (7), MCC (41), ADVISORY (2), R2P (5) codes with pass ownership, severity, and ledger fields. This is the authoritative Physique-side source for reason code validation in pass output. Append-only policy applies: codes may be added, never removed or renamed."
+    },
+    "kernel_side_registry": {
+      "status": "unresolved",
+      "description": "The kernel VIOLATION_REGISTRY in efl_kernel/kernel/registry.py is currently populated from frozen module specs (EFL_SCM_*, EFL_MESO_*, EFL_MACRO_*) and EFL_Canonical_Law_v1_2_1.json. Physique module violation codes must not be added to these existing frozen registries. The loading path for Physique violation codes into the kernel VIOLATION_REGISTRY has not been specified.",
+      "allowed_options": [
+        "Option A: New frozen Physique module spec file (e.g. EFL_PHYSIQUE_v1_0_0_frozen.json) following the same pattern as EFL_SCM_v1_1_1_frozen.json. Loaded and hash-verified in registry.py alongside existing module specs.",
+        "Option B: Extension block within a new frozen RAL spec version that includes Physique module violation registry entries alongside module registration.",
+        "Option C: Separate Physique violation registry artifact loaded by a new Physique-specific loader in Phase 10, independent of the existing registry.py load pattern."
+      ],
+      "required_decision": "One option must be selected before Phase 10. The decision must be recorded in Phase 9 (Pre-Pass Adapter Spec) or a dedicated registry design decision artifact. Option A is the most consistent with existing patterns in registry.py.",
+      "constraint": "Whichever option is selected, the artifact must be integrity-verified (hash-checked) at load time before any Physique violation code is evaluated."
+    },
+    "integration_note": "The Physique-side global_reason_codes_v1_0.json and the kernel-side VIOLATION_REGISTRY serve different purposes. The global registry governs pass-output validation (is this code allowed in this pass?). The kernel registry governs KDO field enforcement (what severity and override policy apply to this violation code?). Both must be populated before a Physique session can produce a valid KDO."
+  },
+  "hash_pinning": {
+    "method": "SHA-256 of raw file bytes (no line-ending normalization). Computed: python hashlib.sha256(Path(f).read_bytes()).hexdigest()",
+    "computed_date": "2026-03-06",
+    "artifacts": {
+      "Physique/DCC-Physique-v1.2.1-PATCHED.md": "34c04a1f07891d9eb890843ef7a965ba9848b5068c668c5c405eb92268755931",
+      "Physique/efl_tempo_governance_v1_1_2_ENFORCEMENT_CLEAN.json": "870ea66b75fa0f0d33e2fa69bb530ce63a833f67126926cce6edd432d5e2d1c9",
+      "Physique/efl_whitelist_v1_0_3.json": "0dba74d788501f80e121388f59f52b69600bd4c151c5cf9df9baa84f909cb77d",
+      "Physique/mcc-v1-0-1-patchpack.json": "ba2a2e35b9b234e0725e4542fb587e695b03cf2ff8392094fd03500205de67fc",
+      "Physique/global_reason_codes_v1_0.json": "d8c2d81c23d238576a846b83b57315db0aad3f992d5320c7cadd5457310bb747",
+      "Physique/adult_physique_v1_0_2.json": "15f4ae889755ecad2a7d9e55e7046d15b2c1cbd58ae6e2e2823bd92ae82174c1",
+      "Physique/efl_physique_framework_v2_1_tempo_validated.json": "b7a4ab6add915aed1086c1d257cb372ec4717678e1a70f63c17fd86a3e3c21fc",
+      "Physique/Minimal_Runtime_Shell_v1_0_SPEC.md": "232c7b266d3093c2914c0022e41b45dff38ba5c758c06b81c9df72c5bfacc533",
+      "Physique/Minimal_Runtime_Shell_v1_0_INVARIANTS.md": "c247dbf75166970034c57805a7a6213feb4d3ba2e5fc926c7b6ea658769aad18",
+      "Physique/EFL_Physique_Program_Framework_v2_1.md": "7f4ef3783ffb8306823018186e9b82cc00f89442edb316c2f1ee1a0f230cc3a0",
+      "Physique/Physique_Runtime_Binding_Spec_v1_0.md": "1eed572c5aecd469938faec95dc33b27c2a23a5bb80c21e2827cba190186a609",
+      "efl_kernel/specs/EFL_RAL_v1_2_0_frozen.json": "2972ddb70603a567d8750c9e95e69c131275868938089002e48af8eef438e907"
+    }
+  },
+  "open_questions": [
+    {
+      "id": "Q1",
+      "title": "Exercise ID namespace reconciliation",
+      "description": "Three exercise ID formats exist across Physique artifacts: ECA-PHY-* (efl_whitelist_v1_0_3.json), ECA-SQUAT-* (adult_physique_v1_0_2.json), and plain-string IDs (EFL_Exercise_Library_100_v1_0_1.json). One canonical format must be established and all affected artifacts updated or aliased before Phase 10.",
+      "must_resolve_before": "Phase 10",
+      "resolution_path": "Phase 9 (Pre-Pass Adapter Spec) should specify the canonical format and define whether re-issuance or an alias table is acceptable."
+    },
+    {
+      "id": "Q2",
+      "title": "RAL clean-session label",
+      "description": "compute_effective_label in ral.py returns CLAMP when there are zero violations. The RAL spec precedenceOrder ends with CLAMP but does not define a distinct clean/approved label. Whether CLAMP is the intended zero-violation label for a Physique session, or whether a dedicated label is required, must be confirmed by the RAL spec owner before Physique violation codes are registered.",
+      "must_resolve_before": "Before Physique violation codes are registered (prior to Phase 10)",
+      "resolution_path": "Inspect RAL spec intent; if CLAMP is incorrect for zero violations, a new frozen RAL spec version is required."
+    },
+    {
+      "id": "Q3",
+      "title": "Uncapped override reason codes",
+      "description": "compute_effective_cap in ral.py returns float('inf') when no cap is registered for a reason code. Physique override reason codes will require explicit cap values. The policy for what happens if a Physique reason code is registered without a defaultMaxOverridesPer28D must be stated explicitly before Physique codes are added to the RAL override reason registry.",
+      "must_resolve_before": "Before Physique override reason codes are registered",
+      "resolution_path": "State explicit policy in Phase 9 or when Physique override reason codes are defined."
+    },
+    {
+      "id": "Q4",
+      "title": "CL_SPEC hash verification gap",
+      "description": "EFL_Canonical_Law_v1_2_1.json is loaded in registry.py without hash verification, unlike EFL_SCM_*, EFL_MESO_*, EFL_MACRO_* which are hash-verified at load. This gap must be addressed. The question is whether it is corrected in the current kernel (a CLAUDE.md Rule 1-2 compliant change to registry.py) or deferred to Phase 10 as part of Physique loader work.",
+      "must_resolve_before": "Phase 10",
+      "resolution_path": "Assign ownership: current kernel team (kernel patch) or Phase 10 scope."
+    },
+    {
+      "id": "Q5",
+      "title": "Physique module ID confirmation",
+      "description": "Working designation is PHYSIQUE (established in Phase 7). The RAL spec (EFL_RAL_v1_2_0_frozen.json) registers only SESSION, MESO, MACRO, GOVERNANCE. PHYSIQUE is not registered. The working designation is supportable from Phase 7 and Phase 8 records it as intent. It cannot be finalized without a new frozen RAL spec version. Once registered, the module ID cannot be renamed.",
+      "must_resolve_before": "New frozen RAL spec version (prerequisite for Phase 10)",
+      "resolution_path": "Confirm PHYSIQUE as canonical module ID; define required window types and required context fields; write new frozen RAL spec per CLAUDE.md Section 3 protocol."
+    },
+    {
+      "id": "Q6",
+      "title": "GOVERNANCE module interaction",
+      "description": "kernel.py accepts GOVERNANCE as a valid module ID but runs no gates for it (returns empty violations, no run_governance_gates call). Whether Physique introduces GOVERNANCE-module evaluation, or whether GOVERNANCE remains a no-op module, must be clarified before Phase 10.",
+      "must_resolve_before": "Phase 10",
+      "resolution_path": "Decision should be made in Phase 9 or a dedicated GOVERNANCE module design artifact."
+    },
+    {
+      "id": "Q7",
+      "title": "Kernel-side violation registry loading path",
+      "description": "Partially resolved: global_reason_codes_v1_0.json exists as the Physique-side append-only reason code registry (55 codes). Still unresolved: the kernel VIOLATION_REGISTRY (which drives enforce_kernel_owned_fields in registry.py) must be populated from a frozen spec or integrity-verified artifact. Three options exist: (A) new frozen Physique module spec following EFL_SCM_* pattern, (B) extension block within a new frozen RAL version, (C) separate Physique-specific loader in Phase 10. Option A is most consistent with existing patterns. Decision required before Phase 10.",
+      "must_resolve_before": "Phase 10",
+      "resolution_path": "Select one option and document in Phase 9 or a registry design decision artifact. Write the chosen artifact following the frozen spec protocol."
+    },
+    {
+      "id": "Q8",
+      "title": "Tempo governance integration path",
+      "description": "efl_tempo_governance_v1_1_2_ENFORCEMENT_CLEAN.json defines Pass 1B and its reason codes. Whether it loads as a separate runtime artifact (its own load path and hash verification), or is subsumed into a compiled authority artifact alongside DCC rules, or its constraints are encoded into the whitelist, must be specified before Phase 10.",
+      "must_resolve_before": "Phase 10",
+      "resolution_path": "Define integration path in Phase 9 (Pre-Pass Adapter Spec) which must address how Pass 1B enforcement artifacts are loaded."
+    },
+    {
+      "id": "Q9",
+      "title": "Mode label vocabulary alignment",
+      "description": "global_reason_codes_v1_0.json uses CONTEXT for Pass 2 mode and INFORMATIONAL for Pass 3 mode. Phase 7 Section 5.4 uses CONTROL and INFO for the same passes. These are terminologically inconsistent across the Physique artifact set. Canonical mode label vocabulary must be aligned before Phase 9 or Phase 10 to prevent validator confusion.",
+      "must_resolve_before": "Phase 9",
+      "resolution_path": "Choose canonical mode labels (CONTROL/INFO preferred per Phase 7 spec, which is the more recent document) and apply a minimal patch to global_reason_codes_v1_0.json validation_pass_structure section, or document the equivalence explicitly."
+    }
+  ],
+  "notes": [
+    "This manifest does not create runtime coupling. It pins intended artifact identity and loading candidacy as of 2026-03-06. No artifact listed here is currently loaded by efl_kernel.",
+    "SHA-256 hashes were computed from raw file bytes using Python hashlib.sha256(Path(f).read_bytes()).hexdigest(). No line-ending normalization was applied. Phase 10 loaders must use the same method to verify artifact identity at load time.",
+    "global_reason_codes_v1_0.json was identified as a runtime binding candidate for the first time in this phase (Phase 8). It was not classified in Phase 6 or Phase 7. Its candidacy is supported by its content: it is the append-only reason code registry that governs post-pass output validation and must be loaded before pass evaluation can operate.",
+    "The Physique_Runtime_Binding_Spec_v1_0.md hash is pinned here as the Phase 7 baseline that Phase 8 was written against. If Phase 7 is patched after this date, the hash will no longer match and this manifest should be updated to reflect the new baseline.",
+    "All frozen specs in efl_kernel/specs/ are excluded from this manifest because they are already integrity-verified by the kernel at load time via their own documentHash or registryHash mechanisms. Only the EFL_RAL_v1_2_0_frozen.json hash is pinned here as an authority dependency reference.",
+    "No builder tools, HTTP routes, database schemas, loader code, or runtime implementation is defined or implied by this manifest. Those are the subject of Phases 10-18.",
+    "Append-only registry discipline applies to global_reason_codes_v1_0.json: reason codes may be added via formal patch process, never removed or renamed."
+  ]
+}

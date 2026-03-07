@@ -1,0 +1,337 @@
+{
+  "specID": "EFL-RAL",
+  "version": "1.3.0",
+  "documentHash": "2dec1ec0d6e1a36e68a794aa783d9f1410e6a6a591fe05d30bb991ec1b0c0f51",
+  "RALPrecedenceRule": {
+    "precedenceOrder": [
+      "QUARANTINE",
+      "REGENERATE",
+      "HARDFAILNOOVERRIDE",
+      "HARDFAILOVERRIDEPOSSIBLE",
+      "WARNING",
+      "CLAMP"
+    ]
+  },
+  "RALOverrideReasonRegistry": {
+    "entries": [
+      {
+        "code": "OR-001",
+        "status": "ACTIVE",
+        "allowedModules": [
+          "SESSION",
+          "MESO",
+          "MACRO",
+          "GOVERNANCE"
+        ],
+        "defaultMaxOverridesPer28D": 2
+      },
+      {
+        "code": "OR-002",
+        "status": "ACTIVE",
+        "allowedModules": [
+          "SESSION"
+        ],
+        "defaultMaxOverridesPer28D": 1
+      },
+      {
+        "code": "OR-PHY-001",
+        "status": "ACTIVE",
+        "allowedModules": [
+          "PHYSIQUE"
+        ],
+        "defaultMaxOverridesPer28D": 2
+      }
+    ]
+  },
+  "RALKernelSyntheticViolationRegistry": {
+    "violations": [
+      {
+        "code": "RAL.MODULEREGISTRATIONINCOMPLETE",
+        "severity": "QUARANTINE",
+        "overridePossible": false,
+        "logRequired": true
+      },
+      {
+        "code": "RAL.MISSINGORUNDEFINEDREQUIREDSTATE",
+        "severity": "QUARANTINE",
+        "overridePossible": false,
+        "logRequired": true
+      },
+      {
+        "code": "RAL.MALFORMEDWINDOWENTRY",
+        "severity": "QUARANTINE",
+        "overridePossible": false,
+        "logRequired": true
+      },
+      {
+        "code": "RAL.MISSINGREQUIREDWINDOW",
+        "severity": "QUARANTINE",
+        "overridePossible": false,
+        "logRequired": true
+      },
+      {
+        "code": "RAL.MISSINGLINEAGECONTEXT",
+        "severity": "QUARANTINE",
+        "overridePossible": false,
+        "logRequired": true
+      },
+      {
+        "code": "RAL.UNREGISTEREDVIOLATIONCODE",
+        "severity": "QUARANTINE",
+        "overridePossible": false,
+        "logRequired": true
+      },
+      {
+        "code": "RAL.MODULEKDOMODULEIDMISMATCH",
+        "severity": "QUARANTINE",
+        "overridePossible": false,
+        "logRequired": true
+      },
+      {
+        "code": "RAL.MODULEREGISTRYMISMATCH",
+        "severity": "QUARANTINE",
+        "overridePossible": false,
+        "logRequired": true
+      },
+      {
+        "code": "RAL.OVERRIDEREASONCAPBREACH",
+        "severity": "QUARANTINE",
+        "overridePossible": false,
+        "logRequired": true
+      },
+      {
+        "code": "RAL.OVERRIDEVIOLATIONCAPBREACH",
+        "severity": "QUARANTINE",
+        "overridePossible": false,
+        "logRequired": true
+      }
+    ]
+  },
+  "RALDefaultDenyDoctrine": {
+    "rules": [
+      {
+        "id": "DD-001",
+        "description": "Default deny rule"
+      },
+      {
+        "id": "DD-002",
+        "description": "Default deny rule"
+      },
+      {
+        "id": "DD-003",
+        "description": "Default deny rule"
+      },
+      {
+        "id": "DD-004",
+        "description": "Default deny rule"
+      },
+      {
+        "id": "DD-005",
+        "description": "Default deny rule"
+      },
+      {
+        "id": "DD-006",
+        "description": "Default deny rule"
+      },
+      {
+        "id": "DD-007",
+        "description": "Default deny rule"
+      },
+      {
+        "id": "DD-008",
+        "description": "Default deny rule"
+      },
+      {
+        "id": "DD-009",
+        "description": "Default deny rule"
+      }
+    ]
+  },
+  "RALRequiredWindowsByModule": {
+    "requirements": [
+      {
+        "moduleID": "SESSION",
+        "requiredWindowTypes": [
+          "ROLLING7DAYS",
+          "ROLLING28DAYS"
+        ]
+      },
+      {
+        "moduleID": "MESO",
+        "requiredWindowTypes": [
+          "MESOCYCLE"
+        ]
+      },
+      {
+        "moduleID": "MACRO",
+        "requiredWindowTypes": [
+          "SEASON"
+        ]
+      },
+      {
+        "moduleID": "GOVERNANCE",
+        "requiredWindowTypes": [
+          "GOVERNANCEWINDOW"
+        ]
+      },
+      {
+        "moduleID": "PHYSIQUE",
+        "requiredWindowTypes": [
+          "ROLLING7DAYS",
+          "ROLLING28DAYS"
+        ]
+      }
+    ]
+  },
+  "KDOSCHEMA": {
+    "constraints": {
+      "requiredContextByModule": {
+        "SESSION": [
+          "athleteID",
+          "sessionID"
+        ],
+        "MESO": [
+          "athleteID",
+          "mesoID"
+        ],
+        "MACRO": [
+          "athleteID",
+          "seasonID"
+        ],
+        "GOVERNANCE": [
+          "scopeKey"
+        ],
+        "PHYSIQUE": [
+          "athleteID",
+          "sessionID"
+        ]
+      }
+    }
+  },
+  "RALLineageKeys": {
+    "perModule": {
+      "SESSION": {
+        "fields": [
+          "athleteID",
+          "sessionID"
+        ]
+      },
+      "MESO": {
+        "fields": [
+          "athleteID",
+          "mesoID"
+        ]
+      },
+      "MACRO": {
+        "fields": [
+          "athleteID",
+          "seasonID"
+        ]
+      },
+      "GOVERNANCE": {
+        "fields": [
+          "policyCheckID|evaluationDate",
+          "scopeKey"
+        ]
+      },
+      "PHYSIQUE": {
+        "fields": [
+          "athleteID",
+          "sessionID"
+        ]
+      }
+    }
+  },
+  "RALWindowSemantics": {
+    "ROLLING28DAYS": {
+      "days": 28
+    },
+    "ROLLING7DAYS": {
+      "days": 7
+    }
+  },
+  "RALPublishStateDerivation": {
+    "executionOrder": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "baseMapping": [
+      {
+        "when": {
+          "finalEffectiveLabel": "QUARANTINE"
+        },
+        "publishState": "BLOCKED"
+      },
+      {
+        "when": {
+          "finalEffectiveLabel": "REGENERATE"
+        },
+        "publishState": "REGENERATE_REQUIRED"
+      },
+      {
+        "when": {
+          "finalEffectiveLabel": "HARDFAILNOOVERRIDE"
+        },
+        "publishState": "BLOCKED"
+      },
+      {
+        "when": {
+          "finalEffectiveLabel": "HARDFAILOVERRIDEPOSSIBLE"
+        },
+        "publishState": "BLOCKED"
+      },
+      {
+        "when": {
+          "finalSeverity": "WARNING"
+        },
+        "publishState": "PUBLISH_WITH_WARNING"
+      },
+      {
+        "when": {
+          "finalSeverity": "CLAMP"
+        },
+        "publishState": "PUBLISH_WITH_CLAMP"
+      }
+    ]
+  },
+  "freezePolicy": {
+    "canonicalizationRules": {
+      "sortKeysLexicographically": true,
+      "minifyJson": true,
+      "preserveArrayOrder": true
+    }
+  },
+  "moduleRegistration": {
+    "SESSION": {
+      "moduleVersion": "1.1.1",
+      "moduleViolationRegistryVersion": "1.1.1",
+      "registryHash": "e23fcaaf222a1a39dcb4905850954e458f89200288db0d2912e5ef1d0329710d"
+    },
+    "MESO": {
+      "moduleVersion": "1.0.2",
+      "moduleViolationRegistryVersion": "1.0.2",
+      "registryHash": "54113cf2db1116bf67407da998c10c09d89a111d28dd25fd0baa3da03e36e7f5"
+    },
+    "MACRO": {
+      "moduleVersion": "1.0.2",
+      "moduleViolationRegistryVersion": "1.0.2",
+      "registryHash": "dc52f54f1dfc0c1466d4285c61b9dbb6990bdd48629909de57a744fba6912e58"
+    },
+    "GOVERNANCE": {
+      "moduleVersion": "1.0.0",
+      "moduleViolationRegistryVersion": "1.0.0",
+      "registryHash": "NA"
+    },
+    "PHYSIQUE": {
+      "moduleVersion": "1.0.0",
+      "moduleViolationRegistryVersion": "1.0.0",
+      "registryHash": "e32807ef6c060dc8464b629c86f00f394ed5a0bac96a8716e2689fcc115c51bb"
+    }
+  }
+}

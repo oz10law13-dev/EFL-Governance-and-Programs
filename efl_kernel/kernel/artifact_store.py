@@ -277,3 +277,13 @@ class ArtifactStore:
             (artifact_id,),
         ).fetchall()
         return [dict(r) for r in rows]
+
+    def get_versions_by_artifact_id(self, artifact_id: str) -> list[dict]:
+        """Return all versions for artifact_id, ordered by created_at DESC. Never raises."""
+        rows = self._conn.execute(
+            "SELECT * FROM artifact_versions "
+            "WHERE artifact_id = ? "
+            "ORDER BY created_at DESC",
+            (artifact_id,),
+        ).fetchall()
+        return [dict(r) for r in rows]
