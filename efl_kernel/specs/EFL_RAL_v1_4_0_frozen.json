@@ -297,7 +297,7 @@
       "days": 7
     }
   },
-  "documentHash": "456a1ff368b0470b3841152641dc15f1aae266f4ea9abbeb0bc032b3b069f92a",
+  "documentHash": "0ed89408fd370e6493891cad54f839b571082f1344ffae78582b53d7843251c8",
   "freezePolicy": {
     "canonicalizationRules": {
       "minifyJson": true,
@@ -324,7 +324,7 @@
     "PHYSIQUE": {
       "moduleVersion": "1.0.2",
       "moduleViolationRegistryVersion": "1.0.2",
-      "registryHash": "12d41d1a72d1e5bc4b29b813cf2e884c63a2727d8bb3eb3b3cee9783950fcc27"
+      "registryHash": "18e48073a08eac4f755c6bc4fc9755158917415188316a8d8ad38d304be02f3c"
     },
     "SESSION": {
       "moduleVersion": "1.1.1",

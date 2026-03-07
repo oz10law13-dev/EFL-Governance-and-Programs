@@ -1,10 +1,23 @@
 {
-  "documentHash": "d3b654a54c0f39acc1701adcad2e940140264afaea885fa4197fe858c0cfa284",
+  "documentHash": "1ac740c4fd0278edd94be2c1cb99ea8a21961fffe35e88467ebc9b5d9e183596",
   "moduleID": "PHYSIQUE",
+  "moduleVersion": "1.0.2",
+  "moduleViolationRegistryVersion": "1.0.2",
+  "sfiFormula": {
+    "h3_archetype_weight": 2.0,
+    "h4_archetype_weight": 4.0,
+    "node3_sets_weight": 1.0,
+    "unilateral_sets_weight": 0.5
+  },
+  "sfiThresholds": {
+    "elevated": 15,
+    "excessive": 25
+  },
   "specID": "EFL-PHYSIQUE",
   "version": "1.0.2",
   "violationRegistry": {
-    "registryHash": "12d41d1a72d1e5bc4b29b813cf2e884c63a2727d8bb3eb3b3cee9783950fcc27",
+    "registryHash": "18e48073a08eac4f755c6bc4fc9755158917415188316a8d8ad38d304be02f3c",
+    "registryVersion": "1.0.0",
     "violations": [
       {
         "allowedOverrideReasonCodes": [],
