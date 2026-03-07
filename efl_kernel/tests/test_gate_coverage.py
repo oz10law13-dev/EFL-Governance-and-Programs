@@ -53,6 +53,7 @@
 # MCC_VOLUME_CLASS_OVERRIDE_ATTEMPT
 # MCC_WORK_BLOCK_INSUFFICIENT
 # MCC_ECA_SLOT_UNRESOLVABLE
+# PHYSIQUE.CLEARANCEMISSING
 
 from efl_kernel.kernel.registry import validate_bidirectional_coverage
 
@@ -107,3 +108,78 @@ def test_slot_unknown_eca_id_emits_unresolvable(tmp_path):
     assert "MCC_TEMPO_DOWNGRADED_FOR_H_NODE_MAX" not in codes
     assert "MCC_TEMPO_DOWNGRADE_CHAIN_EXHAUSTED" not in codes
     assert "MCC_TEMPO_DOWNGRADE_REVALIDATION_FAILED" not in codes
+
+
+def test_physique_clearance_gate_fires_on_missing_clearance():
+    """PHYSIQUE.CLEARANCEMISSING emitted when e4_requires_clearance=True and athlete lacks clearance."""
+    from efl_kernel.kernel.gates_physique import run_physique_gates
+    from efl_kernel.kernel.dependency_provider import InMemoryDependencyProvider
+
+    payload = {
+        "evaluationContext": {"athleteID": "ath-clearance-test", "sessionID": "ps-1"},
+        "physique_session": {
+            "exercises": [
+                {"exercise_id": "ECA-PRESS-004", "e4_requires_clearance": True, "tempo": "3:0:1:0"},
+            ]
+        },
+    }
+
+    provider = InMemoryDependencyProvider(
+        athlete_profile={"ath-clearance-test": {"e4_clearance": False}}
+    )
+
+    violations = run_physique_gates(payload, provider)
+    codes = [v["code"] for v in violations]
+
+    assert "PHYSIQUE.CLEARANCEMISSING" in codes
+    clearance_v = next(v for v in violations if v["code"] == "PHYSIQUE.CLEARANCEMISSING")
+    assert clearance_v["severity"] == "HARDFAIL"
+    assert clearance_v["overridePossible"] is False
+    assert clearance_v["details"]["exercise_id"] == "ECA-PRESS-004"
+
+
+def test_physique_clearance_gate_suppressed_when_cleared():
+    """PHYSIQUE.CLEARANCEMISSING NOT emitted when athlete has e4_clearance=True."""
+    from efl_kernel.kernel.gates_physique import run_physique_gates
+    from efl_kernel.kernel.dependency_provider import InMemoryDependencyProvider
+
+    payload = {
+        "evaluationContext": {"athleteID": "ath-cleared", "sessionID": "ps-2"},
+        "physique_session": {
+            "exercises": [
+                {"exercise_id": "ECA-PRESS-004", "e4_requires_clearance": True, "tempo": "3:0:1:0"},
+            ]
+        },
+    }
+
+    provider = InMemoryDependencyProvider(
+        athlete_profile={"ath-cleared": {"e4_clearance": True}}
+    )
+
+    violations = run_physique_gates(payload, provider)
+    codes = [v["code"] for v in violations]
+
+    assert "PHYSIQUE.CLEARANCEMISSING" not in codes
+
+
+def test_inv_mcc_001_slot_context_copresence():
+    """INV-MCC-001: day_slots non-empty + context absent → MCC_PASS2_MISSING_OR_FAILED fires, no slot-level MCC codes."""
+    from efl_kernel.kernel.gates_physique import run_physique_gates
+    from efl_kernel.kernel.dependency_provider import InMemoryDependencyProvider
+
+    payload = {
+        "evaluationContext": {"athleteID": "ath-inv", "sessionID": "ps-inv"},
+        "physique_session": {"exercises": []},
+        "day_slots": [{"day_role": "DAY_A", "exercises": []}],
+    }
+
+    provider = InMemoryDependencyProvider(
+        athlete_profile={"ath-inv": {"e4_clearance": False}}
+    )
+
+    violations = run_physique_gates(payload, provider)
+    codes = [v["code"] for v in violations]
+
+    assert "MCC_PASS2_MISSING_OR_FAILED" in codes
+    slot_level_codes = {c for c in codes if c.startswith("MCC_") and c != "MCC_PASS2_MISSING_OR_FAILED"}
+    assert len(slot_level_codes) == 0, f"Unexpected slot-level codes: {slot_level_codes}"
