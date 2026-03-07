@@ -20,6 +20,8 @@ This document defines **mechanically-checkable invariants** that bridge the Runt
 
 These invariants are **implementation contracts**, not suggestions.
 
+These invariants are subordinate to controlling `Physique/DCC-Physique-v1.2.1-PATCHED.md` and active tempo authority `Physique/efl_tempo_governance_v1_1_2_ENFORCEMENT_CLEAN.json`; they do not define parallel legality.
+
 ---
 
 ## Table of Contents
