@@ -54,6 +54,7 @@
 # MCC_WORK_BLOCK_INSUFFICIENT
 # MCC_ECA_SLOT_UNRESOLVABLE
 # PHYSIQUE.CLEARANCEMISSING
+# MCC_PASS2_MISSING_OR_FAILED
 
 from efl_kernel.kernel.registry import validate_bidirectional_coverage
 
@@ -111,21 +112,21 @@ def test_slot_unknown_eca_id_emits_unresolvable(tmp_path):
 
 
 def test_physique_clearance_gate_fires_on_missing_clearance():
-    """PHYSIQUE.CLEARANCEMISSING emitted when e4_requires_clearance=True and athlete lacks clearance."""
+    """PHYSIQUE.CLEARANCEMISSING emitted when whitelist exercise has e4_requires_clearance=True and athlete lacks clearance."""
     from efl_kernel.kernel.gates_physique import run_physique_gates
     from efl_kernel.kernel.dependency_provider import InMemoryDependencyProvider
 
     payload = {
-        "evaluationContext": {"athleteID": "ath-clearance-test", "sessionID": "ps-1"},
+        "evaluationContext": {"athleteID": "ath-no-clearance", "sessionID": "ps-1"},
         "physique_session": {
             "exercises": [
-                {"exercise_id": "ECA-PRESS-004", "e4_requires_clearance": True, "tempo": "3:0:1:0"},
+                {"exercise_id": "ECA-PHY-0027", "band": 2, "node": 2, "tempo": "3:0:1:0"},
             ]
         },
     }
 
     provider = InMemoryDependencyProvider(
-        athlete_profile={"ath-clearance-test": {"e4_clearance": False}}
+        athlete_profile={"ath-no-clearance": {"e4_clearance": False}}
     )
 
     violations = run_physique_gates(payload, provider)
@@ -135,7 +136,7 @@ def test_physique_clearance_gate_fires_on_missing_clearance():
     clearance_v = next(v for v in violations if v["code"] == "PHYSIQUE.CLEARANCEMISSING")
     assert clearance_v["severity"] == "HARDFAIL"
     assert clearance_v["overridePossible"] is False
-    assert clearance_v["details"]["exercise_id"] == "ECA-PRESS-004"
+    assert clearance_v["details"]["exercise_id"] == "ECA-PHY-0027"
 
 
 def test_physique_clearance_gate_suppressed_when_cleared():
@@ -147,7 +148,7 @@ def test_physique_clearance_gate_suppressed_when_cleared():
         "evaluationContext": {"athleteID": "ath-cleared", "sessionID": "ps-2"},
         "physique_session": {
             "exercises": [
-                {"exercise_id": "ECA-PRESS-004", "e4_requires_clearance": True, "tempo": "3:0:1:0"},
+                {"exercise_id": "ECA-PHY-0027", "band": 2, "node": 2, "tempo": "3:0:1:0"},
             ]
         },
     }
@@ -160,6 +161,30 @@ def test_physique_clearance_gate_suppressed_when_cleared():
     codes = [v["code"] for v in violations]
 
     assert "PHYSIQUE.CLEARANCEMISSING" not in codes
+
+
+def test_physique_clearance_gate_fires_for_slot_exercise():
+    """PHYSIQUE.CLEARANCEMISSING emitted for day_slot exercise with _resolved_e4_requires_clearance=True."""
+    from efl_kernel.kernel.gates_physique import run_physique_gates
+    from efl_kernel.kernel.dependency_provider import InMemoryDependencyProvider
+
+    payload = {
+        "evaluationContext": {"athleteID": "ath-slot", "sessionID": "ps-3"},
+        "physique_session": {"exercises": []},
+        "context": {"athlete_id": "ath-slot"},
+        "day_slots": [{"day_role": "DAY_B", "exercises": [
+            {"eca_id": "ECA-PHY-0027", "role": "WORK", "band": 2, "node": 2, "set_count": 3},
+        ]}],
+    }
+
+    provider = InMemoryDependencyProvider(
+        athlete_profile={"ath-slot": {"e4_clearance": False}}
+    )
+
+    violations = run_physique_gates(payload, provider)
+    codes = [v["code"] for v in violations]
+
+    assert "PHYSIQUE.CLEARANCEMISSING" in codes
 
 
 def test_inv_mcc_001_slot_context_copresence():
@@ -183,3 +208,35 @@ def test_inv_mcc_001_slot_context_copresence():
     assert "MCC_PASS2_MISSING_OR_FAILED" in codes
     slot_level_codes = {c for c in codes if c.startswith("MCC_") and c != "MCC_PASS2_MISSING_OR_FAILED"}
     assert len(slot_level_codes) == 0, f"Unexpected slot-level codes: {slot_level_codes}"
+
+
+def test_isometric_exercise_gets_n_a_duration_tempo_mode():
+    """ECA-PHY-0023 (Plank, pattern_plane=Isometric) must get tempo_mode=N/A_DURATION (F6 fix)."""
+    from efl_kernel.kernel.physique_adapter import run_physique_adapter
+
+    payload = {
+        "evaluationContext": {"athleteID": "x"},
+        "physique_session": {"exercises": [{"exercise_id": "ECA-PHY-0023", "tempo": ""}]},
+        "day_slots": [],
+    }
+    r = run_physique_adapter(payload)
+    assert r.halt_codes == []
+    assert r.normalized_exercises[0]["tempo_mode"] == "N/A_DURATION"
+
+
+def test_unknown_horiz_vert_label_halts_adapter():
+    """An unknown horiz_vert label in the whitelist must halt with UNKNOWN_HORIZ_VERT_LABEL (F5 fix)."""
+    import efl_kernel.kernel.physique_adapter as adapter_module
+
+    original = dict(adapter_module.WHITELIST_INDEX["ECA-PHY-0001"])
+    try:
+        adapter_module.WHITELIST_INDEX["ECA-PHY-0001"] = dict(original, horiz_vert="diagonal")
+        payload = {
+            "evaluationContext": {"athleteID": "x"},
+            "physique_session": {"exercises": [{"exercise_id": "ECA-PHY-0001", "tempo": "3:0:1:0"}]},
+            "day_slots": [],
+        }
+        r = adapter_module.run_physique_adapter(payload)
+        assert "UNKNOWN_HORIZ_VERT_LABEL" in r.halt_codes
+    finally:
+        adapter_module.WHITELIST_INDEX["ECA-PHY-0001"] = original

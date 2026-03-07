@@ -334,9 +334,9 @@ def test_physique_module_registered_in_ral():
     """PHYSIQUE must appear in RAL_SPEC moduleRegistration; an unknown module triggers RAL.MODULEREGISTRATIONINCOMPLETE."""
     assert "PHYSIQUE" in RAL_SPEC["moduleRegistration"]
     phy_reg = RAL_SPEC["moduleRegistration"]["PHYSIQUE"]
-    assert phy_reg["moduleVersion"] == "1.0.2"
-    assert phy_reg["moduleViolationRegistryVersion"] == "1.0.2"
-    assert phy_reg["registryHash"] == "18e48073a08eac4f755c6bc4fc9755158917415188316a8d8ad38d304be02f3c"
+    assert phy_reg["moduleVersion"] == "1.0.3"
+    assert phy_reg["moduleViolationRegistryVersion"] == "1.0.3"
+    assert phy_reg["registryHash"] == "da6f7d3e2b46c10a7fe428d43823398154262e26bd48d694af7e7723cb6b7bc9"
     # An unknown module still quarantines with RAL.MODULEREGISTRATIONINCOMPLETE
     kdo = _runner().evaluate(_session_input(), "UNKNOWN_MODULE")
     assert kdo.violations[0]["code"] == "RAL.MODULEREGISTRATIONINCOMPLETE"
