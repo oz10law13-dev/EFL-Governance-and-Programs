@@ -61,7 +61,7 @@
       "DAY_C_node_max": "Increase to 2 (align Tempo)",
       "field_rename": "node_max \u2192 day_role_h_node_max everywhere",
       "dependencies_add": [
-        "Tempo Governance v1.1.2-ENFORCEMENT_CLEAN"
+        "efl_tempo_governance_v1_1_2_ENFORCEMENT_CLEAN.json"
       ]
     }
   }

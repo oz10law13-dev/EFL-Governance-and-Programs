@@ -1,14 +1,16 @@
 # Minimal Runtime Shell v1.0
-## Bounded Compiler Architecture for DCC-Physique v1.2 + MCC
+## Bounded Compiler Architecture for DCC-Physique v1.2.1 + MCC
 
 **Status:** DESIGN-LOCKED  
 **Version:** 1.0.0  
 **Date:** 2026-01-25  
 **Authority Dependencies:**
-- DCC-Physique v1.2 (immutable law)
+- DCC-Physique v1.2.1 (immutable law)
 - ECA v1.2 (exercise catalog authority)
+- efl_tempo_governance_v1_1_2_ENFORCEMENT_CLEAN.json (active tempo authority under DCC)
 - MCC v1.0.0/v1.0.1-PATCHPACK (meso constraint controller)
 - LLM Execution Protocol v1.0 (runtime behavior contract)
+**Authority Boundary Note:** This runtime shell is enforcement infrastructure, not a competing law source. It is subordinate to controlling `Physique/DCC-Physique-v1.2.1-PATCHED.md` and active tempo authority `Physique/efl_tempo_governance_v1_1_2_ENFORCEMENT_CLEAN.json`.
 
 ---
 
@@ -90,7 +92,7 @@ Client / UI / API
 
 | Layer | Role | Mutable | Notes |
 |-------|------|---------|-------|
-| **DCC-Physique v1.2** | Training law (legal/illegal) | ❌ | Highest authority; stops all lower ranks |
+| **DCC-Physique v1.2.1** | Training law (legal/illegal) | ❌ | Highest authority; stops all lower ranks |
 | **ECA v1.2** | Exercise definitions | ❌ | Exact IDs only; canonical source of truth |
 | **MCC** | Stateful restriction | ❌ | Can only restrict/defer/rotate; cannot expand legality |
 | **Execution Protocol** | Runtime law | ❌ | Compiler contract; defines pass behavior |
@@ -121,7 +123,7 @@ Client / UI / API
 ```json
 {
   "authority_versions": {
-    "dcc": "DCC-PHYSIQUE-v1.2",
+    "dcc": "DCC-PHYSIQUE-v1.2.1",
     "eca": "ECA-v1.2",
     "mcc": "MCC-v1.0.0"
   },
@@ -176,6 +178,11 @@ For each `exercises[i].eca_id`:
    - `volume_class`
    - `push_pull`, `horiz_vert`
    - archetype flags
+
+4. **Authoring-taxonomy boundary (deterministic):**
+   - ECA/whitelist authoring may include richer labels than MCC runtime enums (e.g., `horiz_vert = "Incline"`).
+   - Before MCC schema validation, runtime MUST normalize richer authoring labels into the active MCC enum domain (`horizontal|vertical|sagittal|frontal`) via an explicit adapter contract.
+   - If no mapping is defined for a richer label, runtime MUST fail closed (reject) rather than defaulting or silently collapsing categories.
 
 ### 4.4 Design Choice: Fail-Closed (Recommended for v1)
 
