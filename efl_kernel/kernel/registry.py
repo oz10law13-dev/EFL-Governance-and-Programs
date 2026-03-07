@@ -16,7 +16,7 @@ def _load(path: str) -> dict:
 SCM_SPEC = _load("EFL_SCM_v1_1_1_frozen.json")
 MESO_SPEC = _load("EFL_MESO_v1_0_2_frozen.json")
 MACRO_SPEC = _load("EFL_MACRO_v1_0_2_frozen.json")
-PHYSIQUE_SPEC = _load("EFL_PHYSIQUE_v1_0_1_frozen.json")
+PHYSIQUE_SPEC = _load("EFL_PHYSIQUE_v1_0_2_frozen.json")
 CL_SPEC = _load("EFL_Canonical_Law_v1_2_2_frozen.json")
 
 for spec in (SCM_SPEC, MESO_SPEC, MACRO_SPEC, PHYSIQUE_SPEC):
@@ -69,16 +69,6 @@ def enforce_kernel_owned_fields(violation: dict, module_id: str) -> dict:
     for key in ["severity", "overridePossible", "allowedOverrideReasonCodes", "violationCap", "reviewOverrideThreshold28D"]:
         violation[key] = reg[key]
     return violation
-
-
-VIOLATION_REGISTRY[("PHYSIQUE", "MCC_ECA_SLOT_UNRESOLVABLE")] = {
-    "severity": "HARDFAIL",
-    "overridePossible": False,
-    "allowedOverrideReasonCodes": [],
-    "violationCap": None,
-    "reviewOverrideThreshold28D": None,
-    "clampBehavior": None,
-}
 
 
 def validate_bidirectional_coverage() -> dict[str, list[str]]:

@@ -6,7 +6,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-SPEC_PATH = Path(__file__).resolve().parent.parent / "specs" / "EFL_RAL_v1_3_0_frozen.json"
+SPEC_PATH = Path(__file__).resolve().parent.parent / "specs" / "EFL_RAL_v1_4_0_frozen.json"
 
 
 def canonicalize_and_hash(doc: dict, self_hash_field: str | None = None) -> str:

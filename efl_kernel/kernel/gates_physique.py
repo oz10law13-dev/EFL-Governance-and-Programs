@@ -707,20 +707,75 @@ def _run_n_cluster(
                     n3_fired = True
 
 
+def _run_clearance_gate(raw_input: dict, dep_provider) -> list[dict]:
+    """PHYSIQUE-GATE-GAP-001 closure.
+
+    Emits PHYSIQUE.CLEARANCEMISSING (HARDFAIL, no override) for each exercise
+    in physique_session.exercises that has e4_requires_clearance=True when the
+    athlete profile does not carry e4_clearance=True.
+
+    Fail-closed: absent e4_clearance in profile = False.
+    Non-ECA exercises (no exercise_id) are skipped.
+    Day-slot exercises not checked (Phase 9 decision).
+    """
+    violations = []
+    athlete_id = (raw_input.get("evaluationContext") or {}).get("athleteID")
+    if not athlete_id:
+        return violations
+
+    profile = dep_provider.get_athlete_profile(athlete_id) or {}
+    has_clearance = bool(profile.get("e4_clearance", False))
+    if has_clearance:
+        return violations
+
+    exercises = (raw_input.get("physique_session") or {}).get("exercises") or []
+    seen_ids: set = set()
+    for ex in exercises:
+        if not isinstance(ex, dict):
+            continue
+        exercise_id = ex.get("exercise_id")
+        if not exercise_id:
+            continue
+        if not ex.get("e4_requires_clearance", False):
+            continue
+        if exercise_id in seen_ids:
+            continue
+        seen_ids.add(exercise_id)
+        violations.append({
+            "code": "PHYSIQUE.CLEARANCEMISSING",
+            "moduleID": "PHYSIQUE",
+            "severity": "HARDFAIL",
+            "overridePossible": False,
+            "allowedOverrideReasonCodes": [],
+            "violationCap": None,
+            "reviewOverrideThreshold28D": None,
+            "details": {
+                "exercise_id": exercise_id,
+                "athlete_id": athlete_id,
+                "e4_clearance": False,
+            },
+        })
+    return violations
+
+
 def run_physique_gates(raw_input: dict, dep_provider) -> list[dict]:
     """Top-level PHYSIQUE gate function called by kernel Step 6 dispatch.
 
-    Runs the pre-pass adapter then the DCC and MCC gate layers in order.
-    If the adapter halts (structural pre-evaluation failure), returns a
-    RAL.MISSINGORUNDEFINEDREQUIREDSTATE synthetic violation so the kernel
-    can quarantine immediately without invoking any LAW-mode pass.
+    Runs the clearance gate first (reads raw input + dep_provider directly),
+    then the pre-pass adapter, then DCC and MCC gate layers in order.
+    If the adapter halts, appends RAL.MISSINGORUNDEFINEDREQUIREDSTATE and
+    returns without invoking any LAW-mode pass.
     """
+    # Clearance gate — PHYSIQUE-GATE-GAP-001
+    violations = list(_run_clearance_gate(raw_input, dep_provider))
+
     adapter_result = run_physique_adapter(raw_input)
 
     if adapter_result.halt_codes:
-        return [_syn("RAL.MISSINGORUNDEFINEDREQUIREDSTATE")]
+        violations.append(_syn("RAL.MISSINGORUNDEFINEDREQUIREDSTATE"))
+        return violations
 
-    violations = run_physique_dcc_gates(adapter_result, dep_provider)
+    violations += run_physique_dcc_gates(adapter_result, dep_provider)
 
     # O1: MCC_PASS2_MISSING_OR_FAILED — day_slots provided but context absent
     if adapter_result.day_slots and not adapter_result.context:
