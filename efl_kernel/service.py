@@ -10,6 +10,7 @@ from efl_kernel.kernel.kernel import KernelRunner
 from efl_kernel.kernel.operational_store import OperationalStore
 from efl_kernel.kernel.sqlite_dependency_provider import SqliteDependencyProvider
 from efl_kernel.kernel.artifact_store import ArtifactStore
+from efl_kernel.kernel.exercise_catalog import ExerciseCatalog
 
 
 def create_app(db_path: str | None = None) -> FastAPI:
@@ -34,6 +35,7 @@ def create_app(db_path: str | None = None) -> FastAPI:
     )
     app.state.runner = KernelRunner(app.state.provider)
     app.state.artifact_store = ArtifactStore(resolved_path)
+    app.state.catalog = ExerciseCatalog()
 
     _register_routes(app)
     return app
@@ -170,6 +172,36 @@ def _register_routes(app: FastAPI) -> None:
         except ValueError as e:
             raise HTTPException(status_code=409, detail=str(e))
         return result
+
+    @app.get("/exercises")
+    def list_exercises(
+        request: Request,
+        h_node: str | None = None,
+        day_role: str | None = None,
+        movement_family: str | None = None,
+        node: int | None = None,
+    ):
+        filters: dict = {}
+        if h_node is not None:
+            filters["h_node"] = h_node
+        if day_role is not None:
+            filters["day_role"] = day_role
+        if movement_family is not None:
+            filters["movement_family"] = movement_family
+        if node is not None:
+            filters["node"] = node
+        return request.app.state.catalog.list_exercises(filters or None)
+
+    @app.get("/exercises/{canonical_id}")
+    def get_exercise(canonical_id: str, request: Request):
+        ex = request.app.state.catalog.get_exercise(canonical_id)
+        if ex is None:
+            raise HTTPException(status_code=404, detail=f"Exercise {canonical_id!r} not found")
+        return ex
+
+    @app.post("/check/exercise")
+    def check_exercise(payload: dict, request: Request):
+        return request.app.state.catalog.check_exercise(payload)
 
     @app.post("/author/session")
     def author_session(payload: dict, request: Request):
