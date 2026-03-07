@@ -43,7 +43,10 @@ _ATHLETE_COLS = (
     "athlete_id", "max_daily_contact_load", "minimum_rest_interval_hours",
     "e4_clearance", "created_at", "updated_at",
 )
-_SESSION_COLS = ("session_id", "athlete_id", "session_date", "contact_load", "created_at")
+_SESSION_COLS = (
+    "session_id", "athlete_id", "session_date", "contact_load", "created_at",
+    "readiness_state", "is_collapsed",
+)
 _SEASON_COLS = (
     "athlete_id", "season_id", "competition_weeks", "gpp_weeks",
     "start_date", "end_date", "created_at", "updated_at",
@@ -66,9 +69,22 @@ class OperationalStore:
         self._conn = sqlite3.connect(db_path, check_same_thread=False)
         self._conn.row_factory = sqlite3.Row
         self._init_tables()
+        self._migrate_schema()
 
     def _init_tables(self) -> None:
         self._conn.executescript(_DDL)
+        self._conn.commit()
+
+    def _migrate_schema(self) -> None:
+        """Idempotent migration: add new columns to op_sessions if they don't exist."""
+        for stmt in [
+            "ALTER TABLE op_sessions ADD COLUMN readiness_state TEXT",
+            "ALTER TABLE op_sessions ADD COLUMN is_collapsed INTEGER NOT NULL DEFAULT 0",
+        ]:
+            try:
+                self._conn.execute(stmt)
+            except sqlite3.OperationalError:
+                pass  # column already exists
         self._conn.commit()
 
     # ------------------------------------------------------------------ #
@@ -125,14 +141,17 @@ class OperationalStore:
         created_at = session.get("created_at", _now())
         self._conn.execute(
             "INSERT OR REPLACE INTO op_sessions "
-            "(session_id, athlete_id, session_date, contact_load, created_at) "
-            "VALUES (?, ?, ?, ?, ?)",
+            "(session_id, athlete_id, session_date, contact_load, created_at, "
+            "readiness_state, is_collapsed) "
+            "VALUES (?, ?, ?, ?, ?, ?, ?)",
             (
                 session["session_id"],
                 session["athlete_id"],
                 session["session_date"],
                 session["contact_load"],
                 created_at,
+                session.get("readiness_state"),
+                int(session.get("is_collapsed", False)),
             ),
         )
         self._conn.commit()
@@ -177,6 +196,34 @@ class OperationalStore:
             (athlete_id, before_date),
         ).fetchone()
         return dict(row) if row is not None else None
+
+    def get_readiness_history(
+        self, athlete_id: str, window_start: str, anchor_date: str
+    ) -> list[str]:
+        """Return readiness_state values for sessions in window, ASC order.
+
+        NULL readiness_state rows are excluded.
+        """
+        rows = self._conn.execute(
+            "SELECT readiness_state FROM op_sessions "
+            "WHERE athlete_id = ? AND session_date >= ? AND session_date <= ? "
+            "  AND readiness_state IS NOT NULL "
+            "ORDER BY session_date ASC",
+            (athlete_id, window_start, anchor_date),
+        ).fetchall()
+        return [r[0] for r in rows]
+
+    def get_collapse_count(
+        self, athlete_id: str, window_start: str, anchor_date: str
+    ) -> int:
+        """Return count of collapsed (is_collapsed=1) sessions in window."""
+        row = self._conn.execute(
+            "SELECT COUNT(*) FROM op_sessions "
+            "WHERE athlete_id = ? AND session_date >= ? AND session_date <= ? "
+            "  AND is_collapsed = 1",
+            (athlete_id, window_start, anchor_date),
+        ).fetchone()
+        return row[0] if row else 0
 
     # ------------------------------------------------------------------ #
     # Seasons                                                              #

@@ -11,9 +11,12 @@ from datetime import date, timedelta
 import pytest
 from fastapi.testclient import TestClient
 
+from efl_kernel.kernel.audit_store import AuditStore
 from efl_kernel.kernel.gates_physique import run_physique_mcc_gates
+from efl_kernel.kernel.operational_store import OperationalStore
 from efl_kernel.kernel.physique_adapter import TEMPO_GOV, WHITELIST_INDEX
 from efl_kernel.kernel.ral import RAL_SPEC
+from efl_kernel.kernel.sqlite_dependency_provider import SqliteDependencyProvider
 from efl_kernel.service import create_app
 
 PHY_REG = RAL_SPEC["moduleRegistration"]["PHYSIQUE"]
@@ -1137,3 +1140,130 @@ def test_integration_adjacency_violation_in_kdo(client):
     assert r.status_code == 200
     codes = [v["code"] for v in r.json()["violations"]]
     assert "MCC_ADJACENCY_VIOLATION" in codes
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# L3 — CHRONIC_YELLOW_GUARD_TRIGGERED (Phase 19C)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+
+def test_l3_chronic_yellow_guard_fires_via_payload():
+    v = _run(_ctx(chronic_yellow_count=3), [_slot()])
+    assert "MCC_CHRONIC_YELLOW_GUARD_TRIGGERED" in _codes(v)
+
+
+def test_l3_chronic_yellow_guard_suppresses_below_threshold():
+    v = _run(_ctx(chronic_yellow_count=2), [_slot()])
+    assert "MCC_CHRONIC_YELLOW_GUARD_TRIGGERED" not in _codes(v)
+
+
+def test_l3_chronic_yellow_guard_suppresses_when_no_source():
+    # no payload field, dep_provider=None → silent suppress
+    v = _run(_ctx(), [_slot()])
+    assert "MCC_CHRONIC_YELLOW_GUARD_TRIGGERED" not in _codes(v)
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# L4 — COLLAPSE_ESCALATION_TRIGGERED (Phase 19C)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+
+def test_l4_collapse_escalation_fires_via_payload():
+    v = _run(_ctx(recent_collapse_count=1), [_slot()])
+    assert "MCC_COLLAPSE_ESCALATION_TRIGGERED" in _codes(v)
+
+
+def test_l4_collapse_escalation_suppresses_zero():
+    v = _run(_ctx(recent_collapse_count=0), [_slot()])
+    assert "MCC_COLLAPSE_ESCALATION_TRIGGERED" not in _codes(v)
+
+
+def test_l4_collapse_escalation_suppresses_when_no_source():
+    v = _run(_ctx(), [_slot()])
+    assert "MCC_COLLAPSE_ESCALATION_TRIGGERED" not in _codes(v)
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# M1/M2 — SFI gates (Phase 19D)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+
+def test_m2_sfi_excessive_fires():
+    # node3_sets=20×1=20 + 3 h3 archetypes×2=6 → SFI=26 >= 25 → M2
+    exs = [
+        _ex(node=3, set_count=20, h_node="H1"),
+        _ex(h_node="H3", movement_family="Squat", set_count=1),
+        _ex(h_node="H3", movement_family="Hinge", set_count=1),
+        _ex(h_node="H3", movement_family="Press", set_count=1),
+    ]
+    v = _run(_ctx(), [_slot(exercises=exs)])
+    assert "MCC_SFI_EXCESSIVE_WARNING" in _codes(v)
+
+
+def test_m1_sfi_elevated_fires():
+    # node3_sets=9×1=9 + 3 h3 archetypes×2=6 → SFI=15 >= 15, < 25 → M1 only
+    exs = [
+        _ex(node=3, set_count=9, h_node="H1"),
+        _ex(h_node="H3", movement_family="Squat", set_count=1),
+        _ex(h_node="H3", movement_family="Hinge", set_count=1),
+        _ex(h_node="H3", movement_family="Press", set_count=1),
+    ]
+    v = _run(_ctx(), [_slot(exercises=exs)])
+    assert "MCC_SFI_ELEVATED_WARNING" in _codes(v)
+    assert "MCC_SFI_EXCESSIVE_WARNING" not in _codes(v)
+
+
+def test_m2_suppresses_m1_when_both_would_fire():
+    # SFI=25 >= 25 → only M2 fires, M1 suppressed
+    exs = [_ex(node=3, set_count=25, h_node="H1")]
+    v = _run(_ctx(), [_slot(exercises=exs)])
+    assert "MCC_SFI_EXCESSIVE_WARNING" in _codes(v)
+    assert "MCC_SFI_ELEVATED_WARNING" not in _codes(v)
+
+
+def test_m1_sfi_suppressed_below_threshold():
+    # SFI=0 (node1, H1, no unilateral)
+    v = _run(_ctx(), [_slot(exercises=[_ex(node=1, h_node="H1")])])
+    assert "MCC_SFI_ELEVATED_WARNING" not in _codes(v)
+    assert "MCC_SFI_EXCESSIVE_WARNING" not in _codes(v)
+
+
+def test_m1_unilateral_contributes_to_sfi():
+    # 30 unilateral_sets × 0.5 = 15.0 >= 15 → M1
+    exs = [_ex(set_count=30, unilateral=True)]
+    v = _run(_ctx(), [_slot(exercises=exs)])
+    assert "MCC_SFI_ELEVATED_WARNING" in _codes(v)
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# L3/L4 provider-path integration (Phase 19C)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+
+def test_l3_chronic_yellow_guard_fires_via_provider(tmp_path):
+    db = str(tmp_path / "l3.db")
+    op = OperationalStore(db)
+    for i, state in enumerate(["YELLOW", "YELLOW", "YELLOW"]):
+        op.upsert_session({
+            "session_id": f"S{i}", "athlete_id": "A1",
+            "session_date": f"2026-01-0{i + 1}T10:00:00+00:00",
+            "contact_load": 50.0, "readiness_state": state,
+        })
+    provider = SqliteDependencyProvider(op, AuditStore(db))
+    ctx = _ctx(athlete_id="A1", anchor_date="2026-01-05")
+    v = run_physique_mcc_gates(ctx, [_slot()], provider, WHITELIST_INDEX, TEMPO_GOV)
+    assert "MCC_CHRONIC_YELLOW_GUARD_TRIGGERED" in _codes(v)
+
+
+def test_l4_collapse_escalation_fires_via_provider(tmp_path):
+    db = str(tmp_path / "l4.db")
+    op = OperationalStore(db)
+    op.upsert_session({
+        "session_id": "S1", "athlete_id": "A1",
+        "session_date": "2026-01-03T10:00:00+00:00",
+        "contact_load": 50.0, "is_collapsed": True,
+    })
+    provider = SqliteDependencyProvider(op, AuditStore(db))
+    ctx = _ctx(athlete_id="A1", anchor_date="2026-01-05")
+    v = run_physique_mcc_gates(ctx, [_slot()], provider, WHITELIST_INDEX, TEMPO_GOV)
+    assert "MCC_COLLAPSE_ESCALATION_TRIGGERED" in _codes(v)

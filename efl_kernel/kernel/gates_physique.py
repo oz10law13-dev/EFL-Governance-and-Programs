@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections import Counter
+from datetime import date as _date
 
 from .physique_adapter import (
     ECCENTRIC_MINIMUMS,
@@ -11,9 +12,13 @@ from .physique_adapter import (
     run_physique_adapter,
 )
 from .ral import KERNEL_SYNTHETIC_VIOLATIONS
+from .registry import PHYSIQUE_SPEC
 
 # H-node numeric rank (H4 is not in governance doc but defined here for completeness)
 H_NODE_NUMERIC: dict[str, int] = {"H0": 0, "H1": 1, "H2": 2, "H3": 3, "H4": 4}
+
+_SFI_THRESHOLDS = PHYSIQUE_SPEC["sfiThresholds"]
+_SFI_FORMULA = PHYSIQUE_SPEC["sfiFormula"]
 
 
 def _syn(code: str) -> dict:
@@ -60,6 +65,34 @@ def _h_effective(base_h_str: str, E: int, IB: int, IT: int) -> int:
     """Compute effective h-node numeric rank from base h-node string and tempo values."""
     base = H_NODE_NUMERIC.get(base_h_str, 0)
     return base + _tempo_modifier(E, IB, IT)
+
+
+def _compute_sfi(slot: dict) -> float:
+    """Compute Structural Fatigue Index for a single slot's WORK exercises."""
+    node3_sets = 0
+    unilateral_sets = 0
+    h3_families: set[str] = set()
+    h4_families: set[str] = set()
+    for ex in slot.get("exercises", []):
+        if ex.get("role") != "WORK":
+            continue
+        sc = ex.get("set_count", 0)
+        if ex.get("node", 0) == 3:
+            node3_sets += sc
+        if ex.get("unilateral", False):
+            unilateral_sets += sc
+        h_rank = H_NODE_NUMERIC.get(ex.get("h_node", "H0"), 0)
+        mf = ex.get("movement_family", "")
+        if h_rank >= 3:
+            h3_families.add(mf)
+        if h_rank >= 4:
+            h4_families.add(mf)
+    return (
+        node3_sets * _SFI_FORMULA["node3_sets_weight"]
+        + unilateral_sets * _SFI_FORMULA["unilateral_sets_weight"]
+        + len(h3_families) * _SFI_FORMULA["h3_archetype_weight"]
+        + len(h4_families) * _SFI_FORMULA["h4_archetype_weight"]
+    )
 
 
 def run_physique_dcc_gates(adapter_result, dep_provider) -> list[dict]:
@@ -496,12 +529,44 @@ def run_physique_mcc_gates(
                 violations.append(_mcc_v("MCC_READINESS_BAND_MISMATCH"))
                 break
 
-    # DEFERRED stubs — see Phase 19C/19D
-    # MCC_CHRONIC_YELLOW_GUARD_TRIGGERED — needs op_store readiness_state column (Phase 19C)
-    # MCC_COLLAPSE_ESCALATION_TRIGGERED  — needs op_store is_collapsed column (Phase 19C)
-    # MCC_SFI_ELEVATED_WARNING           — SFI thresholds not frozen in spec (Phase 19D)
-    # MCC_SFI_EXCESSIVE_WARNING          — SFI thresholds not frozen in spec (Phase 19D)
-    # MCC_PRIMEREPETITIONWARNING         — needs persistent PRIME history ledger (future phase)
+    # ─── L3/L4: Chronic Readiness History ──────────────────────────────────────
+    # L3: CHRONIC_YELLOW_GUARD_TRIGGERED — payload-first, provider fallback
+    yellow_count = context.get("chronic_yellow_count")
+    if yellow_count is None and dep_provider is not None:
+        _athlete_id = context.get("athlete_id")
+        _anchor_raw = context.get("anchor_date")
+        if _athlete_id and _anchor_raw:
+            _anchor = _date.fromisoformat(str(_anchor_raw))
+            _history = dep_provider.get_readiness_history(_athlete_id, _anchor)
+            yellow_count = sum(1 for s in _history if s == "YELLOW")
+    if yellow_count is not None and yellow_count >= 3:
+        violations.append(_mcc_v("MCC_CHRONIC_YELLOW_GUARD_TRIGGERED"))
+
+    # L4: COLLAPSE_ESCALATION_TRIGGERED — payload-first, provider fallback
+    collapse_count = context.get("recent_collapse_count")
+    if collapse_count is None and dep_provider is not None:
+        _athlete_id = context.get("athlete_id")
+        _anchor_raw = context.get("anchor_date")
+        if _athlete_id and _anchor_raw:
+            _anchor = _date.fromisoformat(str(_anchor_raw))
+            collapse_count = dep_provider.get_collapse_count(_athlete_id, _anchor)
+    if collapse_count is not None and collapse_count >= 1:
+        violations.append(_mcc_v("MCC_COLLAPSE_ESCALATION_TRIGGERED"))
+
+    # ─── M: SFI (Structural Fatigue Index) ──────────────────────────────────────
+    # M1/M2 computed per slot; M2 takes priority over M1 (mutually exclusive per slot)
+    m1_fired = m2_fired = False
+    for slot in day_slots:
+        sfi = _compute_sfi(slot)
+        if sfi >= _SFI_THRESHOLDS["excessive"]:
+            if not m2_fired:
+                violations.append(_mcc_v("MCC_SFI_EXCESSIVE_WARNING"))
+                m2_fired = True
+        elif sfi >= _SFI_THRESHOLDS["elevated"]:
+            if not m1_fired:
+                violations.append(_mcc_v("MCC_SFI_ELEVATED_WARNING"))
+                m1_fired = True
+    # MCC_PRIMEREPETITIONWARNING — deferred: needs persistent PRIME history ledger (future phase)
 
     # ─── N: Tempo Governance ───────────────────────────────────────────────────
     if tempo_gov is not None:

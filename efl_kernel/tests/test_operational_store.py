@@ -284,3 +284,63 @@ def test_seed_cli_exits_1_on_missing_required_field(tmp_path):
     with pytest.raises(SystemExit) as exc_info:
         seed.main(["--fixture", str(fixture_file), "--db", str(tmp_path / "test.db")])
     assert exc_info.value.code == 1
+
+
+# ─── readiness_state / is_collapsed columns (Phase 19C) ──────────────────────
+
+
+def test_upsert_session_with_readiness_state(tmp_path):
+    store = OperationalStore(str(tmp_path / "test.db"))
+    store.upsert_session({**_session("S1", "A1", "2026-01-01", 80.0), "readiness_state": "YELLOW"})
+    rows = store.get_sessions_in_window("A1", "2025-12-31", "2026-01-02")
+    assert rows[0]["session_id"] == "S1"
+
+
+def test_upsert_session_without_readiness_state_defaults_null(tmp_path):
+    store = OperationalStore(str(tmp_path / "test.db"))
+    store.upsert_session(_session("S1", "A1", "2026-01-01", 80.0))
+    # Column exists but value is NULL — no error on read
+    rows = store.get_sessions_in_window("A1", "2025-12-31", "2026-01-02")
+    assert len(rows) == 1
+
+
+def test_upsert_session_with_is_collapsed_true(tmp_path):
+    store = OperationalStore(str(tmp_path / "test.db"))
+    store.upsert_session({**_session("S1", "A1", "2026-01-01", 80.0), "is_collapsed": True})
+    assert store.get_collapse_count("A1", "2025-12-31", "2026-01-02") == 1
+
+
+def test_get_readiness_history_returns_ordered_states(tmp_path):
+    store = OperationalStore(str(tmp_path / "test.db"))
+    store.upsert_session({**_session("S1", "A1", "2026-01-02T10:00:00+00:00", 80.0),
+                          "readiness_state": "YELLOW"})
+    store.upsert_session({**_session("S2", "A1", "2026-01-03T10:00:00+00:00", 70.0),
+                          "readiness_state": "GREEN"})
+    hist = store.get_readiness_history("A1", "2026-01-01", "2026-01-04")
+    assert hist == ["YELLOW", "GREEN"]
+
+
+def test_get_readiness_history_excludes_null_readiness(tmp_path):
+    store = OperationalStore(str(tmp_path / "test.db"))
+    store.upsert_session(_session("S1", "A1", "2026-01-02T10:00:00+00:00", 80.0))
+    hist = store.get_readiness_history("A1", "2026-01-01", "2026-01-04")
+    assert hist == []
+
+
+def test_get_collapse_count_returns_count(tmp_path):
+    store = OperationalStore(str(tmp_path / "test.db"))
+    store.upsert_session({**_session("S1", "A1", "2026-01-02T10:00:00+00:00", 80.0),
+                          "is_collapsed": True})
+    store.upsert_session(_session("S2", "A1", "2026-01-03T10:00:00+00:00", 70.0))
+    assert store.get_collapse_count("A1", "2026-01-01", "2026-01-04") == 1
+
+
+def test_get_collapse_count_returns_zero_when_none(tmp_path):
+    store = OperationalStore(str(tmp_path / "test.db"))
+    assert store.get_collapse_count("A1", "2026-01-01", "2026-01-04") == 0
+
+
+def test_schema_migration_idempotent(tmp_path):
+    db = str(tmp_path / "test.db")
+    OperationalStore(db)
+    OperationalStore(db)  # second init must not raise

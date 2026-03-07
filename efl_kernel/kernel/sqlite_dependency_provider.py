@@ -132,6 +132,26 @@ class SqliteDependencyProvider(KernelDependencyProvider):
         """Delegate to AuditStore. Returns byReasonCode and byViolationCode counts."""
         return self.audit_store.get_override_history(lineage_key, module_id, window_days)
 
+    def get_readiness_history(
+        self, athlete_id: str, anchor_date: date, window_days: int = 7
+    ) -> list[str]:
+        """Return readiness_state values for sessions in the rolling window."""
+        anchor_date_str = anchor_date.isoformat() + "T23:59:59.999999+00:00"
+        window_start_str = (anchor_date - timedelta(days=window_days)).isoformat()
+        return self.operational_store.get_readiness_history(
+            athlete_id, window_start_str, anchor_date_str
+        )
+
+    def get_collapse_count(
+        self, athlete_id: str, anchor_date: date, window_days: int = 7
+    ) -> int:
+        """Return count of collapsed sessions in the rolling window."""
+        anchor_date_str = anchor_date.isoformat() + "T23:59:59.999999+00:00"
+        window_start_str = (anchor_date - timedelta(days=window_days)).isoformat()
+        return self.operational_store.get_collapse_count(
+            athlete_id, window_start_str, anchor_date_str
+        )
+
     def get_weekly_totals(self, athlete_id: str, anchor_date: date) -> dict:
         """Not implemented — no live gate consumer exists for this method.
 
