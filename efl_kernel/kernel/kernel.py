@@ -75,6 +75,11 @@ class KernelRunner:
         )
 
     def evaluate(self, raw_input: dict, module_id: str) -> KDO:
+        # Normalize PHYSIQUE declared input envelope (§5.1 spec-declared → transitional names)
+        if module_id == "PHYSIQUE":
+            from .physique_adapter import _normalize_physique_envelope
+            raw_input = _normalize_physique_envelope(raw_input)
+
         # Step 0 - module identity
         if module_id not in RAL_SPEC.get("moduleRegistration", {}):
             return self._build_kdo(module_id, raw_input, [self._syn_violation("RAL.MODULEREGISTRATIONINCOMPLETE", module_id)])

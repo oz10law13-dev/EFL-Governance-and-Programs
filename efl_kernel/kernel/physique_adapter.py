@@ -60,6 +60,28 @@ class PhysiqueAdapterResult:
     resolved_slot_exercises: list[dict] = dataclasses.field(default_factory=list)
 
 
+def _normalize_physique_envelope(raw_input: dict) -> dict:
+    """Map spec-declared top-level field names to transitional names for PHYSIQUE.
+
+    Spec §5.1 declares: evaluation_context, session
+    Transitional (runtime): evaluationContext, physique_session
+
+    Rules (validate-if-present, transitional wins if both present):
+    - If 'evaluationContext' absent AND 'evaluation_context' present:
+      copy 'evaluation_context' → 'evaluationContext'
+    - If 'physique_session' absent AND 'session' present:
+      copy 'session' → 'physique_session'
+
+    Returns a shallow copy. Never mutates input. Never removes keys.
+    """
+    out = dict(raw_input)
+    if "evaluationContext" not in out and "evaluation_context" in out:
+        out["evaluationContext"] = out["evaluation_context"]
+    if "physique_session" not in out and "session" in out:
+        out["physique_session"] = out["session"]
+    return out
+
+
 def _parse_tempo(tempo_str: str) -> tuple[bool, dict | None, bool, bool]:
     """Parse an ECICT tempo string.
 
