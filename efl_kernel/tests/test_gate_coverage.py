@@ -55,6 +55,7 @@
 # MCC_ECA_SLOT_UNRESOLVABLE
 # PHYSIQUE.CLEARANCEMISSING
 # MCC_PASS2_MISSING_OR_FAILED
+# DCC_TEMPO_GOVERNANCE_UNAVAILABLE
 
 from efl_kernel.kernel.registry import validate_bidirectional_coverage
 
@@ -240,3 +241,85 @@ def test_unknown_horiz_vert_label_halts_adapter():
         assert "UNKNOWN_HORIZ_VERT_LABEL" in r.halt_codes
     finally:
         adapter_module.WHITELIST_INDEX["ECA-PHY-0001"] = original
+
+
+def test_gap004_tempo_gov_unavailable_emits_mcc_violation():
+    """GAP-004: adapter halt DCC_TEMPO_GOVERNANCE_UNAVAILABLE → _mcc_v (not _syn) in gates."""
+    import efl_kernel.kernel.physique_adapter as adapter_module
+    from efl_kernel.kernel.gates_physique import run_physique_gates
+    from efl_kernel.kernel.dependency_provider import InMemoryDependencyProvider
+
+    original_error = adapter_module._TEMPO_GOV_LOAD_ERROR
+    try:
+        adapter_module._TEMPO_GOV_LOAD_ERROR = True
+        payload = {
+            "evaluationContext": {"athleteID": "ath-gap004"},
+            "physique_session": {"exercises": []},
+            "day_slots": [],
+        }
+        provider = InMemoryDependencyProvider(athlete_profile={})
+        violations = run_physique_gates(payload, provider)
+        codes = [v["code"] for v in violations]
+        assert "DCC_TEMPO_GOVERNANCE_UNAVAILABLE" in codes
+        # Must be PHYSIQUE-registered violation (moduleID=PHYSIQUE), not RAL synthetic
+        v = next(v for v in violations if v["code"] == "DCC_TEMPO_GOVERNANCE_UNAVAILABLE")
+        assert v["moduleID"] == "PHYSIQUE"
+    finally:
+        adapter_module._TEMPO_GOV_LOAD_ERROR = original_error
+
+
+def test_f1_authority_version_mismatch_halts_adapter():
+    """F1: authority_versions with wrong whitelist_version halts with AUTHORITY_VERSION_MISMATCH."""
+    from efl_kernel.kernel.physique_adapter import run_physique_adapter
+
+    payload = {
+        "evaluationContext": {"athleteID": "x"},
+        "physique_session": {"exercises": []},
+        "day_slots": [],
+        "authority_versions": {"whitelist_version": "0.0.0"},
+    }
+    r = run_physique_adapter(payload)
+    assert "AUTHORITY_VERSION_MISMATCH" in r.halt_codes
+
+
+def test_f1_authority_version_correct_does_not_halt():
+    """F1: authority_versions matching actual versions → no halt."""
+    from efl_kernel.kernel.physique_adapter import run_physique_adapter, _WHITELIST_VERSION, _TEMPO_GOV_VERSION
+
+    payload = {
+        "evaluationContext": {"athleteID": "x"},
+        "physique_session": {"exercises": []},
+        "day_slots": [],
+        "authority_versions": {
+            "whitelist_version": _WHITELIST_VERSION,
+            "tempo_gov_version": _TEMPO_GOV_VERSION,
+        },
+    }
+    r = run_physique_adapter(payload)
+    assert r.halt_codes == []
+
+
+def test_f2_non_list_exercises_halts_schema_validation_failed():
+    """F2: physique_session.exercises not a list → SCHEMA_VALIDATION_FAILED."""
+    from efl_kernel.kernel.physique_adapter import run_physique_adapter
+
+    payload = {
+        "evaluationContext": {"athleteID": "x"},
+        "physique_session": {"exercises": "not-a-list"},
+        "day_slots": [],
+    }
+    r = run_physique_adapter(payload)
+    assert "SCHEMA_VALIDATION_FAILED" in r.halt_codes
+
+
+def test_f2_exercise_missing_id_halts_incomplete_input():
+    """F2: exercise dict with no exercise_id → INCOMPLETE_INPUT."""
+    from efl_kernel.kernel.physique_adapter import run_physique_adapter
+
+    payload = {
+        "evaluationContext": {"athleteID": "x"},
+        "physique_session": {"exercises": [{"tempo": "3:0:1:0"}]},
+        "day_slots": [],
+    }
+    r = run_physique_adapter(payload)
+    assert "INCOMPLETE_INPUT" in r.halt_codes
