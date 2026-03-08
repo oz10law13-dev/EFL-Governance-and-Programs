@@ -7,6 +7,8 @@ import os
 _logger = logging.getLogger(__name__)
 
 from fastapi import FastAPI, HTTPException, Request
+from fastapi.responses import JSONResponse
+from starlette.middleware.base import BaseHTTPMiddleware
 
 from efl_kernel.kernel.audit_store import AuditStore
 from efl_kernel.kernel.kernel import KernelRunner
@@ -14,6 +16,18 @@ from efl_kernel.kernel.operational_store import OperationalStore
 from efl_kernel.kernel.sqlite_dependency_provider import SqliteDependencyProvider
 from efl_kernel.kernel.artifact_store import ArtifactStore
 from efl_kernel.kernel.exercise_catalog import ExerciseCatalog
+
+
+class APIKeyMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request, call_next):
+        api_key = os.environ.get("EFL_API_KEY")
+        if api_key is None:
+            return await call_next(request)
+        if request.url.path == "/health":
+            return await call_next(request)
+        if request.headers.get("x-api-key") != api_key:
+            return JSONResponse(status_code=401, content={"detail": "unauthorized"})
+        return await call_next(request)
 
 
 def create_app(db_path: str | None = None) -> FastAPI:
@@ -30,6 +44,7 @@ def create_app(db_path: str | None = None) -> FastAPI:
     resolved_path = db_path or os.environ.get("EFL_DB_PATH", "efl_audit.db")
 
     app = FastAPI(title="EFL Kernel Service", version="18.0.0")
+    app.add_middleware(APIKeyMiddleware)
     app.state.db_path = resolved_path
     app.state.op_store = OperationalStore(resolved_path)
     app.state.audit_store = AuditStore(resolved_path)
