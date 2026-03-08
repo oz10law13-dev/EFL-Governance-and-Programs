@@ -30,29 +30,33 @@ class APIKeyMiddleware(BaseHTTPMiddleware):
         return await call_next(request)
 
 
-def create_app(db_path: str | None = None) -> FastAPI:
+def create_app(db_path: str | None = None, op_db_path: str | None = None) -> FastAPI:
     """
     Create and return a configured FastAPI application.
 
-    db_path: path to the shared SQLite database file.
-             If None, reads EFL_DB_PATH env var.
-             Falls back to "efl_audit.db" if neither is set.
+    db_path:    path to the audit SQLite database (kdo_log, override_ledger).
+                If None, reads EFL_AUDIT_DB_PATH env var. Falls back to "efl_audit.db".
+    op_db_path: path to the operational SQLite database (athletes, sessions, artifacts).
+                If None, reads EFL_OP_DB_PATH env var. Falls back to db_path resolution.
 
     Stores, provider, and runner are initialized here and
     attached to app.state for use in request handlers.
     """
-    resolved_path = db_path or os.environ.get("EFL_DB_PATH", "efl_audit.db")
+    resolved_audit = db_path or os.environ.get("EFL_AUDIT_DB_PATH", "efl_audit.db")
+    resolved_op    = op_db_path or os.environ.get("EFL_OP_DB_PATH") or resolved_audit
 
     app = FastAPI(title="EFL Kernel Service", version="18.0.0")
     app.add_middleware(APIKeyMiddleware)
-    app.state.db_path = resolved_path
-    app.state.op_store = OperationalStore(resolved_path)
-    app.state.audit_store = AuditStore(resolved_path)
+    app.state.audit_db_path = resolved_audit
+    app.state.op_db_path    = resolved_op
+    app.state.db_path       = resolved_audit   # backward compat alias
+    app.state.op_store = OperationalStore(resolved_op)
+    app.state.audit_store = AuditStore(resolved_audit)
     app.state.provider = SqliteDependencyProvider(
         app.state.op_store, app.state.audit_store
     )
     app.state.runner = KernelRunner(app.state.provider)
-    app.state.artifact_store = ArtifactStore(resolved_path)
+    app.state.artifact_store = ArtifactStore(resolved_op)
     app.state.catalog = ExerciseCatalog()
 
     _register_routes(app)

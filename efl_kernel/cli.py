@@ -17,7 +17,18 @@ def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description="EFL Kernel evaluation CLI")
     parser.add_argument("--module", required=True, help="Module ID (SESSION, MESO, MACRO, GOVERNANCE)")
     parser.add_argument("--input", required=True, dest="input_path", help="Path to JSON payload file")
-    parser.add_argument("--db", default="efl_audit.db", dest="db_path", help="Path to SQLite audit database")
+    parser.add_argument(
+        "--db", "--audit-db",
+        default="efl_audit.db",
+        dest="db_path",
+        help="Path to audit SQLite database (KDO log, override ledger)"
+    )
+    parser.add_argument(
+        "--op-db",
+        default=None,
+        dest="op_db_path",
+        help="Path to operational SQLite database (athletes, sessions, seasons). Defaults to --db path if not specified."
+    )
     args = parser.parse_args(argv)
 
     if args.module not in _KNOWN_MODULES:
@@ -37,9 +48,11 @@ def main(argv: list[str] | None = None) -> None:
         print(f"Error: invalid JSON in {args.input_path}: {exc}", file=sys.stderr)
         sys.exit(1)
 
+    op_db = args.op_db_path or args.db_path
+
     try:
         audit_store = AuditStore(args.db_path)
-        op_store = OperationalStore(args.db_path)
+        op_store = OperationalStore(op_db)
         dep = SqliteDependencyProvider(op_store, audit_store)
         kdo = KernelRunner(dep).evaluate(payload, args.module)
         audit_store.commit_kdo(kdo)

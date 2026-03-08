@@ -31,8 +31,12 @@ def _validate(records: list[dict], required: set[str], entity: str) -> None:
 def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description="EFL Kernel operational data seed tool")
     parser.add_argument("--fixture", required=True, help="Path to JSON fixture file")
-    parser.add_argument("--db", default="efl_audit.db", dest="db_path",
-                        help="Path to SQLite database file (default: efl_audit.db)")
+    parser.add_argument(
+        "--db", "--op-db",
+        default="efl_audit.db",
+        dest="db_path",
+        help="Path to operational SQLite database to seed"
+    )
     args = parser.parse_args(argv)
 
     # Load fixture
