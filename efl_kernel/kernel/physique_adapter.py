@@ -133,14 +133,19 @@ def _validate_input_shape(payload: dict) -> list[str]:
 
 
 def _verify_authority_versions(authority_versions: dict) -> list[str]:
-    """F1: Validate-if-present (D1). Returns ["AUTHORITY_VERSION_MISMATCH"] on mismatch."""
+    """F1: Validate-if-present (D1 Option A).
+    Key names follow spec-declared authority_versions envelope (§5.2):
+      - 'whitelist' → loaded whitelist version
+      - 'tempo_governance' → loaded tempo governance version
+    Absent key = skip (validate-if-present). Present key with wrong value = halt.
+    """
     if not authority_versions:
         return []
-    if "whitelist_version" in authority_versions:
-        if authority_versions["whitelist_version"] != _WHITELIST_VERSION:
+    if "whitelist" in authority_versions:
+        if authority_versions["whitelist"] != _WHITELIST_VERSION:
             return ["AUTHORITY_VERSION_MISMATCH"]
-    if "tempo_gov_version" in authority_versions:
-        if authority_versions["tempo_gov_version"] != _TEMPO_GOV_VERSION:
+    if "tempo_governance" in authority_versions:
+        if authority_versions["tempo_governance"] != _TEMPO_GOV_VERSION:
             return ["AUTHORITY_VERSION_MISMATCH"]
     return []
 

@@ -269,21 +269,21 @@ def test_gap004_tempo_gov_unavailable_emits_mcc_violation():
 
 
 def test_f1_authority_version_mismatch_halts_adapter():
-    """F1: authority_versions with wrong whitelist_version halts with AUTHORITY_VERSION_MISMATCH."""
+    """F1: authority_versions with wrong 'whitelist' value halts with AUTHORITY_VERSION_MISMATCH."""
     from efl_kernel.kernel.physique_adapter import run_physique_adapter
 
     payload = {
         "evaluationContext": {"athleteID": "x"},
         "physique_session": {"exercises": []},
         "day_slots": [],
-        "authority_versions": {"whitelist_version": "0.0.0"},
+        "authority_versions": {"whitelist": "0.0.0"},
     }
     r = run_physique_adapter(payload)
     assert "AUTHORITY_VERSION_MISMATCH" in r.halt_codes
 
 
 def test_f1_authority_version_correct_does_not_halt():
-    """F1: authority_versions matching actual versions → no halt."""
+    """F1: authority_versions with spec-declared keys matching actual versions → no halt."""
     from efl_kernel.kernel.physique_adapter import run_physique_adapter, _WHITELIST_VERSION, _TEMPO_GOV_VERSION
 
     payload = {
@@ -291,8 +291,8 @@ def test_f1_authority_version_correct_does_not_halt():
         "physique_session": {"exercises": []},
         "day_slots": [],
         "authority_versions": {
-            "whitelist_version": _WHITELIST_VERSION,
-            "tempo_gov_version": _TEMPO_GOV_VERSION,
+            "whitelist": _WHITELIST_VERSION,
+            "tempo_governance": _TEMPO_GOV_VERSION,
         },
     }
     r = run_physique_adapter(payload)
