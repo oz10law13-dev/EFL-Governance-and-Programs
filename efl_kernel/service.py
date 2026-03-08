@@ -1,7 +1,10 @@
 from __future__ import annotations
 
 import dataclasses
+import logging
 import os
+
+_logger = logging.getLogger(__name__)
 
 from fastapi import FastAPI, HTTPException, Request
 
@@ -63,6 +66,16 @@ def _evaluate_and_commit(runner, audit_store, payload: dict, module_id: str) -> 
             status_code=500,
             detail=f"KDO commit failed: {e}",
         )
+    _logger.info(
+        "kdo_committed",
+        extra={
+            "module_id": kdo.module_id,
+            "object_id": kdo.object_id,
+            "decision_hash": kdo.audit["decisionHash"],
+            "final_publish_state": kdo.resolution["finalPublishState"],
+            "violation_count": len(kdo.violations),
+        },
+    )
     return dataclasses.asdict(kdo)
 
 
@@ -71,6 +84,17 @@ def _register_routes(app: FastAPI) -> None:
     @app.get("/health")
     def health():
         return {"status": "ok", "db_path": app.state.db_path}
+
+    @app.get("/kdo/{decision_hash}")
+    def get_kdo(decision_hash: str, request: Request):
+        result = request.app.state.audit_store.get_kdo(decision_hash)
+        if result is None:
+            raise HTTPException(status_code=404, detail=f"KDO {decision_hash!r} not found")
+        return result
+
+    @app.get("/metrics")
+    def get_metrics(request: Request):
+        return request.app.state.audit_store.get_metrics()
 
     @app.post("/evaluate/session")
     def evaluate_session(payload: dict, request: Request):
