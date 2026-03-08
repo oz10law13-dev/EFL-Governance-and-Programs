@@ -1,0 +1,714 @@
+{
+  "documentHash": "d9c8fe5dedeb85915a2f8314ed5236de565401613bc04b4a8f676f6915396984",
+  "moduleID": "PHYSIQUE",
+  "moduleVersion": "1.0.4",
+  "moduleViolationRegistryVersion": "1.0.4",
+  "sfiFormula": {
+    "h3_archetype_weight": 2.0,
+    "h4_archetype_weight": 4.0,
+    "node3_sets_weight": 1.0,
+    "unilateral_sets_weight": 0.5
+  },
+  "sfiThresholds": {
+    "elevated": 15,
+    "excessive": 25
+  },
+  "specID": "EFL-PHYSIQUE",
+  "version": "1.0.4",
+  "violationRegistry": {
+    "registryHash": "7140d801e3194e0bbc74adc7f3c6d03bb503edc3124c3f0dfc0b71a02c185ec0",
+    "registryVersion": "1.0.4",
+    "violations": [
+      {
+        "allowedOverrideReasonCodes": [],
+        "clampBehavior": {
+          "action": "NONE"
+        },
+        "code": "DCC_TEMPO_EXPLOSIVE_NOT_ALLOWED_FOR_EXERCISE",
+        "moduleID": "PHYSIQUE",
+        "overridePossible": false,
+        "reviewOverrideThreshold28D": 0,
+        "severity": "HARDFAIL",
+        "violationCap": 0
+      },
+      {
+        "allowedOverrideReasonCodes": [],
+        "clampBehavior": {
+          "action": "NONE"
+        },
+        "code": "DCC_TEMPO_E_BELOW_MINIMUM",
+        "moduleID": "PHYSIQUE",
+        "overridePossible": false,
+        "reviewOverrideThreshold28D": 0,
+        "severity": "HARDFAIL",
+        "violationCap": 0
+      },
+      {
+        "allowedOverrideReasonCodes": [],
+        "clampBehavior": {
+          "action": "NONE"
+        },
+        "code": "DCC_TEMPO_E_EXCEEDS_CEILING",
+        "moduleID": "PHYSIQUE",
+        "overridePossible": false,
+        "reviewOverrideThreshold28D": 0,
+        "severity": "HARDFAIL",
+        "violationCap": 0
+      },
+      {
+        "allowedOverrideReasonCodes": [],
+        "clampBehavior": {
+          "action": "NONE"
+        },
+        "code": "DCC_TEMPO_FORMAT_INVALID",
+        "moduleID": "PHYSIQUE",
+        "overridePossible": false,
+        "reviewOverrideThreshold28D": 0,
+        "severity": "HARDFAIL",
+        "violationCap": 0
+      },
+      {
+        "allowedOverrideReasonCodes": [],
+        "clampBehavior": {
+          "action": "NONE"
+        },
+        "code": "DCC_TEMPO_IB_EXCEEDS_CEILING",
+        "moduleID": "PHYSIQUE",
+        "overridePossible": false,
+        "reviewOverrideThreshold28D": 0,
+        "severity": "HARDFAIL",
+        "violationCap": 0
+      },
+      {
+        "allowedOverrideReasonCodes": [],
+        "clampBehavior": {
+          "action": "NONE"
+        },
+        "code": "DCC_TEMPO_IT_EXCEEDS_CEILING",
+        "moduleID": "PHYSIQUE",
+        "overridePossible": false,
+        "reviewOverrideThreshold28D": 0,
+        "severity": "HARDFAIL",
+        "violationCap": 0
+      },
+      {
+        "allowedOverrideReasonCodes": [],
+        "clampBehavior": {
+          "action": "NONE"
+        },
+        "code": "DCC_TEMPO_X_IN_INVALID_POSITION",
+        "moduleID": "PHYSIQUE",
+        "overridePossible": false,
+        "reviewOverrideThreshold28D": 0,
+        "severity": "HARDFAIL",
+        "violationCap": 0
+      },
+      {
+        "allowedOverrideReasonCodes": [
+          "OR-PHY-001"
+        ],
+        "clampBehavior": {
+          "action": "NONE"
+        },
+        "code": "MCC_ADJACENCY_VIOLATION",
+        "moduleID": "PHYSIQUE",
+        "overridePossible": true,
+        "reviewOverrideThreshold28D": 1,
+        "severity": "HARDFAIL",
+        "violationCap": 2
+      },
+      {
+        "allowedOverrideReasonCodes": [
+          "OR-PHY-001"
+        ],
+        "clampBehavior": {
+          "action": "NONE"
+        },
+        "code": "MCC_BAND_NODE_ILLEGAL_COMBINATION",
+        "moduleID": "PHYSIQUE",
+        "overridePossible": true,
+        "reviewOverrideThreshold28D": 1,
+        "severity": "HARDFAIL",
+        "violationCap": 2
+      },
+      {
+        "allowedOverrideReasonCodes": [
+          "OR-PHY-001"
+        ],
+        "clampBehavior": {
+          "action": "NONE"
+        },
+        "code": "MCC_DAY_A_PATTERN_GUARANTEE_VIOLATED",
+        "moduleID": "PHYSIQUE",
+        "overridePossible": true,
+        "reviewOverrideThreshold28D": 1,
+        "severity": "HARDFAIL",
+        "violationCap": 2
+      },
+      {
+        "allowedOverrideReasonCodes": [
+          "OR-PHY-001"
+        ],
+        "clampBehavior": {
+          "action": "NONE"
+        },
+        "code": "MCC_D_MINIMUM_VIOLATED",
+        "moduleID": "PHYSIQUE",
+        "overridePossible": true,
+        "reviewOverrideThreshold28D": 1,
+        "severity": "HARDFAIL",
+        "violationCap": 2
+      },
+      {
+        "allowedOverrideReasonCodes": [
+          "OR-PHY-001"
+        ],
+        "clampBehavior": {
+          "action": "NONE"
+        },
+        "code": "MCC_MULTI_AXIS_PROGRESSION_VIOLATION",
+        "moduleID": "PHYSIQUE",
+        "overridePossible": true,
+        "reviewOverrideThreshold28D": 1,
+        "severity": "HARDFAIL",
+        "violationCap": 2
+      },
+      {
+        "allowedOverrideReasonCodes": [
+          "OR-PHY-001"
+        ],
+        "clampBehavior": {
+          "action": "NONE"
+        },
+        "code": "MCC_NODE_PERMISSION_VIOLATION",
+        "moduleID": "PHYSIQUE",
+        "overridePossible": true,
+        "reviewOverrideThreshold28D": 1,
+        "severity": "HARDFAIL",
+        "violationCap": 2
+      },
+      {
+        "allowedOverrideReasonCodes": [
+          "OR-PHY-001"
+        ],
+        "clampBehavior": {
+          "action": "NONE"
+        },
+        "code": "MCC_TEMPO_ESCALATION_REQUIRES_OPT_IN",
+        "moduleID": "PHYSIQUE",
+        "overridePossible": true,
+        "reviewOverrideThreshold28D": 1,
+        "severity": "HARDFAIL",
+        "violationCap": 2
+      },
+      {
+        "allowedOverrideReasonCodes": [
+          "OR-PHY-001"
+        ],
+        "clampBehavior": {
+          "action": "NONE"
+        },
+        "code": "MCC_BAND3_PATTERN_EXCEEDED",
+        "moduleID": "PHYSIQUE",
+        "overridePossible": true,
+        "reviewOverrideThreshold28D": 2,
+        "severity": "WARNING",
+        "violationCap": 3
+      },
+      {
+        "allowedOverrideReasonCodes": [
+          "OR-PHY-001"
+        ],
+        "clampBehavior": {
+          "action": "NONE"
+        },
+        "code": "MCC_H3_AGGREGATE_EXCEEDED",
+        "moduleID": "PHYSIQUE",
+        "overridePossible": true,
+        "reviewOverrideThreshold28D": 2,
+        "severity": "WARNING",
+        "violationCap": 3
+      },
+      {
+        "allowedOverrideReasonCodes": [
+          "OR-PHY-001"
+        ],
+        "clampBehavior": {
+          "action": "NONE"
+        },
+        "code": "MCC_READINESS_BAND_MISMATCH",
+        "moduleID": "PHYSIQUE",
+        "overridePossible": true,
+        "reviewOverrideThreshold28D": 2,
+        "severity": "WARNING",
+        "violationCap": 3
+      },
+      {
+        "allowedOverrideReasonCodes": [
+          "OR-PHY-001"
+        ],
+        "clampBehavior": {
+          "action": "NONE"
+        },
+        "code": "MCC_READINESS_VIOLATION",
+        "moduleID": "PHYSIQUE",
+        "overridePossible": true,
+        "reviewOverrideThreshold28D": 2,
+        "severity": "WARNING",
+        "violationCap": 3
+      },
+      {
+        "allowedOverrideReasonCodes": [
+          "OR-PHY-001"
+        ],
+        "clampBehavior": {
+          "action": "NONE"
+        },
+        "code": "MCC_ROUTE_SATURATION_VIOLATION",
+        "moduleID": "PHYSIQUE",
+        "overridePossible": true,
+        "reviewOverrideThreshold28D": 2,
+        "severity": "WARNING",
+        "violationCap": 3
+      },
+      {
+        "allowedOverrideReasonCodes": [
+          "OR-PHY-001"
+        ],
+        "clampBehavior": {
+          "action": "NONE"
+        },
+        "code": "MCC_SESSION_VOLUME_EXCEEDED",
+        "moduleID": "PHYSIQUE",
+        "overridePossible": true,
+        "reviewOverrideThreshold28D": 2,
+        "severity": "WARNING",
+        "violationCap": 3
+      },
+      {
+        "allowedOverrideReasonCodes": [
+          "OR-PHY-001"
+        ],
+        "clampBehavior": {
+          "action": "NONE"
+        },
+        "code": "MCC_SFI_EXCESSIVE_WARNING",
+        "moduleID": "PHYSIQUE",
+        "overridePossible": true,
+        "reviewOverrideThreshold28D": 2,
+        "severity": "WARNING",
+        "violationCap": 3
+      },
+      {
+        "allowedOverrideReasonCodes": [
+          "OR-PHY-001"
+        ],
+        "clampBehavior": {
+          "action": "NONE"
+        },
+        "code": "MCC_TEMPO_DOWNGRADE_CHAIN_EXHAUSTED",
+        "moduleID": "PHYSIQUE",
+        "overridePossible": true,
+        "reviewOverrideThreshold28D": 2,
+        "severity": "WARNING",
+        "violationCap": 3
+      },
+      {
+        "allowedOverrideReasonCodes": [
+          "OR-PHY-001"
+        ],
+        "clampBehavior": {
+          "action": "NONE"
+        },
+        "code": "MCC_TEMPO_DOWNGRADE_REVALIDATION_FAILED",
+        "moduleID": "PHYSIQUE",
+        "overridePossible": true,
+        "reviewOverrideThreshold28D": 2,
+        "severity": "WARNING",
+        "violationCap": 3
+      },
+      {
+        "allowedOverrideReasonCodes": [
+          "OR-PHY-001"
+        ],
+        "clampBehavior": {
+          "action": "NONE"
+        },
+        "code": "MCC_C_DAY_MESO_ROTATION_VIOLATION",
+        "moduleID": "PHYSIQUE",
+        "overridePossible": true,
+        "reviewOverrideThreshold28D": 2,
+        "severity": "WARNING",
+        "violationCap": 3
+      },
+      {
+        "allowedOverrideReasonCodes": [
+          "OR-PHY-001"
+        ],
+        "clampBehavior": {
+          "action": "NONE"
+        },
+        "code": "MCC_DENSITY_LEDGER_EXCEEDED",
+        "moduleID": "PHYSIQUE",
+        "overridePossible": true,
+        "reviewOverrideThreshold28D": 2,
+        "severity": "WARNING",
+        "violationCap": 3
+      },
+      {
+        "allowedOverrideReasonCodes": [
+          "OR-PHY-001"
+        ],
+        "clampBehavior": {
+          "action": "NONE"
+        },
+        "code": "MCC_PATTERN_BALANCE_VIOLATED",
+        "moduleID": "PHYSIQUE",
+        "overridePossible": true,
+        "reviewOverrideThreshold28D": 2,
+        "severity": "WARNING",
+        "violationCap": 3
+      },
+      {
+        "allowedOverrideReasonCodes": [
+          "OR-PHY-001"
+        ],
+        "clampBehavior": {
+          "action": "NONE"
+        },
+        "code": "MCC_SFI_ELEVATED_WARNING",
+        "moduleID": "PHYSIQUE",
+        "overridePossible": true,
+        "reviewOverrideThreshold28D": 2,
+        "severity": "WARNING",
+        "violationCap": 3
+      },
+      {
+        "allowedOverrideReasonCodes": [
+          "OR-PHY-001"
+        ],
+        "clampBehavior": {
+          "action": "NONE"
+        },
+        "code": "MCC_TEMPO_ESCALATION_CLAMPED_TO_H3",
+        "moduleID": "PHYSIQUE",
+        "overridePossible": true,
+        "reviewOverrideThreshold28D": 2,
+        "severity": "WARNING",
+        "violationCap": 3
+      },
+      {
+        "allowedOverrideReasonCodes": [],
+        "clampBehavior": {
+          "action": "NONE"
+        },
+        "code": "MCC_TEMPO_DOWNGRADED_FOR_H_NODE_MAX",
+        "moduleID": "PHYSIQUE",
+        "overridePossible": false,
+        "reviewOverrideThreshold28D": 0,
+        "severity": "CLAMP",
+        "violationCap": 0
+      },
+      {
+        "allowedOverrideReasonCodes": [],
+        "clampBehavior": {
+          "action": "NONE"
+        },
+        "code": "MCC_TEMPO_DOWNGRADED_FOR_TUT_CEILING",
+        "moduleID": "PHYSIQUE",
+        "overridePossible": false,
+        "reviewOverrideThreshold28D": 0,
+        "severity": "CLAMP",
+        "violationCap": 0
+      },
+      {
+        "allowedOverrideReasonCodes": [],
+        "clampBehavior": {
+          "action": "NONE"
+        },
+        "code": "MCC_TEMPO_ESCALATION_APPROVED",
+        "moduleID": "PHYSIQUE",
+        "overridePossible": false,
+        "reviewOverrideThreshold28D": 0,
+        "severity": "CLAMP",
+        "violationCap": 0
+      },
+      {
+        "allowedOverrideReasonCodes": [],
+        "clampBehavior": {
+          "action": "NONE"
+        },
+        "code": "MCC_TEMPO_MODIFIED_BY_MCC",
+        "moduleID": "PHYSIQUE",
+        "overridePossible": false,
+        "reviewOverrideThreshold28D": 0,
+        "severity": "CLAMP",
+        "violationCap": 0
+      },
+      {
+        "allowedOverrideReasonCodes": [
+          "OR-PHY-001"
+        ],
+        "clampBehavior": {
+          "action": "NONE"
+        },
+        "code": "MCC_CHRONIC_YELLOW_GUARD_TRIGGERED",
+        "moduleID": "PHYSIQUE",
+        "overridePossible": true,
+        "reviewOverrideThreshold28D": 1,
+        "severity": "HARDFAIL",
+        "violationCap": 2
+      },
+      {
+        "allowedOverrideReasonCodes": [
+          "OR-PHY-001"
+        ],
+        "clampBehavior": {
+          "action": "NONE"
+        },
+        "code": "MCC_COLLAPSE_ESCALATION_TRIGGERED",
+        "moduleID": "PHYSIQUE",
+        "overridePossible": true,
+        "reviewOverrideThreshold28D": 1,
+        "severity": "HARDFAIL",
+        "violationCap": 2
+      },
+      {
+        "allowedOverrideReasonCodes": [
+          "OR-PHY-001"
+        ],
+        "clampBehavior": {
+          "action": "NONE"
+        },
+        "code": "MCC_CONSECUTIVE_NODE3_EXCEEDED",
+        "moduleID": "PHYSIQUE",
+        "overridePossible": true,
+        "reviewOverrideThreshold28D": 1,
+        "severity": "HARDFAIL",
+        "violationCap": 2
+      },
+      {
+        "allowedOverrideReasonCodes": [
+          "OR-PHY-001"
+        ],
+        "clampBehavior": {
+          "action": "NONE"
+        },
+        "code": "MCC_DAY_A_FREQUENCY_EXCEEDED",
+        "moduleID": "PHYSIQUE",
+        "overridePossible": true,
+        "reviewOverrideThreshold28D": 1,
+        "severity": "HARDFAIL",
+        "violationCap": 2
+      },
+      {
+        "allowedOverrideReasonCodes": [
+          "OR-PHY-001"
+        ],
+        "clampBehavior": {
+          "action": "NONE"
+        },
+        "code": "MCC_DAY_B_FREQUENCY_EXCEEDED",
+        "moduleID": "PHYSIQUE",
+        "overridePossible": true,
+        "reviewOverrideThreshold28D": 1,
+        "severity": "HARDFAIL",
+        "violationCap": 2
+      },
+      {
+        "allowedOverrideReasonCodes": [
+          "OR-PHY-001"
+        ],
+        "clampBehavior": {
+          "action": "NONE"
+        },
+        "code": "MCC_DAY_C_PATTERN_REPETITION",
+        "moduleID": "PHYSIQUE",
+        "overridePossible": true,
+        "reviewOverrideThreshold28D": 1,
+        "severity": "HARDFAIL",
+        "violationCap": 2
+      },
+      {
+        "allowedOverrideReasonCodes": [
+          "OR-PHY-001"
+        ],
+        "clampBehavior": {
+          "action": "NONE"
+        },
+        "code": "MCC_DAY_D_INTENT_VIOLATION",
+        "moduleID": "PHYSIQUE",
+        "overridePossible": true,
+        "reviewOverrideThreshold28D": 1,
+        "severity": "HARDFAIL",
+        "violationCap": 2
+      },
+      {
+        "allowedOverrideReasonCodes": [
+          "OR-PHY-001"
+        ],
+        "clampBehavior": {
+          "action": "NONE"
+        },
+        "code": "MCC_ECA_COVERAGE_MISSING",
+        "moduleID": "PHYSIQUE",
+        "overridePossible": true,
+        "reviewOverrideThreshold28D": 1,
+        "severity": "HARDFAIL",
+        "violationCap": 2
+      },
+      {
+        "allowedOverrideReasonCodes": [
+          "OR-PHY-001"
+        ],
+        "clampBehavior": {
+          "action": "NONE"
+        },
+        "code": "MCC_ECA_PATTERN_INCOMPLETE",
+        "moduleID": "PHYSIQUE",
+        "overridePossible": true,
+        "reviewOverrideThreshold28D": 1,
+        "severity": "HARDFAIL",
+        "violationCap": 2
+      },
+      {
+        "allowedOverrideReasonCodes": [
+          "OR-PHY-001"
+        ],
+        "clampBehavior": {
+          "action": "NONE"
+        },
+        "code": "MCC_FAMILY_MULTI_AXIS_VIOLATION",
+        "moduleID": "PHYSIQUE",
+        "overridePossible": true,
+        "reviewOverrideThreshold28D": 1,
+        "severity": "HARDFAIL",
+        "violationCap": 2
+      },
+      {
+        "allowedOverrideReasonCodes": [
+          "OR-PHY-001"
+        ],
+        "clampBehavior": {
+          "action": "NONE"
+        },
+        "code": "MCC_FREQUENCY_NOT_SUPPORTED",
+        "moduleID": "PHYSIQUE",
+        "overridePossible": true,
+        "reviewOverrideThreshold28D": 1,
+        "severity": "HARDFAIL",
+        "violationCap": 2
+      },
+      {
+        "allowedOverrideReasonCodes": [
+          "OR-PHY-001"
+        ],
+        "clampBehavior": {
+          "action": "NONE"
+        },
+        "code": "MCC_H4_FREQUENCY_EXCEEDED",
+        "moduleID": "PHYSIQUE",
+        "overridePossible": true,
+        "reviewOverrideThreshold28D": 1,
+        "severity": "HARDFAIL",
+        "violationCap": 2
+      },
+      {
+        "allowedOverrideReasonCodes": [
+          "OR-PHY-001"
+        ],
+        "clampBehavior": {
+          "action": "NONE"
+        },
+        "code": "MCC_PRIME_SCOPE_VIOLATION",
+        "moduleID": "PHYSIQUE",
+        "overridePossible": true,
+        "reviewOverrideThreshold28D": 1,
+        "severity": "HARDFAIL",
+        "violationCap": 2
+      },
+      {
+        "allowedOverrideReasonCodes": [
+          "OR-PHY-001"
+        ],
+        "clampBehavior": {
+          "action": "NONE"
+        },
+        "code": "MCC_SESSION_DURATION_EXCEEDED",
+        "moduleID": "PHYSIQUE",
+        "overridePossible": true,
+        "reviewOverrideThreshold28D": 1,
+        "severity": "HARDFAIL",
+        "violationCap": 2
+      },
+      {
+        "allowedOverrideReasonCodes": [
+          "OR-PHY-001"
+        ],
+        "clampBehavior": {
+          "action": "NONE"
+        },
+        "code": "MCC_VOLUME_CLASS_OVERRIDE_ATTEMPT",
+        "moduleID": "PHYSIQUE",
+        "overridePossible": true,
+        "reviewOverrideThreshold28D": 1,
+        "severity": "HARDFAIL",
+        "violationCap": 2
+      },
+      {
+        "allowedOverrideReasonCodes": [
+          "OR-PHY-001"
+        ],
+        "clampBehavior": {
+          "action": "NONE"
+        },
+        "code": "MCC_WORK_BLOCK_INSUFFICIENT",
+        "moduleID": "PHYSIQUE",
+        "overridePossible": true,
+        "reviewOverrideThreshold28D": 1,
+        "severity": "HARDFAIL",
+        "violationCap": 2
+      },
+      {
+        "allowedOverrideReasonCodes": [],
+        "clampBehavior": null,
+        "code": "MCC_ECA_SLOT_UNRESOLVABLE",
+        "moduleID": "PHYSIQUE",
+        "overridePossible": false,
+        "reviewOverrideThreshold28D": null,
+        "severity": "HARDFAIL",
+        "violationCap": null
+      },
+      {
+        "allowedOverrideReasonCodes": [],
+        "clampBehavior": null,
+        "code": "PHYSIQUE.CLEARANCEMISSING",
+        "moduleID": "PHYSIQUE",
+        "overridePossible": false,
+        "reviewOverrideThreshold28D": null,
+        "severity": "HARDFAIL",
+        "violationCap": null
+      },
+      {
+        "allowedOverrideReasonCodes": [],
+        "clampBehavior": null,
+        "code": "MCC_PASS2_MISSING_OR_FAILED",
+        "moduleID": "PHYSIQUE",
+        "overridePossible": false,
+        "reviewOverrideThreshold28D": null,
+        "severity": "HARDFAIL",
+        "violationCap": null
+      },
+      {
+        "allowedOverrideReasonCodes": [],
+        "clampBehavior": null,
+        "code": "DCC_TEMPO_GOVERNANCE_UNAVAILABLE",
+        "moduleID": "PHYSIQUE",
+        "overridePossible": false,
+        "reviewOverrideThreshold28D": null,
+        "severity": "HARDFAIL",
+        "violationCap": null
+      }
+    ]
+  }
+}
