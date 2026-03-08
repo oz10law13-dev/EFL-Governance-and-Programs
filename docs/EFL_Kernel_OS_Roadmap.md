@@ -136,8 +136,6 @@ The full chain — whitelist → stateless check → governed eval → KDO commi
 | ~~13B~~ | ~~/author/physique route~~ | ~~0.5~~ | ✅ COMPLETE |
 | ~~14~~ | ~~Athlete/session/season CRUD API + whitelist path fix~~ | ~~1~~ | ✅ COMPLETE |
 | **15** | `GET /kdo/{hash}` + structured logging + `/metrics` | 1 | **NEXT** |
-| 14 | Athlete/session/season CRUD API + whitelist path fix | 1 | None |
-| 15 | `GET /kdo/{hash}` + structured logging + `/metrics` | 1 | None |
 | 16 | Authentication middleware (API key) | 1 | None |
 | 17 | Audit/operational DB separation | 1 | 2.1 infra decision |
 | 18 | Governed authoring / builder prep | 3–4 | 14, 15 |
