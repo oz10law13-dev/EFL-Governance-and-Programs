@@ -212,6 +212,66 @@ def _register_routes(app: FastAPI) -> None:
     def check_exercise(payload: dict, request: Request):
         return request.app.state.catalog.check_exercise(payload)
 
+    @app.post("/author/physique")
+    def author_physique(payload: dict, request: Request):
+        try:
+            artifact_store = request.app.state.artifact_store
+            audit_store = request.app.state.audit_store
+            runner = request.app.state.runner
+
+            # 1. Commit artifact version
+            version_result = artifact_store.commit_artifact_version(
+                artifact_id=payload["artifact_id"],
+                module_id="PHYSIQUE",
+                object_id=payload["object_id"],
+                content=payload["content"],
+            )
+            version_id = version_result["version_id"]
+            content_hash = version_result["content_hash"]
+
+            # 2. Evaluate and commit KDO
+            kdo_dict = _evaluate_and_commit(runner, audit_store, payload["evaluation_payload"], "PHYSIQUE")
+            decision_hash = kdo_dict["audit"]["decisionHash"]
+            final_publish_state = kdo_dict["resolution"]["finalPublishState"]
+
+            # 3. Route by publish state
+            if final_publish_state in ("BLOCKED", "ILLEGALQUARANTINED"):
+                return {
+                    "version_id": version_id,
+                    "lifecycle": "DRAFT",
+                    "publish_state": final_publish_state,
+                    "decision_hash": decision_hash,
+                    "promoted": False,
+                    "requires_review": False,
+                }
+            elif final_publish_state == "LEGALREADY":
+                artifact_store.link_kdo(version_id, decision_hash, content_hash)
+                artifact_store.promote_to_live(version_id, audit_store.get_kdo)
+                return {
+                    "version_id": version_id,
+                    "lifecycle": "LIVE",
+                    "publish_state": final_publish_state,
+                    "decision_hash": decision_hash,
+                    "promoted": True,
+                    "requires_review": False,
+                }
+            elif final_publish_state in ("REQUIRESREVIEW", "LEGALOVERRIDE"):
+                artifact_store.link_kdo(version_id, decision_hash, content_hash)
+                return {
+                    "version_id": version_id,
+                    "lifecycle": "DRAFT",
+                    "publish_state": final_publish_state,
+                    "decision_hash": decision_hash,
+                    "promoted": False,
+                    "requires_review": True,
+                }
+            else:
+                raise ValueError(f"Unexpected publish state: {final_publish_state!r}")
+        except HTTPException:
+            raise
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+
     @app.post("/author/session")
     def author_session(payload: dict, request: Request):
         try:
