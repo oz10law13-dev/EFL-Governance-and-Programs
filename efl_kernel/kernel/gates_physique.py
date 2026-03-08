@@ -787,7 +787,10 @@ def run_physique_gates(raw_input: dict, dep_provider) -> list[dict]:
     adapter_result = run_physique_adapter(raw_input)
 
     if adapter_result.halt_codes:
-        violations.append(_syn("RAL.MISSINGORUNDEFINEDREQUIREDSTATE"))
+        if "DCC_TEMPO_GOVERNANCE_UNAVAILABLE" in adapter_result.halt_codes:
+            violations.append(_mcc_v("DCC_TEMPO_GOVERNANCE_UNAVAILABLE"))
+        else:
+            violations.append(_syn("RAL.MISSINGORUNDEFINEDREQUIREDSTATE"))
         return violations
 
     # Step 6.B — clearance gate (whitelist-authoritative, GAP-003/005)

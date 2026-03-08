@@ -16,7 +16,7 @@ def _load(path: str) -> dict:
 SCM_SPEC = _load("EFL_SCM_v1_1_1_frozen.json")
 MESO_SPEC = _load("EFL_MESO_v1_0_2_frozen.json")
 MACRO_SPEC = _load("EFL_MACRO_v1_0_2_frozen.json")
-PHYSIQUE_SPEC = _load("EFL_PHYSIQUE_v1_0_3_frozen.json")
+PHYSIQUE_SPEC = _load("EFL_PHYSIQUE_v1_0_4_frozen.json")
 CL_SPEC = _load("EFL_Canonical_Law_v1_2_2_frozen.json")
 
 for spec in (SCM_SPEC, MESO_SPEC, MACRO_SPEC, PHYSIQUE_SPEC):

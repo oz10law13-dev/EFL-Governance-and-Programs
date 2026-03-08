@@ -1,21 +1,46 @@
 from __future__ import annotations
 
+import copy
 import dataclasses
+import hashlib
 import json
 from pathlib import Path
 
 _PHYSIQUE_DIR = Path(__file__).resolve().parent.parent.parent / "Physique"
 _WHITELIST = json.loads((_PHYSIQUE_DIR / "efl_whitelist_v1_0_4.json").read_text(encoding="utf-8"))
-_TEMPO_GOV = json.loads(
-    (_PHYSIQUE_DIR / "efl_tempo_governance_v1_1_2_ENFORCEMENT_CLEAN.json").read_text(encoding="utf-8")
-)
+try:
+    _TEMPO_GOV = json.loads(
+        (_PHYSIQUE_DIR / "efl_tempo_governance_v1_1_2_ENFORCEMENT_CLEAN.json").read_text(encoding="utf-8")
+    )
+    _TEMPO_GOV_LOAD_ERROR = False
+except Exception:
+    _TEMPO_GOV = {}
+    _TEMPO_GOV_LOAD_ERROR = True
 _MANIFEST = json.loads(
     (_PHYSIQUE_DIR / "physique_runtime_manifest_v1_0.json").read_text(encoding="utf-8")
 )
 
+_ALIAS_TABLE_PATH = _PHYSIQUE_DIR / "physique_alias_table_v1_0.json"
+try:
+    _alias_raw = json.loads(_ALIAS_TABLE_PATH.read_text(encoding="utf-8"))
+    _alias_check = copy.deepcopy(_alias_raw)
+    _alias_check["documentHash"] = ""
+    _alias_actual_hash = hashlib.sha256(
+        json.dumps(_alias_check, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
+    ).hexdigest()
+    if _alias_actual_hash != _alias_raw.get("documentHash", ""):
+        raise RuntimeError("alias table hash mismatch")
+    ALIAS_INDEX: dict[str, str] = _alias_raw.get("aliases", {})
+    _ALIAS_TABLE_LOAD_ERROR = False
+except Exception:
+    ALIAS_INDEX = {}
+    _ALIAS_TABLE_LOAD_ERROR = True
+
 WHITELIST_INDEX: dict[str, dict] = {ex["canonical_id"]: ex for ex in _WHITELIST["exercises"]}
 ECCENTRIC_MINIMUMS: dict[str, int] = _TEMPO_GOV["eccentric_minimum_rules"]["class_based_minimums"]
 ADAPTER_VERSION: str = _MANIFEST["version"]
+_WHITELIST_VERSION: str = _WHITELIST.get("version", "")
+_TEMPO_GOV_VERSION: str = _TEMPO_GOV.get("version", "") if not _TEMPO_GOV_LOAD_ERROR else ""
 DAY_ROLE_H_NODE_MAX: dict[str, int] = _TEMPO_GOV["day_role_cap_enforcement"]["day_role_h_node_max_values"]
 TEMPO_GOV = _TEMPO_GOV
 
@@ -29,6 +54,7 @@ class PhysiqueAdapterResult:
     halt_codes: list[str]
     adapter_version: str
     athlete_id: str = ""
+    adapter_trace: dict = dataclasses.field(default_factory=dict)
     context: dict = dataclasses.field(default_factory=dict)
     day_slots: list[dict] = dataclasses.field(default_factory=list)
     resolved_slot_exercises: list[dict] = dataclasses.field(default_factory=list)
@@ -82,6 +108,35 @@ def _classify_tempo_mode(movement_family: str, pattern_plane: str | None) -> str
     return "ECICT"
 
 
+def _validate_input_shape(payload: dict) -> list[str]:
+    """F2: Validate payload shape. Returns halt codes (empty = valid)."""
+    physique_session = payload.get("physique_session")
+    if not isinstance(physique_session, dict):
+        return ["SCHEMA_VALIDATION_FAILED"]
+    exercises = physique_session.get("exercises")
+    if not isinstance(exercises, list):
+        return ["SCHEMA_VALIDATION_FAILED"]
+    for ex in exercises:
+        if not isinstance(ex, dict):
+            return ["SCHEMA_VALIDATION_FAILED"]
+        if not ex.get("exercise_id"):
+            return ["INCOMPLETE_INPUT"]
+    return []
+
+
+def _verify_authority_versions(authority_versions: dict) -> list[str]:
+    """F1: Validate-if-present (D1). Returns ["AUTHORITY_VERSION_MISMATCH"] on mismatch."""
+    if not authority_versions:
+        return []
+    if "whitelist_version" in authority_versions:
+        if authority_versions["whitelist_version"] != _WHITELIST_VERSION:
+            return ["AUTHORITY_VERSION_MISMATCH"]
+    if "tempo_gov_version" in authority_versions:
+        if authority_versions["tempo_gov_version"] != _TEMPO_GOV_VERSION:
+            return ["AUTHORITY_VERSION_MISMATCH"]
+    return []
+
+
 def _resolve_slot_exercises(day_slots: list[dict], whitelist_index: dict) -> list[dict]:
     """For each exercise in each day_slot, attempt whitelist resolution.
 
@@ -122,23 +177,75 @@ def run_physique_adapter(payload: dict) -> PhysiqueAdapterResult:
     Fail closed: if any exercise in physique_session cannot be resolved to the whitelist,
     halt immediately without partially normalizing the remaining exercises.
     """
+    athlete_id = (payload.get("evaluationContext") or {}).get("athleteID", "")
+
+    # 3g — early-exit guards (F2, GAP-004, alias load, F1)
+    shape_errors = _validate_input_shape(payload)
+    if shape_errors:
+        halt_codes = shape_errors
+        return PhysiqueAdapterResult(
+            normalized_exercises=[], halt_codes=halt_codes, adapter_version=ADAPTER_VERSION,
+            athlete_id=athlete_id,
+            adapter_trace={"adapter_version": ADAPTER_VERSION, "halt_reason": halt_codes},
+        )
+
+    if _TEMPO_GOV_LOAD_ERROR:
+        halt_codes = ["DCC_TEMPO_GOVERNANCE_UNAVAILABLE"]
+        return PhysiqueAdapterResult(
+            normalized_exercises=[], halt_codes=halt_codes, adapter_version=ADAPTER_VERSION,
+            athlete_id=athlete_id,
+            adapter_trace={"adapter_version": ADAPTER_VERSION, "halt_reason": halt_codes},
+        )
+
+    if _ALIAS_TABLE_LOAD_ERROR:
+        halt_codes = ["ADAPTER_LOAD_FAILURE"]
+        return PhysiqueAdapterResult(
+            normalized_exercises=[], halt_codes=halt_codes, adapter_version=ADAPTER_VERSION,
+            athlete_id=athlete_id,
+            adapter_trace={"adapter_version": ADAPTER_VERSION, "halt_reason": halt_codes},
+        )
+
+    version_errors = _verify_authority_versions(payload.get("authority_versions") or {})
+    if version_errors:
+        halt_codes = version_errors
+        return PhysiqueAdapterResult(
+            normalized_exercises=[], halt_codes=halt_codes, adapter_version=ADAPTER_VERSION,
+            athlete_id=athlete_id,
+            adapter_trace={"adapter_version": ADAPTER_VERSION, "halt_reason": halt_codes},
+        )
+
     physique_session = payload.get("physique_session", {})
     raw_day_slots = payload.get("day_slots", [])
     context = payload.get("context", {})
-    athlete_id = (payload.get("evaluationContext") or {}).get("athleteID", "")
 
     exercises = physique_session.get("exercises", [])
     normalized: list[dict] = []
 
+    # 3i — trace lists
+    _trace_resolved_via_alias: list[str] = []
+    _trace_horiz_vert_events: list[dict] = []
+    _trace_tempo_modes: list[dict] = []
+    _trace_e4_flagged: list[str] = []
+
     for ex_input in exercises:
         exercise_id = ex_input.get("exercise_id", "")
         wl_entry = WHITELIST_INDEX.get(exercise_id)
+        # 3h — alias resolution after WHITELIST_INDEX miss
         if wl_entry is None:
+            canonical_id = ALIAS_INDEX.get(exercise_id)
+            if canonical_id:
+                wl_entry = WHITELIST_INDEX.get(canonical_id)
+                if wl_entry is not None:
+                    _trace_resolved_via_alias.append(exercise_id)
+                    exercise_id = canonical_id
+        if wl_entry is None:
+            halt_codes = ["UNKNOWN_EXERCISE_ID"]
             return PhysiqueAdapterResult(
                 normalized_exercises=[],
-                halt_codes=["UNKNOWN_EXERCISE_ID"],
+                halt_codes=halt_codes,
                 adapter_version=ADAPTER_VERSION,
                 athlete_id=athlete_id,
+                adapter_trace={"adapter_version": ADAPTER_VERSION, "halt_reason": halt_codes},
                 context=context,
                 day_slots=raw_day_slots,
                 resolved_slot_exercises=[],
@@ -150,14 +257,17 @@ def run_physique_adapter(payload: dict) -> PhysiqueAdapterResult:
             horiz_vert_normalized = None
         elif horiz_vert_raw in HORIZ_VERT_MAP:
             horiz_vert_normalized = HORIZ_VERT_MAP[horiz_vert_raw]
+            _trace_horiz_vert_events.append({"exercise_id": exercise_id, "raw": horiz_vert_raw, "normalized": horiz_vert_normalized})
         elif horiz_vert_raw in ("horizontal", "vertical", "sagittal", "frontal"):
             horiz_vert_normalized = horiz_vert_raw
         else:
+            halt_codes = ["UNKNOWN_HORIZ_VERT_LABEL"]
             return PhysiqueAdapterResult(
                 normalized_exercises=[],
-                halt_codes=["UNKNOWN_HORIZ_VERT_LABEL"],
+                halt_codes=halt_codes,
                 adapter_version=ADAPTER_VERSION,
                 athlete_id=athlete_id,
+                adapter_trace={"adapter_version": ADAPTER_VERSION, "halt_reason": halt_codes},
                 context=context,
                 day_slots=raw_day_slots,
                 resolved_slot_exercises=[],
@@ -166,6 +276,7 @@ def run_physique_adapter(payload: dict) -> PhysiqueAdapterResult:
         movement_family = wl_entry.get("movement_family", "")
         pattern_plane = wl_entry.get("pattern_plane")
         tempo_mode = _classify_tempo_mode(movement_family, pattern_plane)
+        _trace_tempo_modes.append({"exercise_id": exercise_id, "tempo_mode": tempo_mode})
 
         # Tempo parsing (record state; DCC gates fire violations, not adapter)
         tempo_str = ex_input.get("tempo", "")
@@ -198,6 +309,8 @@ def run_physique_adapter(payload: dict) -> PhysiqueAdapterResult:
             "e4_requires_clearance": wl_entry.get("e4_requires_clearance", False),
             "day_role_allowed": wl_entry.get("day_role_allowed"),
         })
+        if wl_entry.get("e4_requires_clearance", False):
+            _trace_e4_flagged.append(exercise_id)
 
     # Normalize day_slots: apply horiz_vert mapping; unknown labels halt (F5 fix).
     normalized_slots: list[dict] = []
@@ -213,11 +326,13 @@ def run_physique_adapter(payload: dict) -> PhysiqueAdapterResult:
                 elif raw_hv in ("horizontal", "vertical", "sagittal", "frontal"):
                     norm_ex["horiz_vert"] = raw_hv
                 else:
+                    halt_codes = ["UNKNOWN_HORIZ_VERT_LABEL"]
                     return PhysiqueAdapterResult(
                         normalized_exercises=[],
-                        halt_codes=["UNKNOWN_HORIZ_VERT_LABEL"],
+                        halt_codes=halt_codes,
                         adapter_version=ADAPTER_VERSION,
                         athlete_id=athlete_id,
+                        adapter_trace={"adapter_version": ADAPTER_VERSION, "halt_reason": halt_codes},
                         context=context,
                         day_slots=raw_day_slots,
                         resolved_slot_exercises=[],
@@ -232,6 +347,15 @@ def run_physique_adapter(payload: dict) -> PhysiqueAdapterResult:
         halt_codes=[],
         adapter_version=ADAPTER_VERSION,
         athlete_id=athlete_id,
+        adapter_trace={
+            "adapter_version": ADAPTER_VERSION,
+            "whitelist_version": _WHITELIST_VERSION,
+            "tempo_gov_version": _TEMPO_GOV_VERSION,
+            "resolved_via_alias": _trace_resolved_via_alias,
+            "horiz_vert_events": _trace_horiz_vert_events,
+            "tempo_modes": _trace_tempo_modes,
+            "e4_flagged": _trace_e4_flagged,
+        },
         context=context,
         day_slots=normalized_slots,
         resolved_slot_exercises=resolved_slots,
