@@ -2,8 +2,8 @@
 **Document:** EFL_Kernel_OS_Roadmap.md  
 **Status:** LIVING DOCUMENT  
 **Date:** 2026-03-08  
-**Suite at time of writing:** 400 passed, 1 skipped
-**Last completed phase:** Phase 15 (commit 48bfec8)
+**Suite at time of writing:** 406 passed, 1 skipped
+**Last completed phase:** Phase 16 (commit 377a73a)
 
 ---
 
@@ -93,7 +93,7 @@ The full chain — whitelist → stateless check → governed eval → KDO commi
 | # | Phase | Item | Impact | Effort |
 |---|---|---|---|---|
 | 2.1 | **16** | **SQLite → PostgreSQL** — single file, single writer, no horizontal scale. Can't run multiple uvicorn workers against the same db. Can't serve real concurrent users. | Can't deploy to production with any meaningful load | High — new provider implementation, connection pooling, DDL migration, async driver |
-| 2.2 | **17** | **No authentication** — all HTTP routes are open. Any caller can evaluate any athlete, read any artifact, promote any KDO. | Unacceptable for any real deployment | Medium — API key or JWT middleware; auth-scoped queries |
+| 2.2 | **16** | ✅ **COMPLETE** — `APIKeyMiddleware` added to `service.py`. Reads `EFL_API_KEY` at request time. No-op when unset. `/health` exempt. 401 on missing/wrong key. | — | — |
 | 2.3 | **18** | **No formal schema migration versioning** — `_migrate_schema()` uses idempotent `ALTER TABLE` patches. Works for additive changes, breaks for column renames, type changes, or drops on a running system with real data. | Can't safely deploy schema changes to production | Medium — versioned migration runner (Alembic or custom numbered scripts) |
 | 2.4 | **19** | **Audit and operational data share one SQLite file** — `AuditStore` and `OperationalStore` both write to `efl_audit.db`. Corrupting operational data can corrupt the legal audit record. | Violates audit integrity separation principle | Medium — separate db file paths or separate database instances |
 | 2.5 | **20** | **No backup/restore strategy** — the KDO log is the legal record of every evaluation decision. No WAL configuration, no scheduled backup, no point-in-time restore. | Losing the audit store is catastrophic and unrecoverable | Medium — WAL mode, scheduled backup script, restore verification procedure |
@@ -136,8 +136,8 @@ The full chain — whitelist → stateless check → governed eval → KDO commi
 | ~~13B~~ | ~~/author/physique route~~ | ~~0.5~~ | ✅ COMPLETE |
 | ~~14~~ | ~~Athlete/session/season CRUD API + whitelist path fix~~ | ~~1~~ | ✅ COMPLETE |
 | ~~15~~ | ~~`GET /kdo/{hash}` + structured logging + `/metrics`~~ | ~~1~~ | ✅ COMPLETE |
-| **16** | Authentication middleware (API key) | 1 | **NEXT** |
-| 17 | Audit/operational DB separation | 1 | 2.1 infra decision |
+| ~~16~~ | ~~Authentication middleware (API key)~~ | ~~1~~ | ✅ COMPLETE |
+| **17** | Audit/operational DB separation | 1 | **NEXT** |
 | 18 | Governed authoring / builder prep | 3–4 | 14, 15 |
 
 ### Tier B — Production Infrastructure
