@@ -2,8 +2,8 @@
 **Document:** EFL_Kernel_OS_Roadmap.md  
 **Status:** LIVING DOCUMENT  
 **Date:** 2026-03-08  
-**Suite at time of writing:** 394 passed, 1 skipped
-**Last completed phase:** Phase 14 (commit 30f99ea)
+**Suite at time of writing:** 400 passed, 1 skipped
+**Last completed phase:** Phase 15 (commit 48bfec8)
 
 ---
 
@@ -135,8 +135,8 @@ The full chain — whitelist → stateless check → governed eval → KDO commi
 | ~~13~~ | ~~Input envelope normalization~~ | ~~1~~ | ✅ COMPLETE |
 | ~~13B~~ | ~~/author/physique route~~ | ~~0.5~~ | ✅ COMPLETE |
 | ~~14~~ | ~~Athlete/session/season CRUD API + whitelist path fix~~ | ~~1~~ | ✅ COMPLETE |
-| **15** | `GET /kdo/{hash}` + structured logging + `/metrics` | 1 | **NEXT** |
-| 16 | Authentication middleware (API key) | 1 | None |
+| ~~15~~ | ~~`GET /kdo/{hash}` + structured logging + `/metrics`~~ | ~~1~~ | ✅ COMPLETE |
+| **16** | Authentication middleware (API key) | 1 | **NEXT** |
 | 17 | Audit/operational DB separation | 1 | 2.1 infra decision |
 | 18 | Governed authoring / builder prep | 3–4 | 14, 15 |
 
