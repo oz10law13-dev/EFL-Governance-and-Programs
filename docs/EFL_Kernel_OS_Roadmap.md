@@ -2,8 +2,8 @@
 **Document:** EFL_Kernel_OS_Roadmap.md  
 **Status:** LIVING DOCUMENT  
 **Date:** 2026-03-08  
-**Suite at time of writing:** 373 passed, 1 skipped
-**Last completed phase:** Phase 13 (commit 3445afd)
+**Suite at time of writing:** 379 passed, 1 skipped
+**Last completed phase:** Phase 13B (commit 612d082)
 
 ---
 
@@ -80,7 +80,7 @@ The full chain — whitelist → stateless check → governed eval → KDO commi
 | # | Phase | Item | Blocking | Scope |
 |---|---|---|---|---|
 | 1.1 | **13** | ✅ **COMPLETE** — Input envelope normalization — `_normalize_physique_envelope` maps `evaluation_context`→`evaluationContext` and `session`→`physique_session` before kernel Step 0. Transitional names remain valid. | — | — |
-| 1.2 | **13B** | **`/author/physique` route** — `/author/session` exists; PHYSIQUE has no equivalent single-call author path (commit + eval + promote). | Yes — PHYSIQUE can't complete the full lifecycle from one HTTP call | `service.py` new route mirroring `author_session` |
+| 1.2 | **13B** | ✅ **COMPLETE** — `/author/physique` route added to `service.py`; mirrors `author_session` lifecycle exactly. | — | — |
 | 1.3 | **14** | **Athlete/session/season CRUD API routes** — athletes enter the system only via seed tool or direct `upsert_athlete` calls in test code. No governed `POST /athletes`, `POST /sessions`, `POST /seasons`. | Yes — can't enroll a real athlete without writing code | `service.py` new routes + validation |
 | 1.4 | **14B** | **`ExerciseCatalog` loading stale whitelist** — `exercise_catalog.py` hardcodes path to `efl_whitelist_v1_0_3.json`; whitelist is at v1.0.4. | Minor — functional but out of sync | `exercise_catalog.py` path reference |
 | 1.5 | **15** | **MESO/MACRO Physique-specific gates are stubs** — Phase 7 spec §9 flags these explicitly. General MESO/MACRO gates fire; Physique-specific MESO/MACRO gate logic (density-aware meso evaluation, Physique-specific macro constraints) is not implemented. | No — general gates still enforce; Physique-specific rules absent | `gates_meso.py`, `gates_macro.py` future extension |
@@ -133,7 +133,8 @@ The full chain — whitelist → stateless check → governed eval → KDO commi
 | Phase | Title | Weeks | Dependency |
 |---|---|---|---|
 | ~~13~~ | ~~Input envelope normalization~~ | ~~1~~ | ✅ COMPLETE |
-| **13B** | `/author/physique` route | 0.5 | ~~13~~ **NEXT** |
+| ~~13B~~ | ~~/author/physique route~~ | ~~0.5~~ | ✅ COMPLETE |
+| **14** | Athlete/session/season CRUD API + whitelist path fix | 1 | **NEXT** |
 | 14 | Athlete/session/season CRUD API + whitelist path fix | 1 | None |
 | 15 | `GET /kdo/{hash}` + structured logging + `/metrics` | 1 | None |
 | 16 | Authentication middleware (API key) | 1 | None |
