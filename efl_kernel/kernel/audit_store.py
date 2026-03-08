@@ -101,3 +101,33 @@ class AuditStore:
                 by_reason[r_code] = by_reason.get(r_code, 0) + cnt
 
         return {"byReasonCode": by_reason, "byViolationCode": by_violation}
+
+    def get_metrics(self) -> dict:
+        """Return aggregate counts from kdo_log.
+
+        Returns:
+            {
+                "kdo_total": int,
+                "by_module": {module_id: count, ...},
+                "by_publish_state": {finalPublishState: count, ...},
+            }
+        """
+        total_row = self._conn.execute("SELECT COUNT(*) FROM kdo_log").fetchone()
+        kdo_total = total_row[0] if total_row else 0
+
+        by_module: dict[str, int] = {}
+        for row in self._conn.execute(
+            "SELECT module_id, COUNT(*) FROM kdo_log GROUP BY module_id"
+        ).fetchall():
+            by_module[row[0]] = row[1]
+
+        by_publish_state: dict[str, int] = {}
+        for row in self._conn.execute("SELECT kdo_json FROM kdo_log").fetchall():
+            state = json.loads(row[0])["resolution"]["finalPublishState"]
+            by_publish_state[state] = by_publish_state.get(state, 0) + 1
+
+        return {
+            "kdo_total": kdo_total,
+            "by_module": by_module,
+            "by_publish_state": by_publish_state,
+        }
