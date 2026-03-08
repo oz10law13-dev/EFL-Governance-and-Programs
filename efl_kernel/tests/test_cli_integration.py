@@ -138,3 +138,114 @@ def test_cli_invalid_json_exits_1(tmp_path):
     with pytest.raises(SystemExit) as exc_info:
         cli.main(["--module", "SESSION", "--input", str(bad_json_file), "--db", db_path])
     assert exc_info.value.code == 1
+
+
+def _physique_payload(exercises=None) -> dict:
+    reg = RAL_SPEC["moduleRegistration"]["PHYSIQUE"]
+    return {
+        "moduleVersion": reg["moduleVersion"],
+        "moduleViolationRegistryVersion": reg["moduleViolationRegistryVersion"],
+        "registryHash": reg["registryHash"],
+        "objectID": "obj-physique-cli-test",
+        "evaluationContext": {
+            "athleteID": "ATH-CLI-PHY-001",
+            "sessionID": "sess-physique-cli-001",
+        },
+        "windowContext": [
+            {
+                "windowType": "ROLLING7DAYS",
+                "anchorDate": "2026-01-01",
+                "startDate": "2025-12-26",
+                "endDate": "2026-01-01",
+                "timezone": "UTC",
+            },
+            {
+                "windowType": "ROLLING28DAYS",
+                "anchorDate": "2026-01-01",
+                "startDate": "2025-12-05",
+                "endDate": "2026-01-01",
+                "timezone": "UTC",
+            },
+        ],
+        "physique_session": {"exercises": exercises or []},
+    }
+
+
+def test_cli_physique_clean_payload(tmp_path, capsys):
+    """PHYSIQUE CLI: non-E4 exercise, valid tempo → clean KDO, persisted to kdo_log."""
+    payload_file = tmp_path / "physique_payload.json"
+    payload_file.write_text(
+        json.dumps(_physique_payload([{"exercise_id": "ECA-PHY-0001", "tempo": "3:0:1:0"}])),
+        encoding="utf-8",
+    )
+    db_path = str(tmp_path / "test_physique.db")
+
+    cli.main(["--module", "PHYSIQUE", "--input", str(payload_file), "--db", db_path])
+
+    captured = capsys.readouterr()
+    result = json.loads(captured.out)
+    assert "resolution" in result
+    assert result["resolution"]["finalPublishState"] in KDOValidator.allowed_publish
+
+    decision_hash = result["audit"]["decisionHash"]
+    conn = sqlite3.connect(db_path)
+    row = conn.execute(
+        "SELECT decision_hash FROM kdo_log WHERE decision_hash = ?", (decision_hash,)
+    ).fetchone()
+    conn.close()
+    assert row is not None
+
+
+def test_cli_physique_clearance_violation(tmp_path, capsys):
+    """PHYSIQUE CLI: ECA-PHY-0027 (e4_requires_clearance=True) + athlete e4_clearance=0 → PHYSIQUE.CLEARANCEMISSING."""
+    from efl_kernel.kernel.operational_store import OperationalStore
+
+    db_path = str(tmp_path / "test_physique_clearance.db")
+    op = OperationalStore(db_path)
+    op.upsert_athlete({
+        "athlete_id": "ATH-CLI-PHY-002",
+        "max_daily_contact_load": 200.0,
+        "minimum_rest_interval_hours": 24.0,
+        "e4_clearance": 0,
+    })
+
+    reg = RAL_SPEC["moduleRegistration"]["PHYSIQUE"]
+    payload = {
+        "moduleVersion": reg["moduleVersion"],
+        "moduleViolationRegistryVersion": reg["moduleViolationRegistryVersion"],
+        "registryHash": reg["registryHash"],
+        "objectID": "obj-physique-clearance-cli",
+        "evaluationContext": {
+            "athleteID": "ATH-CLI-PHY-002",
+            "sessionID": "sess-clearance-cli-001",
+        },
+        "windowContext": [
+            {
+                "windowType": "ROLLING7DAYS",
+                "anchorDate": "2026-01-01",
+                "startDate": "2025-12-26",
+                "endDate": "2026-01-01",
+                "timezone": "UTC",
+            },
+            {
+                "windowType": "ROLLING28DAYS",
+                "anchorDate": "2026-01-01",
+                "startDate": "2025-12-05",
+                "endDate": "2026-01-01",
+                "timezone": "UTC",
+            },
+        ],
+        "physique_session": {
+            "exercises": [{"exercise_id": "ECA-PHY-0027", "tempo": "3:0:1:0"}]
+        },
+    }
+    payload_file = tmp_path / "physique_clearance_payload.json"
+    payload_file.write_text(json.dumps(payload), encoding="utf-8")
+
+    cli.main(["--module", "PHYSIQUE", "--input", str(payload_file), "--db", db_path])
+
+    captured = capsys.readouterr()
+    result = json.loads(captured.out)
+    codes = [v["code"] for v in result.get("violations", [])]
+    assert "PHYSIQUE.CLEARANCEMISSING" in codes
+    assert result["resolution"]["finalPublishState"] == "ILLEGALQUARANTINED"
