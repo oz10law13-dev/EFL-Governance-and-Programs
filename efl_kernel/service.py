@@ -212,6 +212,48 @@ def _register_routes(app: FastAPI) -> None:
     def check_exercise(payload: dict, request: Request):
         return request.app.state.catalog.check_exercise(payload)
 
+    # ── Operational CRUD ──────────────────────────────────────────────
+
+    @app.post("/athletes")
+    def create_athlete(payload: dict, request: Request):
+        for field in ("athlete_id", "max_daily_contact_load", "minimum_rest_interval_hours", "e4_clearance"):
+            if field not in payload:
+                raise HTTPException(status_code=400, detail=f"Missing required field: {field}")
+        op_store = request.app.state.op_store
+        op_store.upsert_athlete(payload)
+        return op_store.get_athlete(payload["athlete_id"])
+
+    @app.get("/athletes/{athlete_id}")
+    def get_athlete(athlete_id: str, request: Request):
+        row = request.app.state.op_store.get_athlete(athlete_id)
+        if row is None:
+            raise HTTPException(status_code=404, detail=f"Athlete {athlete_id!r} not found")
+        return row
+
+    @app.post("/sessions")
+    def create_session(payload: dict, request: Request):
+        for field in ("session_id", "athlete_id", "session_date", "contact_load"):
+            if field not in payload:
+                raise HTTPException(status_code=400, detail=f"Missing required field: {field}")
+        request.app.state.op_store.upsert_session(payload)
+        return {"status": "ok", "session_id": payload["session_id"]}
+
+    @app.post("/seasons")
+    def create_season(payload: dict, request: Request):
+        for field in ("athlete_id", "season_id", "competition_weeks", "gpp_weeks", "start_date", "end_date"):
+            if field not in payload:
+                raise HTTPException(status_code=400, detail=f"Missing required field: {field}")
+        op_store = request.app.state.op_store
+        op_store.upsert_season(payload)
+        return op_store.get_season(payload["athlete_id"], payload["season_id"])
+
+    @app.get("/seasons/{athlete_id}/{season_id}")
+    def get_season(athlete_id: str, season_id: str, request: Request):
+        row = request.app.state.op_store.get_season(athlete_id, season_id)
+        if row is None:
+            raise HTTPException(status_code=404, detail=f"Season {season_id!r} for athlete {athlete_id!r} not found")
+        return row
+
     @app.post("/author/physique")
     def author_physique(payload: dict, request: Request):
         try:
