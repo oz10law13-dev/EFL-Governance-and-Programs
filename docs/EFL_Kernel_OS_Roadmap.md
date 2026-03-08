@@ -53,9 +53,9 @@
 | `GET /exercises/{id}` | Complete |
 | `POST /check/exercise` (stateless fast-path) | Complete |
 | `POST /author/session` (commit + eval + promote) | Complete — SESSION only |
-| `POST /author/physique` | **MISSING** |
-| Athlete/session/season CRUD routes | **MISSING** |
-| `GET /kdo/{decision_hash}` audit query | **MISSING** |
+| `POST /author/physique` | Complete — Phase 13B |
+| `POST /athletes`, `GET /athletes/{id}`, `POST /sessions`, `POST /seasons`, `GET /seasons/{athlete_id}/{season_id}` | Complete — Phase 14 |
+| `GET /kdo/{decision_hash}` audit query | Complete — Phase 15 |
 
 ### Layer 4 — Authoring Loop ✅ SUBSTANTIALLY COMPLETE
 
@@ -107,8 +107,8 @@ The full chain — whitelist → stateless check → governed eval → KDO commi
 |---|---|---|---|---|
 | 3.1 | **21** | **No real session intake path** — session data enters only via seed fixtures or direct API evaluation calls. No governed intake workflow for real training data (athlete submits session → system records it → evaluation can reference it). | Coaches can't submit real session data through a normal workflow | Medium — intake API with validation layer separate from evaluation |
 | 3.2 | **22** | **Review workflow has no UI surface** — `REQUIRESREVIEW` KDOs are committed to the audit log but there is no mechanism for a human reviewer to discover, action, or resolve them. The code path exists; the operational surface does not. | Override/review path is unactionable in practice | Medium-High — review queue API (`GET /review-queue`, `POST /artifacts/{id}/review`) + any front-end |
-| 3.3 | **23** | **No structured logging or observability** — `print(json.dumps(kdo))` is the only output path for CLI; no log aggregation, no alerting on repeated quarantines, no health metrics beyond `/health`. | Can't monitor quarantine rates, repeated violations, or system degradation | Low-Medium — structured logger with levels, `/metrics` endpoint, log aggregation integration |
-| 3.4 | **24** | **`GET /kdo/{decision_hash}` audit query route missing** — KDOs are persisted to `kdo_log` but there is no HTTP route to retrieve a specific KDO by its hash. Can't produce a verifiable legal record for an external party. | Can't audit or export decisions | Low — single read route on `audit_store.get_kdo()` |
+| 3.3 | **15** | ✅ **COMPLETE** — Structured logging added to `_evaluate_and_commit` (logger `efl_kernel.service`, INFO after each KDO commit). `GET /metrics` endpoint added to `service.py`. `AuditStore.get_metrics()` returns `kdo_total`, `by_module`, `by_publish_state`. | — | — |
+| 3.4 | **15** | ✅ **COMPLETE** — `GET /kdo/{decision_hash}` route added to `service.py`. Returns full KDO dict from `audit_store.get_kdo(decision_hash)`. 404 if not found. | — | — |
 | 3.5 | **25** | **Phase 18 governed authoring not built** — no guided path to create a valid Physique session from scratch. Coaches must hand-craft JSON payloads; there is no builder interface, no proposal generation, no constraint-aware exercise selection workflow. | Coaches can't create a session through any normal interface | High — full Phase 18 scope (see Track 4) |
 
 ---
