@@ -3,7 +3,7 @@ from __future__ import annotations
 
 
 def test_trace_present_on_success():
-    """F7: adapter_trace populated on success path."""
+    """F7: adapter_trace populated on success path with spec-declared key names."""
     from efl_kernel.kernel.physique_adapter import run_physique_adapter
 
     payload = {
@@ -16,10 +16,11 @@ def test_trace_present_on_success():
     assert "adapter_version" in r.adapter_trace
     assert "whitelist_version" in r.adapter_trace
     assert "tempo_gov_version" in r.adapter_trace
-    assert isinstance(r.adapter_trace.get("resolved_via_alias"), list)
-    assert isinstance(r.adapter_trace.get("horiz_vert_events"), list)
-    assert isinstance(r.adapter_trace.get("tempo_modes"), list)
-    assert isinstance(r.adapter_trace.get("e4_flagged"), list)
+    assert r.adapter_trace.get("exercises_normalized") == 1
+    assert isinstance(r.adapter_trace.get("alias_resolutions"), list)
+    assert isinstance(r.adapter_trace.get("horiz_vert_mappings"), list)
+    assert isinstance(r.adapter_trace.get("tempo_mode_assignments"), list)
+    assert isinstance(r.adapter_trace.get("e4_injections_true"), list)
 
 
 def test_trace_contains_halt_reason_on_halt():
@@ -50,7 +51,7 @@ def test_f3_alias_resolution_squat():
     assert r.halt_codes == [], f"Unexpected halt: {r.halt_codes}"
     assert len(r.normalized_exercises) == 1
     assert r.normalized_exercises[0]["exercise_id"] == "ECA-PHY-0001"
-    assert "ECA-SQUAT-001" in r.adapter_trace.get("resolved_via_alias", [])
+    assert "ECA-SQUAT-001" in r.adapter_trace.get("alias_resolutions", [])
 
 
 def test_f3_alias_resolution_hinge():
@@ -65,7 +66,7 @@ def test_f3_alias_resolution_hinge():
     r = run_physique_adapter(payload)
     assert r.halt_codes == [], f"Unexpected halt: {r.halt_codes}"
     assert r.normalized_exercises[0]["exercise_id"] == "ECA-PHY-0004"
-    assert "ECA-HINGE-001" in r.adapter_trace.get("resolved_via_alias", [])
+    assert "ECA-HINGE-001" in r.adapter_trace.get("alias_resolutions", [])
 
 
 def test_f3_alias_resolution_isolate_011():
@@ -124,7 +125,7 @@ def test_trace_e4_flagged_recorded():
     }
     r = run_physique_adapter(payload)
     assert r.halt_codes == []
-    assert "ECA-PHY-0027" in r.adapter_trace.get("e4_flagged", [])
+    assert "ECA-PHY-0027" in r.adapter_trace.get("e4_injections_true", [])
 
 
 def test_trace_horiz_vert_event_recorded_for_incline():
@@ -141,7 +142,7 @@ def test_trace_horiz_vert_event_recorded_for_incline():
         }
         r = adapter_module.run_physique_adapter(payload)
         assert r.halt_codes == []
-        events = r.adapter_trace.get("horiz_vert_events", [])
+        events = r.adapter_trace.get("horiz_vert_mappings", [])
         assert any(e["raw"] == "Incline" and e["normalized"] == "horizontal" for e in events)
     finally:
         adapter_module.WHITELIST_INDEX["ECA-PHY-0001"] = original

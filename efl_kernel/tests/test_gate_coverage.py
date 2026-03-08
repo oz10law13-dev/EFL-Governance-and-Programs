@@ -323,3 +323,46 @@ def test_f2_exercise_missing_id_halts_incomplete_input():
     }
     r = run_physique_adapter(payload)
     assert "INCOMPLETE_INPUT" in r.halt_codes
+
+
+def test_f2_physique_session_absent_does_not_halt():
+    """F2: physique_session absent → valid empty session, not a schema error."""
+    from efl_kernel.kernel.physique_adapter import run_physique_adapter
+
+    r = run_physique_adapter({"evaluationContext": {"athleteID": "x"}, "day_slots": []})
+    assert "SCHEMA_VALIDATION_FAILED" not in r.halt_codes
+    assert r.halt_codes == []
+
+
+def test_f2_physique_session_none_does_not_halt():
+    """F2: physique_session=None → valid empty session, not a schema error."""
+    from efl_kernel.kernel.physique_adapter import run_physique_adapter
+
+    r = run_physique_adapter({"evaluationContext": {"athleteID": "x"}, "physique_session": None})
+    assert r.halt_codes == []
+
+
+def test_run_physique_gates_with_sqlite_provider(tmp_path):
+    """Smoke: gates evaluate against SqliteDependencyProvider (not InMemory)."""
+    from efl_kernel.kernel.operational_store import OperationalStore
+    from efl_kernel.kernel.audit_store import AuditStore
+    from efl_kernel.kernel.sqlite_dependency_provider import SqliteDependencyProvider
+    from efl_kernel.kernel.gates_physique import run_physique_gates
+
+    db_path = str(tmp_path / "smoke.db")
+    op_store = OperationalStore(db_path)
+    audit_store = AuditStore(db_path)
+    op_store.upsert_athlete({
+        "athlete_id": "ath-sqlite-smoke",
+        "max_daily_contact_load": 200.0,
+        "minimum_rest_interval_hours": 24.0,
+        "e4_clearance": 1,
+    })
+    provider = SqliteDependencyProvider(op_store, audit_store)
+    payload = {
+        "evaluationContext": {"athleteID": "ath-sqlite-smoke"},
+        "physique_session": {"exercises": [{"exercise_id": "ECA-PHY-0001", "tempo": "3:0:1:0"}]},
+        "day_slots": [],
+    }
+    violations = run_physique_gates(payload, provider)
+    assert isinstance(violations, list)

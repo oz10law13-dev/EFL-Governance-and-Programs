@@ -109,11 +109,19 @@ def _classify_tempo_mode(movement_family: str, pattern_plane: str | None) -> str
 
 
 def _validate_input_shape(payload: dict) -> list[str]:
-    """F2: Validate payload shape. Returns halt codes (empty = valid)."""
+    """F2: Validate payload shape. Returns halt codes (empty = valid).
+
+    physique_session absent or None → treated as empty session (valid).
+    exercises absent or None → treated as empty list (valid).
+    """
     physique_session = payload.get("physique_session")
+    if physique_session is None:
+        return []
     if not isinstance(physique_session, dict):
         return ["SCHEMA_VALIDATION_FAILED"]
     exercises = physique_session.get("exercises")
+    if exercises is None:
+        return []
     if not isinstance(exercises, list):
         return ["SCHEMA_VALIDATION_FAILED"]
     for ex in exercises:
@@ -214,7 +222,7 @@ def run_physique_adapter(payload: dict) -> PhysiqueAdapterResult:
             adapter_trace={"adapter_version": ADAPTER_VERSION, "halt_reason": halt_codes},
         )
 
-    physique_session = payload.get("physique_session", {})
+    physique_session = payload.get("physique_session") or {}
     raw_day_slots = payload.get("day_slots", [])
     context = payload.get("context", {})
 
@@ -351,10 +359,11 @@ def run_physique_adapter(payload: dict) -> PhysiqueAdapterResult:
             "adapter_version": ADAPTER_VERSION,
             "whitelist_version": _WHITELIST_VERSION,
             "tempo_gov_version": _TEMPO_GOV_VERSION,
-            "resolved_via_alias": _trace_resolved_via_alias,
-            "horiz_vert_events": _trace_horiz_vert_events,
-            "tempo_modes": _trace_tempo_modes,
-            "e4_flagged": _trace_e4_flagged,
+            "exercises_normalized": len(normalized),
+            "alias_resolutions": _trace_resolved_via_alias,
+            "horiz_vert_mappings": _trace_horiz_vert_events,
+            "tempo_mode_assignments": _trace_tempo_modes,
+            "e4_injections_true": _trace_e4_flagged,
         },
         context=context,
         day_slots=normalized_slots,
