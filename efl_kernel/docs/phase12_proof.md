@@ -179,13 +179,81 @@ not the fail-closed sentinel.
 
 ---
 
-## Step 5 — Verify KDO persistence
+## Step 5 — PHYSIQUE evaluation (clearance violation)
+
+Write the following JSON to `physique_payload.json`:
+
+```json
+{
+  "moduleVersion": "1.0.4",
+  "moduleViolationRegistryVersion": "1.0.4",
+  "registryHash": "7140d801e3194e0bbc74adc7f3c6d03bb503edc3124c3f0dfc0b71a02c185ec0",
+  "objectID": "SMOKE-PHY-001",
+  "evaluationContext": {
+    "athleteID": "ATH001",
+    "sessionID": "SMOKE-PHY-001"
+  },
+  "windowContext": [
+    {
+      "windowType": "ROLLING7DAYS",
+      "anchorDate": "2026-03-01",
+      "startDate": "2026-02-22",
+      "endDate": "2026-03-01",
+      "timezone": "UTC"
+    },
+    {
+      "windowType": "ROLLING28DAYS",
+      "anchorDate": "2026-03-01",
+      "startDate": "2026-02-01",
+      "endDate": "2026-03-01",
+      "timezone": "UTC"
+    }
+  ],
+  "physique_session": {
+    "exercises": [
+      {
+        "exercise_id": "ECA-PHY-0027",
+        "tempo": "3:0:1:0"
+      }
+    ]
+  }
+}
+```
+
+To retrieve the current PHYSIQUE registry values at runtime:
+
+```python
+from efl_kernel.kernel.ral import RAL_SPEC
+PHY_REG = RAL_SPEC["moduleRegistration"]["PHYSIQUE"]
+print(PHY_REG["moduleVersion"], PHY_REG["registryHash"])
+```
+
+```
+python -m efl_kernel.cli \
+  --module PHYSIQUE \
+  --input physique_payload.json \
+  --db efl_audit.db
+```
+
+Expected: KDO JSON with `"PHYSIQUE.CLEARANCEMISSING"` in `violations`.
+
+ATH001 has `e4_clearance=0` (False, sourced from `op_athletes` via
+`SqliteDependencyProvider.get_athlete_profile`). `ECA-PHY-0027`
+(Rest-Pause Set) has `e4_requires_clearance=True` in the whitelist
+(`efl_whitelist_v1_0_4.json`). The adapter injects this flag;
+`_run_clearance_gate` in `gates_physique.py` fires `PHYSIQUE.CLEARANCEMISSING`.
+The DCC tempo gates are silent (3:0:1:0 is within limits for this exercise).
+Expected publish state: `ILLEGALQUARANTINED`.
+
+---
+
+## Step 6 — Verify KDO persistence
 
 ```
 sqlite3 efl_audit.db "SELECT COUNT(*) FROM kdo_log;"
 ```
 
-Expected: `3`
+Expected: `4`
 
 ---
 
@@ -202,7 +270,13 @@ returned by `get_season_phases("ATH002", "SEASON-2026")`.
 ATH001 CL violation comes from the persisted `op_athletes` row
 (`e4_clearance=0`, coerced to `False` by the provider) combined with
 the E4-restricted exercise in the evaluation payload.
+ATH001 PHYSIQUE violation (`PHYSIQUE.CLEARANCEMISSING`) also sources
+`e4_clearance` from the persisted `op_athletes` row. The whitelist
+(`efl_whitelist_v1_0_4.json`) injects `e4_requires_clearance=True`
+for `ECA-PHY-0027`; the adapter trace field `e4_injections_true`
+records the injection. The clearance gate fires without any caller
+input for the clearance flag.
 
 The `SqliteDependencyProvider` uses fail-closed sentinels only for
-missing records. All three smoke tests exercise real rows — none
+missing records. All four smoke tests exercise real rows — none
 rely on sentinel behavior.
