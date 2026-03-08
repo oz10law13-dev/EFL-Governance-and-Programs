@@ -1,0 +1,144 @@
+# Phase 11 — Validation Bridge + Operational Data Schema
+
+**Status:** BINDING
+**Phase:** 11
+**Date:** 2026-03-07
+**Predecessor:** Phase10_Loader_Registry_Hook.md (Phase 10, BINDING)
+
+---
+
+## Scope
+
+Phase 11 closes the following items:
+
+| Item | Description | Resolution |
+|---|---|---|
+| Patch A | F7 adapter_trace key names non-conforming to spec | Renamed to spec-declared names; added `exercises_normalized` |
+| Patch B | F2 absent/None `physique_session` halts incorrectly | Policy decision: None/absent = valid empty session |
+| Patch C | Q4 explicit close log | `test_cl_spec_hash_verification_enforced` confirmed PASSED |
+| B-main | OperationalStore, SqliteDependencyProvider, seed tool | Already implemented; tests and spec added |
+
+---
+
+## Q4: CONFIRMED CLOSED
+
+`test_cl_spec_hash_verification_enforced` — PASSED at Phase 11 entry.
+
+---
+
+## Patch A — F7 Trace Key Names
+
+The `adapter_trace` success-path dict in `run_physique_adapter` now uses spec-declared field names:
+
+| Old key | New key |
+|---|---|
+| `resolved_via_alias` | `alias_resolutions` |
+| `horiz_vert_events` | `horiz_vert_mappings` |
+| `tempo_modes` | `tempo_mode_assignments` |
+| `e4_flagged` | `e4_injections_true` |
+| *(absent)* | `exercises_normalized` (int: count of exercises successfully normalized) |
+
+**Halt-path keys are unchanged:** `{"adapter_version": ..., "halt_reason": [...]}`.
+
+---
+
+## Patch B — F2 Absent Session Policy
+
+**Policy decision (D-F2-1):** `physique_session` absent or `None` is treated as an empty session (zero exercises). This is consistent with the existing fallback `physique_session = payload.get("physique_session") or {}` in the adapter body.
+
+**Updated behavior:**
+
+```
+physique_session absent → []           (no halt)
+physique_session = None → []           (no halt)
+physique_session = "string" → ["SCHEMA_VALIDATION_FAILED"]
+physique_session.exercises absent → [] (no halt)
+physique_session.exercises = None → [] (no halt)
+physique_session.exercises = {} → ["SCHEMA_VALIDATION_FAILED"]
+exercise missing exercise_id → ["INCOMPLETE_INPUT"]
+```
+
+---
+
+## Operational Data Schema
+
+The operational schema is defined in full in `efl_kernel/docs/operational_schema.md`. This section summarizes implementation decisions.
+
+### Table prefix
+
+All operational tables use the `op_` prefix to avoid collision with audit tables (`kdo_log`, `override_ledger`) owned by `audit_store.py`. One shared SQLite database file.
+
+### OperationalStore (`efl_kernel/kernel/operational_store.py`)
+
+**Tables:**
+
+| Table | Primary key | Gate consumers |
+|---|---|---|
+| `op_athletes` | `athlete_id` | `gates_scm.py`, `gates_cl.py` |
+| `op_sessions` | `session_id` | `gates_scm.py`, `gates_meso.py` |
+| `op_seasons` | `(athlete_id, season_id)` | `gates_macro.py` |
+
+**op_sessions additional columns:** `readiness_state` (TEXT, nullable) and `is_collapsed` (INTEGER, default 0) are present for future gate consumers. These are populated by the seed tool when provided in fixtures.
+
+**Interface:** All write methods accept dicts. All read methods return dicts or `None`.
+
+### SqliteDependencyProvider (`efl_kernel/kernel/sqlite_dependency_provider.py`)
+
+Implements `KernelDependencyProvider`. Constructor: `SqliteDependencyProvider(operational_store, audit_store)`.
+
+**Fail-closed sentinels:**
+
+| Missing record | Sentinel | Effect |
+|---|---|---|
+| Athlete not found | `{"maxDailyContactLoad": 0.0, "minimumRestIntervalHours": 24.0, "e4_clearance": False}` | Any nonzero load fires `SCM.MAXDAILYLOAD` |
+| Season not found | `{"competitionWeeks": 1, "gppWeeks": 0}` | Fires `MACRO.PHASEMISMATCH` (competition_weeks > 0, gpp_weeks <= 0) |
+| No prior session | `None` | `gates_scm.py` suppresses `SCM.MINREST` (valid for new athletes) |
+| Empty window | `{"totalContactLoad": 0.0, "dailyContactLoads": []}` | `gates_meso.py` suppresses `MESO.LOADIMBALANCE` (valid state) |
+
+**`get_window_totals`:** Uses `RAL_SPEC["RALWindowSemantics"]` for `window_days`. Window type strings are canonical RAL names (e.g. `"ROLLING28DAYS"`, `"ROLLING7DAYS"`).
+
+**`get_override_history`:** Delegates to `AuditStore.get_override_history()` — no new table.
+
+**`get_weekly_totals`:** Raises `NotImplementedError` — no live gate consumer exists. Stub will be implemented when a gate requires it.
+
+### Seed Tool (`efl_kernel/tools/seed.py`)
+
+CLI: `python -m efl_kernel.tools.seed --fixture path/to/fixture.json --db path/to/efl.db`
+
+Accepts JSON fixture with top-level keys `athletes`, `sessions`, `seasons`. Each entry is written via `OperationalStore.upsert_athlete/upsert_session/upsert_season`. Prints summary of records written. Failures are logged per-record and do not abort the run.
+
+---
+
+## Test Coverage
+
+| Test file | Tests added | Description |
+|---|---|---|
+| `test_gate_coverage.py` | 3 | F2 absent/None session policy; SQLite provider smoke gate |
+| `test_adapter_trace.py` | 0 new (key names updated) | All 9 existing tests updated to spec-declared key names |
+| `test_operational_store.py` | (existing) | OperationalStore CRUD and window totals |
+| `test_sqlite_provider.py` | (existing) | Provider fail-closed behavior and field mapping |
+
+Final suite: **359 passed, 1 skipped**.
+
+---
+
+## Deferred to Phase 12+
+
+| Item | Description |
+|---|---|
+| D-B1 declared envelope | Full declared input envelope from Physique_Pre_Pass_Adapter_Spec_v1_1.md §5.1 |
+| D-B5 `get_weekly_totals` | No live gate consumer; NotImplementedError until gate exists |
+| End-to-end persisted eval | Phase 12 requires seed fixture + CLI evaluation without injected fixtures |
+| PostgreSQL migration | Not in scope |
+| GOVERNANCE gate | Not in scope |
+
+---
+
+## DO NOT — Carry-Forward Constraints
+
+1. Do not create a `weekly_totals` table — `get_weekly_totals` has no live gate consumer
+2. Do not create a second SQLite database file — share the same database path
+3. Do not reuse `kdo_log` or `override_ledger` table names — owned by `audit_store.py`
+4. Do not join operational and audit tables in provider queries
+5. Do not change `InMemoryDependencyProvider` — it remains the test double
+6. No new frozen spec required for Phase 11 — `EFL_PHYSIQUE_v1_0_4_frozen.json` remains current
