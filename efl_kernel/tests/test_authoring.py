@@ -239,3 +239,180 @@ def test_author_session_requiresreview_stays_draft_with_flag(tmp_path, monkeypat
         "SELECT * FROM artifact_kdo_links WHERE version_id = ?", (version_id,)
     ).fetchone()
     assert link_row is not None
+
+
+# ─── /author/physique payload helper ─────────────────────────────────────────
+
+def _physique_author_payload(
+    artifact_id: str,
+    object_id: str,
+    exercises=None,
+    athlete_id: str = "a1",
+    session_id: str = "s1",
+) -> dict:
+    """Full /author/physique request body."""
+    return {
+        "artifact_id": artifact_id,
+        "object_id": object_id,
+        "content": {"physique_plan": artifact_id},
+        "evaluation_payload": {
+            "moduleVersion": PHY_REG["moduleVersion"],
+            "moduleViolationRegistryVersion": PHY_REG["moduleViolationRegistryVersion"],
+            "registryHash": PHY_REG["registryHash"],
+            "objectID": object_id,
+            "evaluationContext": {"athleteID": athlete_id, "sessionID": session_id},
+            "windowContext": [
+                {
+                    "windowType": "ROLLING7DAYS",
+                    "anchorDate": "2026-01-01",
+                    "startDate": "2025-12-26",
+                    "endDate": "2026-01-01",
+                    "timezone": "UTC",
+                },
+                {
+                    "windowType": "ROLLING28DAYS",
+                    "anchorDate": "2026-01-01",
+                    "startDate": "2025-12-05",
+                    "endDate": "2026-01-01",
+                    "timezone": "UTC",
+                },
+            ],
+            "physique_session": {"exercises": exercises or []},
+        },
+    }
+
+
+# ─── /author/physique ─────────────────────────────────────────────────────────
+
+def test_author_physique_legalready_promotes_to_live(svc):
+    client, _, op_store, _, artifact_store = svc
+    r = client.post("/author/physique", json=_physique_author_payload(
+        artifact_id="ART-PHY-AUTH-LIVE-01",
+        object_id="OBJ-PHY-AUTH-LIVE-01",
+    ))
+    assert r.status_code == 200
+    body = r.json()
+    assert body["promoted"] is True
+    assert body["lifecycle"] == "LIVE"
+    assert body["requires_review"] is False
+    assert body["publish_state"] == "LEGALREADY"
+    assert isinstance(body["decision_hash"], str)
+
+    version = artifact_store.get_version(body["version_id"])
+    assert version["lifecycle"] == "LIVE"
+
+
+def test_author_physique_illegalquarantined_stays_draft(svc):
+    client, _, op_store, audit_store, _ = svc
+
+    op_store.upsert_athlete({
+        "athlete_id": "ATH-PHY-AUTH-QUAR",
+        "max_daily_contact_load": 999.0,
+        "minimum_rest_interval_hours": 0.0,
+        "e4_clearance": 0,
+    })
+
+    r = client.post("/author/physique", json=_physique_author_payload(
+        artifact_id="ART-PHY-AUTH-QUAR-01",
+        object_id="OBJ-PHY-AUTH-QUAR-01",
+        exercises=[{"exercise_id": "ECA-PHY-0027", "tempo": "3:0:1:0"}],
+        athlete_id="ATH-PHY-AUTH-QUAR",
+        session_id="S-PHY-AUTH-QUAR-01",
+    ))
+    assert r.status_code == 200
+    body = r.json()
+    assert body["promoted"] is False
+    assert body["lifecycle"] == "DRAFT"
+    assert body["requires_review"] is False
+    assert body["publish_state"] == "ILLEGALQUARANTINED"
+
+    version_id = body["version_id"]
+    link_row = audit_store._conn.execute(
+        "SELECT * FROM artifact_kdo_links WHERE version_id = ?", (version_id,)
+    ).fetchone()
+    assert link_row is None
+
+
+def test_author_physique_requiresreview_stays_draft_with_flag(tmp_path, monkeypatch):
+    db = str(tmp_path / "test_phy_rr.db")
+    app = create_app(db)
+    client = TestClient(app)
+
+    original_evaluate = app.state.runner.evaluate
+
+    def _force_requiresreview(payload, module_id):
+        kdo = original_evaluate(payload, module_id)
+        kdo.resolution["finalPublishState"] = "REQUIRESREVIEW"
+        return kdo
+
+    monkeypatch.setattr(app.state.runner, "evaluate", _force_requiresreview)
+
+    r = client.post("/author/physique", json=_physique_author_payload(
+        artifact_id="ART-PHY-AUTH-RR-01",
+        object_id="OBJ-PHY-AUTH-RR-01",
+    ))
+    assert r.status_code == 200
+    body = r.json()
+    assert body["promoted"] is False
+    assert body["lifecycle"] == "DRAFT"
+    assert body["requires_review"] is True
+    assert body["publish_state"] == "REQUIRESREVIEW"
+
+    version_id = body["version_id"]
+    conn = app.state.artifact_store._conn
+    link_row = conn.execute(
+        "SELECT * FROM artifact_kdo_links WHERE version_id = ?", (version_id,)
+    ).fetchone()
+    assert link_row is not None
+
+
+def test_author_physique_response_shape(svc):
+    client, _, _, _, _ = svc
+    r = client.post("/author/physique", json=_physique_author_payload(
+        artifact_id="ART-PHY-SHAPE-01",
+        object_id="OBJ-PHY-SHAPE-01",
+    ))
+    assert r.status_code == 200
+    body = r.json()
+    for key in ("version_id", "lifecycle", "publish_state", "decision_hash", "promoted", "requires_review"):
+        assert key in body, f"Missing key: {key}"
+
+
+def test_author_physique_kdo_committed_to_audit_store(svc):
+    client, _, _, audit_store, _ = svc
+    r = client.post("/author/physique", json=_physique_author_payload(
+        artifact_id="ART-PHY-AUDIT-01",
+        object_id="OBJ-PHY-AUDIT-01",
+    ))
+    assert r.status_code == 200
+    decision_hash = r.json()["decision_hash"]
+    kdo = audit_store.get_kdo(decision_hash)
+    assert kdo is not None
+    assert kdo["module_id"] == "PHYSIQUE"
+
+
+def test_author_physique_declared_envelope_accepted(svc):
+    client, _, _, _, artifact_store = svc
+    payload = {
+        "artifact_id": "ART-PHY-DECL-01",
+        "object_id": "OBJ-PHY-DECL-01",
+        "content": {"declared_test": True},
+        "evaluation_payload": {
+            "moduleVersion": PHY_REG["moduleVersion"],
+            "moduleViolationRegistryVersion": PHY_REG["moduleViolationRegistryVersion"],
+            "registryHash": PHY_REG["registryHash"],
+            "objectID": "OBJ-PHY-DECL-01",
+            "evaluation_context": {"athleteID": "a1", "sessionID": "s1"},  # DECLARED
+            "windowContext": [
+                {"windowType": "ROLLING7DAYS", "anchorDate": "2026-01-01",
+                 "startDate": "2025-12-26", "endDate": "2026-01-01", "timezone": "UTC"},
+                {"windowType": "ROLLING28DAYS", "anchorDate": "2026-01-01",
+                 "startDate": "2025-12-05", "endDate": "2026-01-01", "timezone": "UTC"},
+            ],
+            "session": {"exercises": []},  # DECLARED
+        },
+    }
+    r = client.post("/author/physique", json=payload)
+    assert r.status_code == 200
+    assert r.json()["publish_state"] == "LEGALREADY"
+    assert r.json()["lifecycle"] == "LIVE"
