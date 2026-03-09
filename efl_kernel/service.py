@@ -18,6 +18,7 @@ from efl_kernel.kernel.sqlite_dependency_provider import SqliteDependencyProvide
 from efl_kernel.kernel.artifact_store import ArtifactStore
 from efl_kernel.kernel.exercise_catalog import ExerciseCatalog
 from efl_kernel.kernel.proposal_engine import PhysiqueProposalEngine
+from efl_kernel.kernel.ral import RAL_SPEC
 
 
 class APIKeyMiddleware(BaseHTTPMiddleware):
@@ -71,7 +72,7 @@ def create_app(
     If database_url (or EFL_DATABASE_URL) is set, the PostgreSQL branch is used and the
     SQLite branch is ignored.
     """
-    app = FastAPI(title="EFL Kernel Service", version="23.0.0")
+    app = FastAPI(title="EFL Kernel Service", version="24.0.0")
     app.add_middleware(APIKeyMiddleware)
 
     resolved_db_url = database_url or os.environ.get("EFL_DATABASE_URL")
@@ -176,6 +177,59 @@ def _evaluate_and_commit(runner, audit_store, payload: dict, module_id: str, org
         },
     )
     return dataclasses.asdict(kdo)
+
+
+def _build_session_eval_payload(
+    athlete_id: str,
+    session_id: str,
+    session_date: str,
+    contact_load: float,
+    exercises: list,
+) -> dict:
+    """Build a conformant SESSION module evaluation payload from intake data.
+
+    The coach sends simplified data. This function constructs the full 7-key
+    evaluation envelope with correct moduleVersion, registryHash, and window
+    context derived from the session date.
+    """
+    from datetime import date, timedelta
+    reg = RAL_SPEC["moduleRegistration"]["SESSION"]
+    anchor = session_date[:10]  # "2026-03-09T..." → "2026-03-09"
+    anchor_date = date.fromisoformat(anchor)
+
+    return {
+        "moduleVersion": reg["moduleVersion"],
+        "moduleViolationRegistryVersion": reg["moduleViolationRegistryVersion"],
+        "registryHash": reg["registryHash"],
+        "objectID": session_id,
+        "evaluationContext": {
+            "athleteID": athlete_id,
+            "sessionID": session_id,
+            "sessionDate": session_date,
+            "contactLoad": contact_load,
+        },
+        "windowContext": [
+            {
+                "windowType": "ROLLING7DAYS",
+                "anchorDate": anchor,
+                "startDate": (anchor_date - timedelta(days=7)).isoformat(),
+                "endDate": anchor,
+                "timezone": "UTC",
+            },
+            {
+                "windowType": "ROLLING28DAYS",
+                "anchorDate": anchor,
+                "startDate": (anchor_date - timedelta(days=28)).isoformat(),
+                "endDate": anchor,
+                "timezone": "UTC",
+            },
+        ],
+        "session": {
+            "sessionDate": session_date,
+            "contactLoad": contact_load,
+            "exercises": exercises,
+        },
+    }
 
 
 def _register_routes(app: FastAPI) -> None:
@@ -513,6 +567,68 @@ def _register_routes(app: FastAPI) -> None:
                 raise HTTPException(status_code=400, detail=f"Missing required field: {field}")
         request.app.state.op_store.upsert_session(payload, org_id=request.state.org_id)
         return {"status": "ok", "session_id": payload["session_id"]}
+
+    @app.post("/intake/session")
+    def intake_session(payload: dict, request: Request):
+        """Governed session intake: record + evaluate in one call."""
+        org_id = request.state.org_id
+        op_store = request.app.state.op_store
+        audit_store = request.app.state.audit_store
+
+        # 1. Validate required fields
+        for field in ("athlete_id", "session_id", "session_date", "contact_load"):
+            if field not in payload:
+                raise HTTPException(status_code=400,
+                    detail=f"Missing required field: {field}")
+
+        athlete_id = payload["athlete_id"]
+        session_id = payload["session_id"]
+
+        # 2. Verify athlete exists
+        athlete = op_store.get_athlete(athlete_id, org_id=org_id)
+        if athlete is None:
+            raise HTTPException(status_code=404,
+                detail=f"Athlete {athlete_id} not found. "
+                       f"Create the athlete first via POST /athletes.")
+
+        # 3. Record session in op_sessions (BEFORE evaluation)
+        op_store.upsert_session({
+            "session_id": session_id,
+            "athlete_id": athlete_id,
+            "session_date": payload["session_date"],
+            "contact_load": payload["contact_load"],
+            "readiness_state": payload.get("readiness_state"),
+            "is_collapsed": payload.get("is_collapsed", False),
+        }, org_id=org_id)
+
+        # 4. Build conformant SESSION evaluation payload
+        eval_payload = _build_session_eval_payload(
+            athlete_id=athlete_id,
+            session_id=session_id,
+            session_date=payload["session_date"],
+            contact_load=payload["contact_load"],
+            exercises=payload.get("exercises", []),
+        )
+
+        # 5. Evaluate via org-scoped runner
+        runner = _make_runner(request.app, org_id)
+        kdo_dict = _evaluate_and_commit(
+            runner, audit_store, eval_payload, "SESSION", org_id=org_id
+        )
+
+        # 6. Return combined result
+        return {
+            "status": "recorded",
+            "session_id": session_id,
+            "athlete_id": athlete_id,
+            "evaluation": {
+                "decision_hash": kdo_dict["audit"]["decisionHash"],
+                "publish_state": kdo_dict["resolution"]["finalPublishState"],
+                "violations": kdo_dict.get("violations", []),
+                "violation_count": len(kdo_dict.get("violations", [])),
+                "module_id": "SESSION",
+            },
+        }
 
     @app.post("/seasons")
     def create_season(payload: dict, request: Request):
