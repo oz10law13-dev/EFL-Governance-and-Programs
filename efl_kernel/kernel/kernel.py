@@ -23,6 +23,26 @@ from .ral import (
 from .registry import VIOLATION_REGISTRY, enforce_kernel_owned_fields, lookup_violation
 
 
+def _match_prior_version(
+    reg: dict, version: str, registry_version: str, registry_hash: str
+) -> dict | None:
+    """Check if caller's version matches a DEPRECATED prior version.
+
+    Returns the matching prior version dict if found, None otherwise.
+    RETIRED versions are not accepted.
+    """
+    for prior in reg.get("priorVersions", []):
+        if prior.get("status") != "DEPRECATED":
+            continue
+        if (
+            prior.get("moduleVersion") == version
+            and prior.get("moduleViolationRegistryVersion") == registry_version
+            and prior.get("registryHash") == registry_hash
+        ):
+            return prior
+    return None
+
+
 class KernelRunner:
     def __init__(self, dep_provider: KernelDependencyProvider):
         self.dep_provider = dep_provider
@@ -53,7 +73,7 @@ class KernelRunner:
         reason = "|".join(v["code"] for v in violations) if violations else "NO_VIOLATIONS"
         if effective == "REGENERATE" and "REGENERATEREQUIRED" not in reason:
             reason += "|REGENERATEREQUIRED"
-        return KDO(
+        kdo = KDO(
             module_id=module_id,
             module_version=raw_input.get("moduleVersion", ""),
             object_id=raw_input.get("objectID", ""),
@@ -73,6 +93,14 @@ class KernelRunner:
             timestamp_normalized=datetime.now(timezone.utc).isoformat(),
             audit={"decisionHash": ""},
         )
+        # Record version negotiation if a deprecated version was accepted
+        if raw_input.get("_version_deprecated"):
+            kdo.resolution["versionNegotiation"] = {
+                "callerVersion": raw_input.get("_version_negotiated_from", ""),
+                "currentVersion": raw_input.get("_version_negotiated_to", ""),
+                "status": "DEPRECATED",
+            }
+        return kdo
 
     def evaluate(self, raw_input: dict, module_id: str) -> KDO:
         # Normalize PHYSIQUE declared input envelope (§5.1 spec-declared → transitional names)
@@ -89,14 +117,28 @@ class KernelRunner:
         if any(k not in raw_input for k in required):
             return self._build_kdo(module_id, raw_input, [self._syn_violation("RAL.MISSINGORUNDEFINEDREQUIREDSTATE", module_id)])
 
-        # Step 0b - registry version match
+        # Step 0b - version negotiation
         reg = RAL_SPEC.get("moduleRegistration", {}).get(module_id, {})
+        caller_version = raw_input.get("moduleVersion")
+        caller_registry_version = raw_input.get("moduleViolationRegistryVersion")
+        caller_hash = raw_input.get("registryHash")
+
         if (
-            raw_input.get("moduleVersion") != reg.get("moduleVersion")
-            or raw_input.get("moduleViolationRegistryVersion") != reg.get("moduleViolationRegistryVersion")
-            or raw_input.get("registryHash") != reg.get("registryHash")
+            caller_version == reg.get("moduleVersion")
+            and caller_registry_version == reg.get("moduleViolationRegistryVersion")
+            and caller_hash == reg.get("registryHash")
         ):
-            return self._build_kdo(module_id, raw_input, [self._syn_violation("RAL.MODULEREGISTRYMISMATCH", module_id)])
+            pass  # Current version — proceed normally
+        else:
+            prior = _match_prior_version(reg, caller_version, caller_registry_version, caller_hash)
+            if prior is not None:
+                # Deprecated version accepted — record negotiation for KDO
+                raw_input["_version_deprecated"] = True
+                raw_input["_version_negotiated_from"] = caller_version
+                raw_input["_version_negotiated_to"] = reg.get("moduleVersion")
+            else:
+                return self._build_kdo(module_id, raw_input,
+                    [self._syn_violation("RAL.MODULEREGISTRYMISMATCH", module_id)])
 
         # Step 2
         for entry in raw_input.get("windowContext", []):
