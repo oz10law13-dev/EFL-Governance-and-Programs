@@ -22,13 +22,30 @@ from efl_kernel.kernel.proposal_engine import PhysiqueProposalEngine
 
 class APIKeyMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request, call_next):
-        api_key = os.environ.get("EFL_API_KEY")
-        if api_key is None:
-            return await call_next(request)
+        # Always set a default org_id — routes can read request.state.org_id
+        request.state.org_id = "default"
+
         if request.url.path == "/health":
             return await call_next(request)
-        if request.headers.get("x-api-key") != api_key:
-            return JSONResponse(status_code=401, content={"detail": "unauthorized"})
+
+        # Multi-key mode: EFL_API_KEYS is a JSON dict mapping key → org_id
+        api_keys_json = os.environ.get("EFL_API_KEYS")
+        if api_keys_json is not None:
+            api_keys = json.loads(api_keys_json)
+            supplied_key = request.headers.get("x-api-key")
+            if supplied_key not in api_keys:
+                return JSONResponse(status_code=401, content={"detail": "unauthorized"})
+            request.state.org_id = api_keys[supplied_key]
+            return await call_next(request)
+
+        # Single-key mode: EFL_API_KEY is a single string, org_id stays "default"
+        api_key = os.environ.get("EFL_API_KEY")
+        if api_key is not None:
+            if request.headers.get("x-api-key") != api_key:
+                return JSONResponse(status_code=401, content={"detail": "unauthorized"})
+            return await call_next(request)
+
+        # No auth configured — pass through, org_id stays "default"
         return await call_next(request)
 
 
@@ -54,7 +71,7 @@ def create_app(
     If database_url (or EFL_DATABASE_URL) is set, the PostgreSQL branch is used and the
     SQLite branch is ignored.
     """
-    app = FastAPI(title="EFL Kernel Service", version="21.0.0")
+    app = FastAPI(title="EFL Kernel Service", version="22.0.0")
     app.add_middleware(APIKeyMiddleware)
 
     resolved_db_url = database_url or os.environ.get("EFL_DATABASE_URL")
@@ -77,6 +94,7 @@ def create_app(
         app.state.op_store      = PgOperationalStore(op_conn)
         app.state.artifact_store = PgArtifactStore(op_conn)
         app.state.provider      = PgDependencyProvider(app.state.op_store, app.state.audit_store)
+        app.state.backend       = "pg"
         MigrationRunner(audit_conn, "pg", "audit").ensure_current()
         MigrationRunner(op_conn, "pg", "operational").ensure_current()
     else:
@@ -91,6 +109,7 @@ def create_app(
             app.state.op_store, app.state.audit_store
         )
         app.state.artifact_store = ArtifactStore(resolved_op)
+        app.state.backend       = "sqlite"
         # Run migrations for file-backed SQLite (skip for :memory: test stores)
         if resolved_audit != ":memory:":
             from efl_kernel.migrations.runner import MigrationRunner
@@ -107,7 +126,24 @@ def create_app(
     return app
 
 
-def _evaluate_and_commit(runner, audit_store, payload: dict, module_id: str) -> dict:
+def _make_runner(app, org_id: str = "default"):
+    """Create a KernelRunner with an org-scoped dependency provider.
+
+    For org_id="default", reuses app.state.runner (preserves test monkeypatching
+    and avoids unnecessary provider creation for the common single-tenant case).
+    """
+    if org_id == "default":
+        return app.state.runner
+    if app.state.backend == "pg":
+        from efl_kernel.kernel.org_scoped_provider import OrgScopedPgProvider
+        provider = OrgScopedPgProvider(app.state.op_store, app.state.audit_store, org_id)
+    else:
+        from efl_kernel.kernel.org_scoped_provider import OrgScopedSqliteProvider
+        provider = OrgScopedSqliteProvider(app.state.op_store, app.state.audit_store, org_id)
+    return KernelRunner(provider)
+
+
+def _evaluate_and_commit(runner, audit_store, payload: dict, module_id: str, org_id: str = "default") -> dict:
     """
     Evaluate payload against module_id via KernelRunner.
     Commit the resulting KDO to AuditStore regardless of
@@ -123,7 +159,7 @@ def _evaluate_and_commit(runner, audit_store, payload: dict, module_id: str) -> 
     """
     kdo = runner.evaluate(payload, module_id)
     try:
-        audit_store.commit_kdo(kdo)
+        audit_store.commit_kdo(kdo, org_id=org_id)
     except Exception as e:
         raise HTTPException(
             status_code=500,
@@ -169,42 +205,50 @@ def _register_routes(app: FastAPI) -> None:
 
     @app.get("/metrics")
     def get_metrics(request: Request):
-        return request.app.state.audit_store.get_metrics()
+        return request.app.state.audit_store.get_metrics(org_id=request.state.org_id)
 
     @app.post("/evaluate/session")
     def evaluate_session(payload: dict, request: Request):
+        org_id = request.state.org_id
         return _evaluate_and_commit(
-            request.app.state.runner,
+            _make_runner(request.app, org_id),
             request.app.state.audit_store,
             payload,
             "SESSION",
+            org_id=org_id,
         )
 
     @app.post("/evaluate/meso")
     def evaluate_meso(payload: dict, request: Request):
+        org_id = request.state.org_id
         return _evaluate_and_commit(
-            request.app.state.runner,
+            _make_runner(request.app, org_id),
             request.app.state.audit_store,
             payload,
             "MESO",
+            org_id=org_id,
         )
 
     @app.post("/evaluate/macro")
     def evaluate_macro(payload: dict, request: Request):
+        org_id = request.state.org_id
         return _evaluate_and_commit(
-            request.app.state.runner,
+            _make_runner(request.app, org_id),
             request.app.state.audit_store,
             payload,
             "MACRO",
+            org_id=org_id,
         )
 
     @app.post("/evaluate/physique")
     def evaluate_physique(payload: dict, request: Request):
+        org_id = request.state.org_id
         return _evaluate_and_commit(
-            request.app.state.runner,
+            _make_runner(request.app, org_id),
             request.app.state.audit_store,
             payload,
             "PHYSIQUE",
+            org_id=org_id,
         )
 
     @app.post("/artifacts", status_code=201)
@@ -214,6 +258,7 @@ def _register_routes(app: FastAPI) -> None:
             module_id=payload["module_id"],
             object_id=payload["object_id"],
             content=payload["content"],
+            org_id=request.state.org_id,
         )
         return result
 
@@ -248,6 +293,7 @@ def _register_routes(app: FastAPI) -> None:
             result = request.app.state.artifact_store.promote_to_live(
                 version_id=version_id,
                 get_kdo_fn=request.app.state.audit_store.get_kdo,
+                org_id=request.state.org_id,
             )
         except ValueError as e:
             raise HTTPException(status_code=409, detail=str(e))
@@ -255,7 +301,7 @@ def _register_routes(app: FastAPI) -> None:
 
     @app.get("/artifacts")
     def list_artifact_versions(artifact_id: str, request: Request):
-        return request.app.state.artifact_store.get_versions_by_artifact_id(artifact_id)
+        return request.app.state.artifact_store.get_versions_by_artifact_id(artifact_id, org_id=request.state.org_id)
 
     @app.get("/artifacts/{version_id}")
     def get_artifact_version(version_id: str, request: Request):
@@ -267,7 +313,7 @@ def _register_routes(app: FastAPI) -> None:
     @app.post("/artifacts/{version_id}/retire")
     def retire_artifact(version_id: str, request: Request):
         try:
-            result = request.app.state.artifact_store.retire(version_id)
+            result = request.app.state.artifact_store.retire(version_id, org_id=request.state.org_id)
         except ValueError as e:
             raise HTTPException(status_code=409, detail=str(e))
         return result
@@ -318,13 +364,14 @@ def _register_routes(app: FastAPI) -> None:
         for field in ("athlete_id", "max_daily_contact_load", "minimum_rest_interval_hours", "e4_clearance"):
             if field not in payload:
                 raise HTTPException(status_code=400, detail=f"Missing required field: {field}")
+        org_id = request.state.org_id
         op_store = request.app.state.op_store
-        op_store.upsert_athlete(payload)
-        return op_store.get_athlete(payload["athlete_id"])
+        op_store.upsert_athlete(payload, org_id=org_id)
+        return op_store.get_athlete(payload["athlete_id"], org_id=org_id)
 
     @app.get("/athletes/{athlete_id}")
     def get_athlete(athlete_id: str, request: Request):
-        row = request.app.state.op_store.get_athlete(athlete_id)
+        row = request.app.state.op_store.get_athlete(athlete_id, org_id=request.state.org_id)
         if row is None:
             raise HTTPException(status_code=404, detail=f"Athlete {athlete_id!r} not found")
         return row
@@ -334,7 +381,7 @@ def _register_routes(app: FastAPI) -> None:
         for field in ("session_id", "athlete_id", "session_date", "contact_load"):
             if field not in payload:
                 raise HTTPException(status_code=400, detail=f"Missing required field: {field}")
-        request.app.state.op_store.upsert_session(payload)
+        request.app.state.op_store.upsert_session(payload, org_id=request.state.org_id)
         return {"status": "ok", "session_id": payload["session_id"]}
 
     @app.post("/seasons")
@@ -342,13 +389,14 @@ def _register_routes(app: FastAPI) -> None:
         for field in ("athlete_id", "season_id", "competition_weeks", "gpp_weeks", "start_date", "end_date"):
             if field not in payload:
                 raise HTTPException(status_code=400, detail=f"Missing required field: {field}")
+        org_id = request.state.org_id
         op_store = request.app.state.op_store
-        op_store.upsert_season(payload)
-        return op_store.get_season(payload["athlete_id"], payload["season_id"])
+        op_store.upsert_season(payload, org_id=org_id)
+        return op_store.get_season(payload["athlete_id"], payload["season_id"], org_id=org_id)
 
     @app.get("/seasons/{athlete_id}/{season_id}")
     def get_season(athlete_id: str, season_id: str, request: Request):
-        row = request.app.state.op_store.get_season(athlete_id, season_id)
+        row = request.app.state.op_store.get_season(athlete_id, season_id, org_id=request.state.org_id)
         if row is None:
             raise HTTPException(status_code=404, detail=f"Season {season_id!r} for athlete {athlete_id!r} not found")
         return row
@@ -356,9 +404,10 @@ def _register_routes(app: FastAPI) -> None:
     @app.post("/author/physique")
     def author_physique(payload: dict, request: Request):
         try:
+            org_id = request.state.org_id
             artifact_store = request.app.state.artifact_store
             audit_store = request.app.state.audit_store
-            runner = request.app.state.runner
+            runner = _make_runner(request.app, org_id)
 
             # 1. Commit artifact version
             version_result = artifact_store.commit_artifact_version(
@@ -366,12 +415,13 @@ def _register_routes(app: FastAPI) -> None:
                 module_id="PHYSIQUE",
                 object_id=payload["object_id"],
                 content=payload["content"],
+                org_id=org_id,
             )
             version_id = version_result["version_id"]
             content_hash = version_result["content_hash"]
 
             # 2. Evaluate and commit KDO
-            kdo_dict = _evaluate_and_commit(runner, audit_store, payload["evaluation_payload"], "PHYSIQUE")
+            kdo_dict = _evaluate_and_commit(runner, audit_store, payload["evaluation_payload"], "PHYSIQUE", org_id=org_id)
             decision_hash = kdo_dict["audit"]["decisionHash"]
             final_publish_state = kdo_dict["resolution"]["finalPublishState"]
 
@@ -387,7 +437,7 @@ def _register_routes(app: FastAPI) -> None:
                 }
             elif final_publish_state == "LEGALREADY":
                 artifact_store.link_kdo(version_id, decision_hash, content_hash)
-                artifact_store.promote_to_live(version_id, audit_store.get_kdo)
+                artifact_store.promote_to_live(version_id, audit_store.get_kdo, org_id=org_id)
                 return {
                     "version_id": version_id,
                     "lifecycle": "LIVE",
@@ -426,10 +476,11 @@ def _register_routes(app: FastAPI) -> None:
     @app.post("/pipeline/physique")
     def pipeline_physique(payload: dict, request: Request):
         try:
+            org_id = request.state.org_id
             proposal_engine = request.app.state.proposal_engine
             artifact_store  = request.app.state.artifact_store
             audit_store     = request.app.state.audit_store
-            runner          = request.app.state.runner
+            runner          = _make_runner(request.app, org_id)
 
             # 1. Generate proposal from constraints
             constraints = payload.get("constraints", {})
@@ -442,13 +493,14 @@ def _register_routes(app: FastAPI) -> None:
                 module_id="PHYSIQUE",
                 object_id=payload["object_id"],
                 content=payload.get("content", candidate),
+                org_id=org_id,
             )
             version_id   = version_result["version_id"]
             content_hash = version_result["content_hash"]
 
             # 3. Evaluate and commit KDO
             kdo_dict = _evaluate_and_commit(
-                runner, audit_store, candidate, "PHYSIQUE"
+                runner, audit_store, candidate, "PHYSIQUE", org_id=org_id
             )
             decision_hash       = kdo_dict["audit"]["decisionHash"]
             final_publish_state = kdo_dict["resolution"]["finalPublishState"]
@@ -468,7 +520,7 @@ def _register_routes(app: FastAPI) -> None:
                 }
             elif final_publish_state == "LEGALREADY":
                 artifact_store.link_kdo(version_id, decision_hash, content_hash)
-                artifact_store.promote_to_live(version_id, audit_store.get_kdo)
+                artifact_store.promote_to_live(version_id, audit_store.get_kdo, org_id=org_id)
                 return {
                     "proposal": proposal,
                     "version_id": version_id,
@@ -503,9 +555,10 @@ def _register_routes(app: FastAPI) -> None:
     @app.post("/author/session")
     def author_session(payload: dict, request: Request):
         try:
+            org_id = request.state.org_id
             artifact_store = request.app.state.artifact_store
             audit_store = request.app.state.audit_store
-            runner = request.app.state.runner
+            runner = _make_runner(request.app, org_id)
 
             # 1. Commit artifact version
             version_result = artifact_store.commit_artifact_version(
@@ -513,12 +566,13 @@ def _register_routes(app: FastAPI) -> None:
                 module_id="SESSION",
                 object_id=payload["object_id"],
                 content=payload["content"],
+                org_id=org_id,
             )
             version_id = version_result["version_id"]
             content_hash = version_result["content_hash"]
 
             # 2. Evaluate and commit KDO
-            kdo_dict = _evaluate_and_commit(runner, audit_store, payload["evaluation_payload"], "SESSION")
+            kdo_dict = _evaluate_and_commit(runner, audit_store, payload["evaluation_payload"], "SESSION", org_id=org_id)
             decision_hash = kdo_dict["audit"]["decisionHash"]
             final_publish_state = kdo_dict["resolution"]["finalPublishState"]
 
@@ -535,7 +589,7 @@ def _register_routes(app: FastAPI) -> None:
                 }
             elif final_publish_state == "LEGALREADY":
                 artifact_store.link_kdo(version_id, decision_hash, content_hash)
-                artifact_store.promote_to_live(version_id, audit_store.get_kdo)
+                artifact_store.promote_to_live(version_id, audit_store.get_kdo, org_id=org_id)
                 return {
                     "version_id": version_id,
                     "lifecycle": "LIVE",

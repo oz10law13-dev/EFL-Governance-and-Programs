@@ -37,6 +37,12 @@ def main(argv: list[str] | None = None) -> None:
         dest="db_path",
         help="Path to operational SQLite database to seed"
     )
+    parser.add_argument(
+        "--org-id",
+        default="default",
+        dest="org_id",
+        help="Organization ID for tenant isolation (default: 'default')"
+    )
     args = parser.parse_args(argv)
 
     # Load fixture
@@ -67,11 +73,11 @@ def main(argv: list[str] | None = None) -> None:
     try:
         store = OperationalStore(args.db_path)
         for athlete in athletes:
-            store.upsert_athlete(athlete)
+            store.upsert_athlete(athlete, org_id=args.org_id)
         for session in sessions:
-            store.upsert_session(session)
+            store.upsert_session(session, org_id=args.org_id)
         for season in seasons:
-            store.upsert_season(season)
+            store.upsert_season(season, org_id=args.org_id)
     except Exception as exc:
         print(f"Error: DB write failed: {exc}", file=sys.stderr)
         sys.exit(1)
