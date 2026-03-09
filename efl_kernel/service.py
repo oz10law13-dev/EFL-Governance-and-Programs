@@ -71,7 +71,7 @@ def create_app(
     If database_url (or EFL_DATABASE_URL) is set, the PostgreSQL branch is used and the
     SQLite branch is ignored.
     """
-    app = FastAPI(title="EFL Kernel Service", version="22.0.0")
+    app = FastAPI(title="EFL Kernel Service", version="23.0.0")
     app.add_middleware(APIKeyMiddleware)
 
     resolved_db_url = database_url or os.environ.get("EFL_DATABASE_URL")
@@ -317,6 +317,136 @@ def _register_routes(app: FastAPI) -> None:
         except ValueError as e:
             raise HTTPException(status_code=409, detail=str(e))
         return result
+
+    # ── Review Queue ──────────────────────────────────────────────
+
+    @app.get("/review-queue")
+    def get_review_queue(request: Request):
+        org_id = request.state.org_id
+        pending = request.app.state.artifact_store.get_pending_reviews(
+            get_kdo_fn=request.app.state.audit_store.get_kdo,
+            org_id=org_id,
+        )
+        return {"pending": pending, "count": len(pending)}
+
+    @app.get("/review-queue/stats")
+    def get_review_queue_stats(request: Request):
+        org_id = request.state.org_id
+        pending = request.app.state.artifact_store.get_pending_reviews(
+            get_kdo_fn=request.app.state.audit_store.get_kdo,
+            org_id=org_id,
+        )
+        by_module: dict[str, int] = {}
+        by_state: dict[str, int] = {}
+        oldest_hours = 0.0
+        from datetime import datetime, timezone
+        now = datetime.now(timezone.utc)
+        for item in pending:
+            by_module[item["module_id"]] = by_module.get(item["module_id"], 0) + 1
+            by_state[item["publish_state"]] = by_state.get(item["publish_state"], 0) + 1
+            try:
+                created = datetime.fromisoformat(item["created_at"])
+                age = (now - created).total_seconds() / 3600
+                if age > oldest_hours:
+                    oldest_hours = age
+            except (ValueError, TypeError):
+                pass
+        return {
+            "total_pending": len(pending),
+            "by_module": by_module,
+            "by_publish_state": by_state,
+            "oldest_pending_hours": round(oldest_hours, 1),
+        }
+
+    @app.get("/review-queue/{version_id}")
+    def get_review_detail_route(version_id: str, request: Request):
+        org_id = request.state.org_id
+        detail = request.app.state.artifact_store.get_review_detail(
+            version_id,
+            get_kdo_fn=request.app.state.audit_store.get_kdo,
+            org_id=org_id,
+        )
+        if detail is None:
+            raise HTTPException(status_code=404, detail="Review item not found")
+        return detail
+
+    @app.post("/review-queue/{version_id}/approve")
+    def approve_review(version_id: str, payload: dict, request: Request):
+        org_id = request.state.org_id
+        store = request.app.state.artifact_store
+        audit = request.app.state.audit_store
+
+        for field in ("reviewer_id", "reason"):
+            if field not in payload:
+                raise HTTPException(status_code=400,
+                    detail=f"Missing required field: {field}")
+
+        detail = store.get_review_detail(version_id, audit.get_kdo, org_id=org_id)
+        if detail is None:
+            raise HTTPException(status_code=404, detail="Review item not found")
+
+        kdo = detail.get("kdo")
+        if kdo is None:
+            raise HTTPException(status_code=409, detail="No KDO linked")
+        decision_hash = kdo.get("audit", {}).get("decisionHash")
+        if not decision_hash:
+            raise HTTPException(status_code=409, detail="KDO missing decisionHash")
+
+        store.add_review_record(
+            artifact_version_id=version_id,
+            decision_hash=decision_hash,
+            reviewer_id=payload["reviewer_id"],
+            reason=payload["reason"],
+            decision="APPROVE",
+        )
+
+        try:
+            result = store.promote_to_live(version_id, audit.get_kdo, org_id=org_id)
+        except ValueError as e:
+            raise HTTPException(status_code=409, detail=str(e))
+
+        return {
+            "version_id": version_id,
+            "lifecycle": result["lifecycle"],
+            "promoted": result["lifecycle"] == "LIVE",
+        }
+
+    @app.post("/review-queue/{version_id}/reject")
+    def reject_review(version_id: str, payload: dict, request: Request):
+        org_id = request.state.org_id
+        store = request.app.state.artifact_store
+        audit = request.app.state.audit_store
+
+        for field in ("reviewer_id", "reason"):
+            if field not in payload:
+                raise HTTPException(status_code=400,
+                    detail=f"Missing required field: {field}")
+
+        detail = store.get_review_detail(version_id, audit.get_kdo, org_id=org_id)
+        if detail is None:
+            raise HTTPException(status_code=404, detail="Review item not found")
+
+        kdo = detail.get("kdo")
+        if kdo is None:
+            raise HTTPException(status_code=409, detail="No KDO linked")
+        decision_hash = kdo.get("audit", {}).get("decisionHash")
+        if not decision_hash:
+            raise HTTPException(status_code=409, detail="KDO missing decisionHash")
+
+        review = store.add_review_record(
+            artifact_version_id=version_id,
+            decision_hash=decision_hash,
+            reviewer_id=payload["reviewer_id"],
+            reason=payload["reason"],
+            decision="REJECT",
+        )
+
+        return {
+            "version_id": version_id,
+            "review_id": review["review_id"],
+            "decision": "REJECT",
+            "lifecycle": "DRAFT",
+        }
 
     @app.get("/exercises")
     def list_exercises(

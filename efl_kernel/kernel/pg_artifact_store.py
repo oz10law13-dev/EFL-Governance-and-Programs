@@ -218,3 +218,84 @@ class PgArtifactStore:
             "WHERE artifact_id = %s AND org_id = %s ORDER BY created_at DESC",
             (artifact_id, org_id),
         ).fetchall()
+
+    def _get_latest_link(self, version_id: str) -> dict | None:
+        return self._conn.execute(
+            "SELECT * FROM artifact_kdo_links "
+            "WHERE version_id = %s ORDER BY linked_at DESC LIMIT 1",
+            (version_id,),
+        ).fetchone()
+
+    def _get_review_records(self, version_id: str) -> list[dict]:
+        return self._conn.execute(
+            "SELECT * FROM review_records "
+            "WHERE artifact_version_id = %s ORDER BY reviewed_at DESC",
+            (version_id,),
+        ).fetchall()
+
+    def get_pending_reviews(self, get_kdo_fn, org_id: str = "default") -> list[dict]:
+        """Return artifact versions pending review.
+
+        get_kdo_fn: callable(decision_hash) -> dict | None
+                    Injected to cross the audit/operational DB boundary.
+        """
+        rows = self._conn.execute(
+            "SELECT av.version_id, av.artifact_id, av.module_id, av.object_id, "
+            "       av.created_at, av.org_id, "
+            "       akl.decision_hash "
+            "FROM artifact_versions av "
+            "JOIN artifact_kdo_links akl ON akl.version_id = av.version_id "
+            "WHERE av.lifecycle = 'DRAFT' "
+            "  AND av.org_id = %s "
+            "  AND NOT EXISTS ( "
+            "    SELECT 1 FROM review_records rr "
+            "    WHERE rr.artifact_version_id = av.version_id "
+            "      AND rr.decision = 'APPROVE' "
+            "  ) "
+            "ORDER BY av.created_at ASC",
+            (org_id,),
+        ).fetchall()
+
+        results = []
+        for r in rows:
+            kdo = get_kdo_fn(r["decision_hash"])
+            if kdo is None:
+                continue
+            state = kdo.get("resolution", {}).get("finalPublishState", "")
+            if state in ("REQUIRESREVIEW", "LEGALOVERRIDE"):
+                results.append({
+                    "version_id": r["version_id"],
+                    "artifact_id": r["artifact_id"],
+                    "module_id": r["module_id"],
+                    "object_id": r["object_id"],
+                    "created_at": r["created_at"],
+                    "org_id": r["org_id"],
+                    "decision_hash": r["decision_hash"],
+                    "publish_state": state,
+                    "violation_count": len(kdo.get("violations", [])),
+                })
+        return results
+
+    def get_review_detail(self, version_id: str, get_kdo_fn,
+                          org_id: str = "default") -> dict | None:
+        """Return full review detail for a version, or None if not found / wrong org."""
+        version = self.get_version(version_id)
+        if version is None:
+            return None
+        if version.get("org_id", "default") != org_id:
+            return None
+
+        link = self._get_latest_link(version_id)
+        if link is None:
+            return None
+
+        kdo = get_kdo_fn(link["decision_hash"])
+        reviews = self._get_review_records(version_id)
+
+        return {
+            "version": version,
+            "kdo": kdo,
+            "violations": kdo.get("violations", []) if kdo else [],
+            "publish_state": kdo["resolution"]["finalPublishState"] if kdo else None,
+            "reviews": reviews,
+        }
