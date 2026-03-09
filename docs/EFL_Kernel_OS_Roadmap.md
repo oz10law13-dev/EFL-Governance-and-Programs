@@ -2,8 +2,8 @@
 **Document:** EFL_Kernel_OS_Roadmap.md  
 **Status:** LIVING DOCUMENT  
 **Date:** 2026-03-08  
-**Suite at time of writing:** 440 passed, 22 skipped
-**Last completed phase:** Phase 20 (commit 76a7749)
+**Suite at time of writing:** 456 passed, 23 skipped
+**Last completed phase:** Phase 21 (commit d71df0c)
 
 ---
 
@@ -96,7 +96,7 @@ The full chain — whitelist → stateless check → governed eval → KDO commi
 | 2.2 | **16** | ✅ **COMPLETE** — `APIKeyMiddleware` added to `service.py`. Reads `EFL_API_KEY` at request time. No-op when unset. `/health` exempt. 401 on missing/wrong key. | — | — |
 | 2.3 | **20** | ✅ **COMPLETE** — Custom numbered-migration runner added. Dialect-specific (SQLite/PG) × domain-specific (audit/operational) migration files. SHA-256 checksum verification (frozen migration discipline). Bootstrap mode for pre-existing databases. `create_app` runs migrations at startup for file-backed and PG databases. | — | — |
 | 2.4 | **17** | ✅ **COMPLETE** — `AuditStore` routes to `EFL_AUDIT_DB_PATH`; `OperationalStore` + `ArtifactStore` route to `EFL_OP_DB_PATH`; backward compat preserved via `resolved_audit` fallback. | — | — |
-| 2.5 | **20** | **No backup/restore strategy** — the KDO log is the legal record of every evaluation decision. No WAL configuration, no scheduled backup, no point-in-time restore. | Losing the audit store is catastrophic and unrecoverable | Medium — WAL mode, scheduled backup script, restore verification procedure |
+| 2.5 | **21** | ✅ **COMPLETE** — SQLite WAL mode on all 3 file-backed stores. Backup CLI tool (`efl_kernel/tools/backup.py`) with `sqlite`, `pg`, `verify` subcommands. `GET /health/backup` route. `docs/backup_restore.md` operational documentation. | — | — |
 
 ---
 
@@ -149,7 +149,7 @@ The full chain — whitelist → stateless check → governed eval → KDO commi
 |---|---|---|---|
 | ~~19~~ | ~~PostgreSQL migration~~ | ~~3–4~~ | ✅ COMPLETE |
 | ~~20~~ | ~~Schema migration versioning (Alembic or custom)~~ | ~~1~~ | ✅ COMPLETE |
-| 21 | Backup/restore strategy + WAL configuration | 1 | 19 |
+| ~~21~~ | ~~Backup/restore strategy + WAL configuration~~ | ~~1~~ | ✅ COMPLETE |
 
 ### Tier C — Multi-User Operational System
 *~10–12 weeks. Makes the system usable by a real coaching organization.*
