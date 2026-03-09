@@ -16,6 +16,7 @@ from efl_kernel.kernel.operational_store import OperationalStore
 from efl_kernel.kernel.sqlite_dependency_provider import SqliteDependencyProvider
 from efl_kernel.kernel.artifact_store import ArtifactStore
 from efl_kernel.kernel.exercise_catalog import ExerciseCatalog
+from efl_kernel.kernel.proposal_engine import PhysiqueProposalEngine
 
 
 class APIKeyMiddleware(BaseHTTPMiddleware):
@@ -58,6 +59,7 @@ def create_app(db_path: str | None = None, op_db_path: str | None = None) -> Fas
     app.state.runner = KernelRunner(app.state.provider)
     app.state.artifact_store = ArtifactStore(resolved_op)
     app.state.catalog = ExerciseCatalog()
+    app.state.proposal_engine = PhysiqueProposalEngine(app.state.catalog)
 
     _register_routes(app)
     return app
@@ -352,6 +354,93 @@ def _register_routes(app: FastAPI) -> None:
                 }
             else:
                 raise ValueError(f"Unexpected publish state: {final_publish_state!r}")
+        except HTTPException:
+            raise
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+
+    @app.post("/propose/physique")
+    def propose_physique(payload: dict, request: Request):
+        try:
+            result = request.app.state.proposal_engine.propose(payload)
+            return result
+        except ValueError as e:
+            raise HTTPException(status_code=422, detail=str(e))
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+
+    @app.post("/pipeline/physique")
+    def pipeline_physique(payload: dict, request: Request):
+        try:
+            proposal_engine = request.app.state.proposal_engine
+            artifact_store  = request.app.state.artifact_store
+            audit_store     = request.app.state.audit_store
+            runner          = request.app.state.runner
+
+            # 1. Generate proposal from constraints
+            constraints = payload.get("constraints", {})
+            proposal = proposal_engine.propose(constraints)
+            candidate = proposal["candidate_payload"]
+
+            # 2. Commit artifact version
+            version_result = artifact_store.commit_artifact_version(
+                artifact_id=payload["artifact_id"],
+                module_id="PHYSIQUE",
+                object_id=payload["object_id"],
+                content=payload.get("content", candidate),
+            )
+            version_id   = version_result["version_id"]
+            content_hash = version_result["content_hash"]
+
+            # 3. Evaluate and commit KDO
+            kdo_dict = _evaluate_and_commit(
+                runner, audit_store, candidate, "PHYSIQUE"
+            )
+            decision_hash       = kdo_dict["audit"]["decisionHash"]
+            final_publish_state = kdo_dict["resolution"]["finalPublishState"]
+            violations          = kdo_dict.get("violations", [])
+
+            # 4. Route by publish state — mirrors author_physique exactly
+            if final_publish_state in ("BLOCKED", "ILLEGALQUARANTINED"):
+                return {
+                    "proposal": proposal,
+                    "version_id": version_id,
+                    "lifecycle": "DRAFT",
+                    "publish_state": final_publish_state,
+                    "decision_hash": decision_hash,
+                    "promoted": False,
+                    "requires_review": False,
+                    "violations": violations,
+                }
+            elif final_publish_state == "LEGALREADY":
+                artifact_store.link_kdo(version_id, decision_hash, content_hash)
+                artifact_store.promote_to_live(version_id, audit_store.get_kdo)
+                return {
+                    "proposal": proposal,
+                    "version_id": version_id,
+                    "lifecycle": "LIVE",
+                    "publish_state": final_publish_state,
+                    "decision_hash": decision_hash,
+                    "promoted": True,
+                    "requires_review": False,
+                    "violations": [],
+                }
+            elif final_publish_state in ("REQUIRESREVIEW", "LEGALOVERRIDE"):
+                artifact_store.link_kdo(version_id, decision_hash, content_hash)
+                return {
+                    "proposal": proposal,
+                    "version_id": version_id,
+                    "lifecycle": "DRAFT",
+                    "publish_state": final_publish_state,
+                    "decision_hash": decision_hash,
+                    "promoted": False,
+                    "requires_review": True,
+                    "violations": violations,
+                }
+            else:
+                raise ValueError(
+                    f"Unexpected publish state: {final_publish_state!r}"
+                )
         except HTTPException:
             raise
         except Exception as e:
