@@ -1,9 +1,9 @@
 # EFL-Kernel — Full Roadmap to True OS
 **Document:** EFL_Kernel_OS_Roadmap.md  
 **Status:** LIVING DOCUMENT  
-**Date:** 2026-03-08  
-**Suite at time of writing:** 486 passed, 23 skipped
-**Last completed phase:** Phase 22 (commit 9166695)
+**Date:** 2026-03-09
+**Suite at time of writing:** 507 passed, 24 skipped
+**Last completed phase:** Phase 23 (commit d50cb8f)
 
 ---
 
@@ -106,7 +106,7 @@ The full chain — whitelist → stateless check → governed eval → KDO commi
 | # | Phase | Item | Impact | Effort |
 |---|---|---|---|---|
 | 3.1 | **21** | **No real session intake path** — session data enters only via seed fixtures or direct API evaluation calls. No governed intake workflow for real training data (athlete submits session → system records it → evaluation can reference it). | Coaches can't submit real session data through a normal workflow | Medium — intake API with validation layer separate from evaluation |
-| 3.2 | **22** | **Review workflow has no UI surface** — `REQUIRESREVIEW` KDOs are committed to the audit log but there is no mechanism for a human reviewer to discover, action, or resolve them. The code path exists; the operational surface does not. | Override/review path is unactionable in practice | Medium-High — review queue API (`GET /review-queue`, `POST /artifacts/{id}/review`) + any front-end |
+| 3.2 | **23** | ✅ **COMPLETE** — Review queue API: `GET /review-queue`, `GET /review-queue/stats`, `GET /review-queue/{id}`, `POST .../approve`, `POST .../reject`. `get_pending_reviews` + `get_review_detail` on both artifact stores. Cross-DB KDO lookup via `get_kdo_fn` injection. 21 tests. | — | — |
 | 3.3 | **15** | ✅ **COMPLETE** — Structured logging added to `_evaluate_and_commit` (logger `efl_kernel.service`, INFO after each KDO commit). `GET /metrics` endpoint added to `service.py`. `AuditStore.get_metrics()` returns `kdo_total`, `by_module`, `by_publish_state`. | — | — |
 | 3.4 | **15** | ✅ **COMPLETE** — `GET /kdo/{decision_hash}` route added to `service.py`. Returns full KDO dict from `audit_store.get_kdo(decision_hash)`. 404 if not found. | — | — |
 | 3.5 | **18** | ✅ **COMPLETE** — `PhysiqueProposalEngine` added. `POST /propose/physique` + `POST /pipeline/physique` wired. Deterministic proposal → evaluate → LIVE pipeline complete. | — | — |
@@ -157,7 +157,7 @@ The full chain — whitelist → stateless check → governed eval → KDO commi
 | Phase | Title | Weeks | Dependency |
 |---|---|---|---|
 | ~~22~~ | ~~Tenancy (org_id isolation)~~ | ~~2–3~~ | ✅ COMPLETE |
-| 23 | Review queue surface (API + minimal UI) | 2–3 | 18 |
+| ~~23~~ | ~~Review queue surface (API + minimal UI)~~ | ~~2–3~~ | ✅ COMPLETE |
 | 24 | Session intake workflow | 2 | 22 |
 | 25 | Governed spec bump CLI tool | 1 | None |
 | 26 | Version negotiation / deprecation window | 1–2 | 25 |
