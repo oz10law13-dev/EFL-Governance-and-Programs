@@ -2,8 +2,8 @@
 **Document:** EFL_Kernel_OS_Roadmap.md  
 **Status:** LIVING DOCUMENT  
 **Date:** 2026-03-09
-**Suite at time of writing:** 524 passed, 25 skipped
-**Last completed phase:** Phase 24 (commit b8caf22)
+**Suite at time of writing:** 540 passed, 25 skipped
+**Last completed phase:** Phase 25 (commit 05bfe30)
 
 ---
 
@@ -120,7 +120,7 @@ The full chain — whitelist → stateless check → governed eval → KDO commi
 | # | Phase | Item | Impact | Effort |
 |---|---|---|---|---|
 | 4.1 | **22** | ✅ **COMPLETE** — `org_id TEXT NOT NULL DEFAULT 'default'` on 6 tables. WHERE-clause isolation on all store methods. `OrgScopedSqliteProvider` / `OrgScopedPgProvider` inject org_id transparently. `APIKeyMiddleware` supports multi-key (`EFL_API_KEYS` JSON dict). All routes pass org_id. 30 tests. | — | — |
-| 4.2 | **27** | **Frozen spec update process is manual** — bumping a spec version requires hand-editing JSON, manually recomputing SHA-256 hashes, and updating all reference points. Creates risk of hash corruption on every spec change. | Every spec version bump is a correctness risk | Medium — governed spec bump CLI (`python -m efl_kernel.tools.spec_bump`) that autocomputes hashes and validates round-trips |
+| 4.2 | **25** | ✅ **COMPLETE** — `python -m efl_kernel.tools.spec_bump` with 5 subcommands: `rehash`, `verify`, `new-version`, `check-all`, `show-registration`. Uses `canonicalize_and_hash` from `ral.py`. Hash order enforced (registryHash before documentHash). Safety warning on overwrite without `--force`. 16 tests. | — | — |
 | 4.3 | **28** | **No version negotiation** — `moduleVersion` in the payload must exactly match the RAL registration. Any spec version bump immediately breaks all existing callers with no grace period. | Spec updates are breaking changes for all callers simultaneously | Medium — version range acceptance policy in kernel; deprecation window |
 | 4.4 | **29** | **Phase 18 — Governed Authoring / Builder Prep** — authoring tools and builder interfaces must not be built before Phase 14 (real dependency provider) and Phase 15 (persisted evaluation path) are complete. Both are done. Phase 18 is now unblocked. Scope: constraint-aware session proposal generation, proposal → evaluation → artifact → LIVE pipeline, rejection → revision loop. | Without this, the system evaluates sessions but cannot help create them | High — 3-4 weeks minimum scope |
 
@@ -160,7 +160,7 @@ The full chain — whitelist → stateless check → governed eval → KDO commi
 | ~~22~~ | ~~Tenancy (org_id isolation)~~ | ~~2–3~~ | ✅ COMPLETE |
 | ~~23~~ | ~~Review queue surface (API + minimal UI)~~ | ~~2–3~~ | ✅ COMPLETE |
 | ~~24~~ | ~~Session intake workflow~~ | ~~2~~ | ✅ COMPLETE |
-| 25 | Governed spec bump CLI tool | 1 | None |
+| ~~25~~ | ~~Governed spec bump CLI tool~~ | ~~1~~ | ✅ COMPLETE |
 | 26 | Version negotiation / deprecation window | 1–2 | 25 |
 
 ---
