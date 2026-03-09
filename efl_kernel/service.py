@@ -31,33 +31,64 @@ class APIKeyMiddleware(BaseHTTPMiddleware):
         return await call_next(request)
 
 
-def create_app(db_path: str | None = None, op_db_path: str | None = None) -> FastAPI:
+def create_app(
+    db_path: str | None = None,
+    op_db_path: str | None = None,
+    database_url: str | None = None,
+    op_database_url: str | None = None,
+) -> FastAPI:
     """
     Create and return a configured FastAPI application.
 
-    db_path:    path to the audit SQLite database (kdo_log, override_ledger).
-                If None, reads EFL_AUDIT_DB_PATH env var. Falls back to "efl_audit.db".
-    op_db_path: path to the operational SQLite database (athletes, sessions, artifacts).
-                If None, reads EFL_OP_DB_PATH env var. Falls back to db_path resolution.
+    PostgreSQL branch (preferred for production):
+      database_url:    PostgreSQL DSN for the audit store (kdo_log, override_ledger).
+                       If None, reads EFL_DATABASE_URL env var.
+      op_database_url: PostgreSQL DSN for op/artifact stores.
+                       If None, reads EFL_OP_DATABASE_URL env var; falls back to database_url.
 
-    Stores, provider, and runner are initialized here and
-    attached to app.state for use in request handlers.
+    SQLite branch (backward-compatible default):
+      db_path:    path to the audit SQLite database. Reads EFL_AUDIT_DB_PATH; falls back to "efl_audit.db".
+      op_db_path: path to the operational SQLite database. Reads EFL_OP_DB_PATH; falls back to db_path.
+
+    If database_url (or EFL_DATABASE_URL) is set, the PostgreSQL branch is used and the
+    SQLite branch is ignored.
     """
-    resolved_audit = db_path or os.environ.get("EFL_AUDIT_DB_PATH", "efl_audit.db")
-    resolved_op    = op_db_path or os.environ.get("EFL_OP_DB_PATH") or resolved_audit
-
-    app = FastAPI(title="EFL Kernel Service", version="18.0.0")
+    app = FastAPI(title="EFL Kernel Service", version="19.0.0")
     app.add_middleware(APIKeyMiddleware)
-    app.state.audit_db_path = resolved_audit
-    app.state.op_db_path    = resolved_op
-    app.state.db_path       = resolved_audit   # backward compat alias
-    app.state.op_store = OperationalStore(resolved_op)
-    app.state.audit_store = AuditStore(resolved_audit)
-    app.state.provider = SqliteDependencyProvider(
-        app.state.op_store, app.state.audit_store
-    )
+
+    resolved_db_url = database_url or os.environ.get("EFL_DATABASE_URL")
+    resolved_op_url = op_database_url or os.environ.get("EFL_OP_DATABASE_URL") or resolved_db_url
+
+    if resolved_db_url:
+        from efl_kernel.kernel.pg_pool import open_pg
+        from efl_kernel.kernel.pg_audit_store import PgAuditStore
+        from efl_kernel.kernel.pg_operational_store import PgOperationalStore
+        from efl_kernel.kernel.pg_artifact_store import PgArtifactStore
+        from efl_kernel.kernel.pg_dependency_provider import PgDependencyProvider
+
+        audit_conn = open_pg(resolved_db_url)
+        op_conn = open_pg(resolved_op_url) if resolved_op_url != resolved_db_url else audit_conn
+        app.state.audit_db_path = resolved_db_url
+        app.state.op_db_path    = resolved_op_url or resolved_db_url
+        app.state.db_path       = resolved_db_url
+        app.state.audit_store   = PgAuditStore(audit_conn)
+        app.state.op_store      = PgOperationalStore(op_conn)
+        app.state.artifact_store = PgArtifactStore(op_conn)
+        app.state.provider      = PgDependencyProvider(app.state.op_store, app.state.audit_store)
+    else:
+        resolved_audit = db_path or os.environ.get("EFL_AUDIT_DB_PATH", "efl_audit.db")
+        resolved_op    = op_db_path or os.environ.get("EFL_OP_DB_PATH") or resolved_audit
+        app.state.audit_db_path = resolved_audit
+        app.state.op_db_path    = resolved_op
+        app.state.db_path       = resolved_audit   # backward compat alias
+        app.state.op_store      = OperationalStore(resolved_op)
+        app.state.audit_store   = AuditStore(resolved_audit)
+        app.state.provider      = SqliteDependencyProvider(
+            app.state.op_store, app.state.audit_store
+        )
+        app.state.artifact_store = ArtifactStore(resolved_op)
+
     app.state.runner = KernelRunner(app.state.provider)
-    app.state.artifact_store = ArtifactStore(resolved_op)
     app.state.catalog = ExerciseCatalog()
     app.state.proposal_engine = PhysiqueProposalEngine(app.state.catalog)
 
