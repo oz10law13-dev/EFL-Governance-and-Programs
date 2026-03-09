@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from datetime import date, datetime, timedelta
 
-from .audit_store import AuditStore
 from .dependency_provider import KernelDependencyProvider
-from .operational_store import OperationalStore
+from .sqlite_audit_store import SqliteAuditStore as AuditStore
+from .sqlite_operational_store import SqliteOperationalStore as OperationalStore
 from .ral import WINDOW_SEMANTICS
 
 # Fail-closed sentinel returned when athlete_id is not found in op_athletes.
