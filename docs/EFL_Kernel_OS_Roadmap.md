@@ -2,8 +2,8 @@
 **Document:** EFL_Kernel_OS_Roadmap.md  
 **Status:** LIVING DOCUMENT  
 **Date:** 2026-03-08  
-**Suite at time of writing:** 412 passed, 1 skipped
-**Last completed phase:** Phase 17 (commit 87a9046)
+**Suite at time of writing:** 420 passed, 1 skipped
+**Last completed phase:** Phase 18 (commit 843e3a6)
 
 ---
 
@@ -34,7 +34,7 @@
 | Seed tool (test/fixture data ingestion) | Complete | `tools/seed.py` |
 | Idempotent schema migration | Partial — additive only | `operational_store._migrate_schema()` |
 
-### Layer 3 — HTTP Service ✅ SUBSTANTIALLY COMPLETE
+### Layer 3 — HTTP Service ✅ COMPLETE
 
 | Route | Status |
 |---|---|
@@ -109,7 +109,7 @@ The full chain — whitelist → stateless check → governed eval → KDO commi
 | 3.2 | **22** | **Review workflow has no UI surface** — `REQUIRESREVIEW` KDOs are committed to the audit log but there is no mechanism for a human reviewer to discover, action, or resolve them. The code path exists; the operational surface does not. | Override/review path is unactionable in practice | Medium-High — review queue API (`GET /review-queue`, `POST /artifacts/{id}/review`) + any front-end |
 | 3.3 | **15** | ✅ **COMPLETE** — Structured logging added to `_evaluate_and_commit` (logger `efl_kernel.service`, INFO after each KDO commit). `GET /metrics` endpoint added to `service.py`. `AuditStore.get_metrics()` returns `kdo_total`, `by_module`, `by_publish_state`. | — | — |
 | 3.4 | **15** | ✅ **COMPLETE** — `GET /kdo/{decision_hash}` route added to `service.py`. Returns full KDO dict from `audit_store.get_kdo(decision_hash)`. 404 if not found. | — | — |
-| 3.5 | **25** | **Phase 18 governed authoring not built** — no guided path to create a valid Physique session from scratch. Coaches must hand-craft JSON payloads; there is no builder interface, no proposal generation, no constraint-aware exercise selection workflow. | Coaches can't create a session through any normal interface | High — full Phase 18 scope (see Track 4) |
+| 3.5 | **18** | ✅ **COMPLETE** — `PhysiqueProposalEngine` added. `POST /propose/physique` + `POST /pipeline/physique` wired. Deterministic proposal → evaluate → LIVE pipeline complete. | — | — |
 
 ---
 
@@ -138,7 +138,9 @@ The full chain — whitelist → stateless check → governed eval → KDO commi
 | ~~15~~ | ~~`GET /kdo/{hash}` + structured logging + `/metrics`~~ | ~~1~~ | ✅ COMPLETE |
 | ~~16~~ | ~~Authentication middleware (API key)~~ | ~~1~~ | ✅ COMPLETE |
 | ~~17~~ | ~~Audit/operational DB separation~~ | ~~1~~ | ✅ COMPLETE |
-| **18** | Governed authoring / builder prep | 3–4 | **NEXT** |
+| ~~18~~ | ~~Governed authoring / builder prep~~ | ~~3–4~~ | ✅ COMPLETE |
+
+*Tier A complete. Tiers B and C pending.*
 
 ### Tier B — Production Infrastructure
 *~8–10 weeks. Makes the system deployable to a real environment.*
