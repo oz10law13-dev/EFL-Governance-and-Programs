@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import dataclasses
+import json
 import logging
 import os
 
@@ -53,7 +54,7 @@ def create_app(
     If database_url (or EFL_DATABASE_URL) is set, the PostgreSQL branch is used and the
     SQLite branch is ignored.
     """
-    app = FastAPI(title="EFL Kernel Service", version="19.0.0")
+    app = FastAPI(title="EFL Kernel Service", version="21.0.0")
     app.add_middleware(APIKeyMiddleware)
 
     resolved_db_url = database_url or os.environ.get("EFL_DATABASE_URL")
@@ -146,6 +147,18 @@ def _register_routes(app: FastAPI) -> None:
     @app.get("/health")
     def health():
         return {"status": "ok", "db_path": app.state.db_path}
+
+    @app.get("/health/backup")
+    def health_backup():
+        backup_dir = os.environ.get("EFL_BACKUP_DIR")
+        if not backup_dir:
+            return {"status": "not_configured", "detail": "EFL_BACKUP_DIR not set"}
+        meta_path = os.path.join(backup_dir, ".last_backup.json")
+        if not os.path.exists(meta_path):
+            return {"status": "no_backups", "backup_dir": backup_dir}
+        with open(meta_path, "r", encoding="utf-8") as f:
+            meta = json.load(f)
+        return {"status": "ok", "backup_dir": backup_dir, **meta}
 
     @app.get("/kdo/{decision_hash}")
     def get_kdo(decision_hash: str, request: Request):

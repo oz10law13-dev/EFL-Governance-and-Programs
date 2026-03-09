@@ -93,9 +93,10 @@ def test_create_app_no_pg_url_uses_sqlite(tmp_path):
 
 
 def test_create_app_version_bumped():
-    """Service version is 19.0.0."""
+    """Service version is at least 19.0.0 (bumped in subsequent phases)."""
     app = create_app()
-    assert app.version == "19.0.0"
+    major = int(app.version.split(".")[0])
+    assert major >= 19
 
 
 def test_sqlite_evaluate_session_still_works(tmp_path):

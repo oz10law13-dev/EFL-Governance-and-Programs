@@ -67,6 +67,8 @@ class SqliteOperationalStore:
 
     def __init__(self, db_path: str = "efl_audit.db"):
         self._conn = sqlite3.connect(db_path, check_same_thread=False)
+        if db_path != ":memory:":
+            self._conn.execute("PRAGMA journal_mode=WAL")
         self._conn.row_factory = sqlite3.Row
         self._init_tables()
         self._migrate_schema()

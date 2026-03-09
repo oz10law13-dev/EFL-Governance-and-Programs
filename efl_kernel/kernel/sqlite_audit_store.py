@@ -28,6 +28,8 @@ CREATE TABLE IF NOT EXISTS override_ledger (
 class SqliteAuditStore:
     def __init__(self, db_path: str = ":memory:"):
         self._conn = sqlite3.connect(db_path, check_same_thread=False)
+        if db_path != ":memory:":
+            self._conn.execute("PRAGMA journal_mode=WAL")
         self._conn.executescript(_DDL)
         self._conn.commit()
 
