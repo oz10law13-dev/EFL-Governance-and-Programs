@@ -1,0 +1,1 @@
+# PostgreSQL audit domain migrations.

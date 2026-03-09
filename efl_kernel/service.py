@@ -65,6 +65,7 @@ def create_app(
         from efl_kernel.kernel.pg_operational_store import PgOperationalStore
         from efl_kernel.kernel.pg_artifact_store import PgArtifactStore
         from efl_kernel.kernel.pg_dependency_provider import PgDependencyProvider
+        from efl_kernel.migrations.runner import MigrationRunner
 
         audit_conn = open_pg(resolved_db_url)
         op_conn = open_pg(resolved_op_url) if resolved_op_url != resolved_db_url else audit_conn
@@ -75,6 +76,8 @@ def create_app(
         app.state.op_store      = PgOperationalStore(op_conn)
         app.state.artifact_store = PgArtifactStore(op_conn)
         app.state.provider      = PgDependencyProvider(app.state.op_store, app.state.audit_store)
+        MigrationRunner(audit_conn, "pg", "audit").ensure_current()
+        MigrationRunner(op_conn, "pg", "operational").ensure_current()
     else:
         resolved_audit = db_path or os.environ.get("EFL_AUDIT_DB_PATH", "efl_audit.db")
         resolved_op    = op_db_path or os.environ.get("EFL_OP_DB_PATH") or resolved_audit
@@ -87,6 +90,13 @@ def create_app(
             app.state.op_store, app.state.audit_store
         )
         app.state.artifact_store = ArtifactStore(resolved_op)
+        # Run migrations for file-backed SQLite (skip for :memory: test stores)
+        if resolved_audit != ":memory:":
+            from efl_kernel.migrations.runner import MigrationRunner
+            MigrationRunner(app.state.audit_store._conn, "sqlite", "audit").ensure_current()
+        if resolved_op != ":memory:":
+            from efl_kernel.migrations.runner import MigrationRunner
+            MigrationRunner(app.state.op_store._conn, "sqlite", "operational").ensure_current()
 
     app.state.runner = KernelRunner(app.state.provider)
     app.state.catalog = ExerciseCatalog()
