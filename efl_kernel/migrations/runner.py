@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import re
+import sqlite3
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -122,13 +123,24 @@ class MigrationRunner:
             return row is not None
 
     def _execute_migration_sqlite(self, sql: str) -> None:
-        """Execute migration SQL in SQLite — statement by statement within explicit transaction."""
+        """Execute migration SQL in SQLite — statement by statement within explicit transaction.
+
+        ALTER TABLE ADD COLUMN that hits 'duplicate column name' is silently
+        skipped — this makes migrations idempotent when store constructors
+        have already added the column via _migrate_org_id().
+        """
         self._conn.execute("BEGIN")
         try:
             for stmt in sql.split(";"):
                 stmt = stmt.strip()
                 if stmt:
-                    self._conn.execute(stmt)
+                    try:
+                        self._conn.execute(stmt)
+                    except sqlite3.OperationalError as e:
+                        if "duplicate column name" in str(e):
+                            pass  # column already exists — idempotent
+                        else:
+                            raise
             self._conn.execute("COMMIT")
         except Exception:
             self._conn.execute("ROLLBACK")

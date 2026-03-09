@@ -60,6 +60,17 @@ class SqliteArtifactStore:
         self._conn.row_factory = sqlite3.Row
         self._conn.executescript(_DDL)
         self._conn.commit()
+        self._migrate_org_id()
+
+    def _migrate_org_id(self) -> None:
+        """Idempotent: add org_id column if it doesn't exist."""
+        try:
+            self._conn.execute(
+                "ALTER TABLE artifact_versions ADD COLUMN org_id TEXT NOT NULL DEFAULT 'default'"
+            )
+            self._conn.commit()
+        except sqlite3.OperationalError:
+            pass
 
     def commit_artifact_version(
         self,
@@ -67,6 +78,7 @@ class SqliteArtifactStore:
         module_id: str,
         object_id: str,
         content: dict,
+        org_id: str = "default",
     ) -> dict:
         """Create a new immutable artifact version in DRAFT state.
 
@@ -79,10 +91,10 @@ class SqliteArtifactStore:
         self._conn.execute(
             "INSERT INTO artifact_versions "
             "(version_id, artifact_id, module_id, object_id, content_json, "
-            "content_hash, lifecycle, created_at, updated_at) "
-            "VALUES (?, ?, ?, ?, ?, ?, 'DRAFT', ?, ?)",
+            "content_hash, lifecycle, created_at, updated_at, org_id) "
+            "VALUES (?, ?, ?, ?, ?, ?, 'DRAFT', ?, ?, ?)",
             (version_id, artifact_id, module_id, object_id,
-             json.dumps(content), content_hash, now, now),
+             json.dumps(content), content_hash, now, now, org_id),
         )
         self._conn.commit()
         row = self._conn.execute(
@@ -144,7 +156,7 @@ class SqliteArtifactStore:
         ).fetchone()
         return dict(row)
 
-    def promote_to_live(self, version_id: str, get_kdo_fn) -> dict:
+    def promote_to_live(self, version_id: str, get_kdo_fn, org_id: str = "default") -> dict:
         """Promote a DRAFT artifact version to LIVE.
 
         Enforces all four invariants:
@@ -163,6 +175,10 @@ class SqliteArtifactStore:
         if row is None:
             raise ValueError(f"artifact version {version_id!r} not found")
         version = dict(row)
+
+        # 1b. Verify org_id matches
+        if version.get("org_id", "default") != org_id:
+            raise ValueError("org_id mismatch")
 
         # 2. Idempotent for already-LIVE
         if version["lifecycle"] == "LIVE":
@@ -228,7 +244,7 @@ class SqliteArtifactStore:
         ).fetchone()
         return dict(updated)
 
-    def retire(self, version_id: str) -> dict:
+    def retire(self, version_id: str, org_id: str = "default") -> dict:
         """Retire an artifact version (DRAFT or LIVE → RETIRED).
 
         Raises ValueError if already RETIRED or not found.
@@ -239,6 +255,8 @@ class SqliteArtifactStore:
         if row is None:
             raise ValueError(f"artifact version {version_id!r} not found")
         version = dict(row)
+        if version.get("org_id", "default") != org_id:
+            raise ValueError("org_id mismatch")
         if version["lifecycle"] == "RETIRED":
             raise ValueError(f"artifact version {version_id!r} is already RETIRED")
         now = _now()
@@ -260,32 +278,32 @@ class SqliteArtifactStore:
         ).fetchone()
         return dict(row) if row is not None else None
 
-    def get_live_versions(self, artifact_id: str) -> list[dict]:
+    def get_live_versions(self, artifact_id: str, org_id: str = "default") -> list[dict]:
         """Return all LIVE versions for artifact_id, ordered by created_at DESC."""
         rows = self._conn.execute(
             "SELECT * FROM artifact_versions "
-            "WHERE artifact_id = ? AND lifecycle = 'LIVE' "
+            "WHERE artifact_id = ? AND lifecycle = 'LIVE' AND org_id = ? "
             "ORDER BY created_at DESC",
-            (artifact_id,),
+            (artifact_id, org_id),
         ).fetchall()
         return [dict(r) for r in rows]
 
-    def get_versions(self, artifact_id: str) -> list[dict]:
+    def get_versions(self, artifact_id: str, org_id: str = "default") -> list[dict]:
         """Return all versions for artifact_id (all lifecycle states), ordered by created_at DESC."""
         rows = self._conn.execute(
             "SELECT * FROM artifact_versions "
-            "WHERE artifact_id = ? "
+            "WHERE artifact_id = ? AND org_id = ? "
             "ORDER BY created_at DESC",
-            (artifact_id,),
+            (artifact_id, org_id),
         ).fetchall()
         return [dict(r) for r in rows]
 
-    def get_versions_by_artifact_id(self, artifact_id: str) -> list[dict]:
+    def get_versions_by_artifact_id(self, artifact_id: str, org_id: str = "default") -> list[dict]:
         """Return all versions for artifact_id, ordered by created_at DESC. Never raises."""
         rows = self._conn.execute(
             "SELECT * FROM artifact_versions "
-            "WHERE artifact_id = ? "
+            "WHERE artifact_id = ? AND org_id = ? "
             "ORDER BY created_at DESC",
-            (artifact_id,),
+            (artifact_id, org_id),
         ).fetchall()
         return [dict(r) for r in rows]

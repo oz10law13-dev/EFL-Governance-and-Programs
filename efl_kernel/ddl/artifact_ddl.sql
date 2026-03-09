@@ -11,7 +11,8 @@ CREATE TABLE IF NOT EXISTS artifact_versions (
     content_hash   TEXT NOT NULL,
     lifecycle      TEXT NOT NULL DEFAULT 'DRAFT',
     created_at     TEXT NOT NULL,
-    updated_at     TEXT NOT NULL
+    updated_at     TEXT NOT NULL,
+    org_id         TEXT NOT NULL DEFAULT 'default'
 );
 
 CREATE INDEX IF NOT EXISTS idx_av_artifact_id
@@ -19,6 +20,9 @@ CREATE INDEX IF NOT EXISTS idx_av_artifact_id
 
 CREATE INDEX IF NOT EXISTS idx_av_lifecycle
     ON artifact_versions(lifecycle);
+
+CREATE INDEX IF NOT EXISTS idx_av_org
+    ON artifact_versions(org_id);
 
 CREATE TABLE IF NOT EXISTS artifact_kdo_links (
     link_id              TEXT PRIMARY KEY NOT NULL,

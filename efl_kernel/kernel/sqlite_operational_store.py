@@ -71,18 +71,25 @@ class SqliteOperationalStore:
             self._conn.execute("PRAGMA journal_mode=WAL")
         self._conn.row_factory = sqlite3.Row
         self._init_tables()
-        self._migrate_schema()
+        self._migrate_schema(include_org_id=True)
 
     def _init_tables(self) -> None:
         self._conn.executescript(_DDL)
         self._conn.commit()
 
-    def _migrate_schema(self) -> None:
-        """Idempotent migration: add new columns to op_sessions if they don't exist."""
-        for stmt in [
+    def _migrate_schema(self, include_org_id: bool = False) -> None:
+        """Idempotent migration: add new columns if they don't exist."""
+        stmts = [
             "ALTER TABLE op_sessions ADD COLUMN readiness_state TEXT",
             "ALTER TABLE op_sessions ADD COLUMN is_collapsed INTEGER NOT NULL DEFAULT 0",
-        ]:
+        ]
+        if include_org_id:
+            stmts.extend([
+                "ALTER TABLE op_athletes ADD COLUMN org_id TEXT NOT NULL DEFAULT 'default'",
+                "ALTER TABLE op_sessions ADD COLUMN org_id TEXT NOT NULL DEFAULT 'default'",
+                "ALTER TABLE op_seasons ADD COLUMN org_id TEXT NOT NULL DEFAULT 'default'",
+            ])
+        for stmt in stmts:
             try:
                 self._conn.execute(stmt)
             except sqlite3.OperationalError:
@@ -93,21 +100,21 @@ class SqliteOperationalStore:
     # Athletes                                                             #
     # ------------------------------------------------------------------ #
 
-    def upsert_athlete(self, athlete: dict) -> None:
+    def upsert_athlete(self, athlete: dict, org_id: str = "default") -> None:
         """Insert or replace an op_athletes row.
 
         created_at is preserved from the existing row on update.
         updated_at defaults to current UTC time if not provided.
         """
         now = _now()
-        existing = self.get_athlete(athlete["athlete_id"])
+        existing = self.get_athlete(athlete["athlete_id"], org_id=org_id)
         created_at = existing["created_at"] if existing else athlete.get("created_at", now)
         updated_at = athlete.get("updated_at", now)
         self._conn.execute(
             "INSERT OR REPLACE INTO op_athletes "
             "(athlete_id, max_daily_contact_load, minimum_rest_interval_hours, "
-            "e4_clearance, created_at, updated_at) "
-            "VALUES (?, ?, ?, ?, ?, ?)",
+            "e4_clearance, created_at, updated_at, org_id) "
+            "VALUES (?, ?, ?, ?, ?, ?, ?)",
             (
                 athlete["athlete_id"],
                 athlete["max_daily_contact_load"],
@@ -115,17 +122,18 @@ class SqliteOperationalStore:
                 athlete["e4_clearance"],
                 created_at,
                 updated_at,
+                org_id,
             ),
         )
         self._conn.commit()
 
-    def get_athlete(self, athlete_id: str) -> dict | None:
+    def get_athlete(self, athlete_id: str, org_id: str = "default") -> dict | None:
         """Return the op_athletes row as a dict, or None if not found."""
         row = self._conn.execute(
             "SELECT athlete_id, max_daily_contact_load, minimum_rest_interval_hours, "
             "e4_clearance, created_at, updated_at "
-            "FROM op_athletes WHERE athlete_id = ?",
-            (athlete_id,),
+            "FROM op_athletes WHERE org_id = ? AND athlete_id = ?",
+            (org_id, athlete_id),
         ).fetchone()
         return dict(row) if row is not None else None
 
@@ -133,7 +141,7 @@ class SqliteOperationalStore:
     # Sessions                                                             #
     # ------------------------------------------------------------------ #
 
-    def upsert_session(self, session: dict) -> None:
+    def upsert_session(self, session: dict, org_id: str = "default") -> None:
         """Insert or replace an op_sessions row.
 
         created_at defaults to current UTC time if not provided.
@@ -144,8 +152,8 @@ class SqliteOperationalStore:
         self._conn.execute(
             "INSERT OR REPLACE INTO op_sessions "
             "(session_id, athlete_id, session_date, contact_load, created_at, "
-            "readiness_state, is_collapsed) "
-            "VALUES (?, ?, ?, ?, ?, ?, ?)",
+            "readiness_state, is_collapsed, org_id) "
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
             (
                 session["session_id"],
                 session["athlete_id"],
@@ -154,6 +162,7 @@ class SqliteOperationalStore:
                 created_at,
                 session.get("readiness_state"),
                 int(session.get("is_collapsed", False)),
+                org_id,
             ),
         )
         self._conn.commit()
@@ -164,6 +173,7 @@ class SqliteOperationalStore:
         window_start: str,
         anchor_date: str,
         exclude_session_id: str = "",
+        org_id: str = "default",
     ) -> list[dict]:
         """Return op_sessions rows within [window_start, anchor_date] inclusive.
 
@@ -174,16 +184,17 @@ class SqliteOperationalStore:
         rows = self._conn.execute(
             "SELECT session_id, athlete_id, session_date, contact_load "
             "FROM op_sessions "
-            "WHERE athlete_id = ? "
+            "WHERE org_id = ? "
+            "  AND athlete_id = ? "
             "  AND session_date >= ? "
             "  AND session_date <= ? "
             "  AND session_id != ? "
             "ORDER BY session_date ASC",
-            (athlete_id, window_start, anchor_date, exclude_session_id),
+            (org_id, athlete_id, window_start, anchor_date, exclude_session_id),
         ).fetchall()
         return [dict(r) for r in rows]
 
-    def get_prior_session(self, athlete_id: str, before_date: str) -> dict | None:
+    def get_prior_session(self, athlete_id: str, before_date: str, org_id: str = "default") -> dict | None:
         """Return the most recent op_sessions row with session_date < before_date.
 
         Strict less-than — the boundary date itself is excluded.
@@ -192,15 +203,15 @@ class SqliteOperationalStore:
         row = self._conn.execute(
             "SELECT session_id, athlete_id, session_date, contact_load "
             "FROM op_sessions "
-            "WHERE athlete_id = ? AND session_date < ? "
+            "WHERE org_id = ? AND athlete_id = ? AND session_date < ? "
             "ORDER BY session_date DESC "
             "LIMIT 1",
-            (athlete_id, before_date),
+            (org_id, athlete_id, before_date),
         ).fetchone()
         return dict(row) if row is not None else None
 
     def get_readiness_history(
-        self, athlete_id: str, window_start: str, anchor_date: str
+        self, athlete_id: str, window_start: str, anchor_date: str, org_id: str = "default"
     ) -> list[str]:
         """Return readiness_state values for sessions in window, ASC order.
 
@@ -208,22 +219,22 @@ class SqliteOperationalStore:
         """
         rows = self._conn.execute(
             "SELECT readiness_state FROM op_sessions "
-            "WHERE athlete_id = ? AND session_date >= ? AND session_date <= ? "
+            "WHERE org_id = ? AND athlete_id = ? AND session_date >= ? AND session_date <= ? "
             "  AND readiness_state IS NOT NULL "
             "ORDER BY session_date ASC",
-            (athlete_id, window_start, anchor_date),
+            (org_id, athlete_id, window_start, anchor_date),
         ).fetchall()
         return [r[0] for r in rows]
 
     def get_collapse_count(
-        self, athlete_id: str, window_start: str, anchor_date: str
+        self, athlete_id: str, window_start: str, anchor_date: str, org_id: str = "default"
     ) -> int:
         """Return count of collapsed (is_collapsed=1) sessions in window."""
         row = self._conn.execute(
             "SELECT COUNT(*) FROM op_sessions "
-            "WHERE athlete_id = ? AND session_date >= ? AND session_date <= ? "
+            "WHERE org_id = ? AND athlete_id = ? AND session_date >= ? AND session_date <= ? "
             "  AND is_collapsed = 1",
-            (athlete_id, window_start, anchor_date),
+            (org_id, athlete_id, window_start, anchor_date),
         ).fetchone()
         return row[0] if row else 0
 
@@ -231,7 +242,7 @@ class SqliteOperationalStore:
     # Seasons                                                              #
     # ------------------------------------------------------------------ #
 
-    def upsert_season(self, season: dict) -> None:
+    def upsert_season(self, season: dict, org_id: str = "default") -> None:
         """Insert or replace an op_seasons row.
 
         created_at is preserved from the existing row on update.
@@ -240,14 +251,14 @@ class SqliteOperationalStore:
         by SQLite; enforced by the caller.
         """
         now = _now()
-        existing = self.get_season(season["athlete_id"], season["season_id"])
+        existing = self.get_season(season["athlete_id"], season["season_id"], org_id=org_id)
         created_at = existing["created_at"] if existing else season.get("created_at", now)
         updated_at = season.get("updated_at", now)
         self._conn.execute(
             "INSERT OR REPLACE INTO op_seasons "
             "(athlete_id, season_id, competition_weeks, gpp_weeks, "
-            "start_date, end_date, created_at, updated_at) "
-            "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+            "start_date, end_date, created_at, updated_at, org_id) "
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
             (
                 season["athlete_id"],
                 season["season_id"],
@@ -257,17 +268,18 @@ class SqliteOperationalStore:
                 season["end_date"],
                 created_at,
                 updated_at,
+                org_id,
             ),
         )
         self._conn.commit()
 
-    def get_season(self, athlete_id: str, season_id: str) -> dict | None:
+    def get_season(self, athlete_id: str, season_id: str, org_id: str = "default") -> dict | None:
         """Return the op_seasons row for (athlete_id, season_id), or None."""
         row = self._conn.execute(
             "SELECT athlete_id, season_id, competition_weeks, gpp_weeks, "
             "start_date, end_date, created_at, updated_at "
             "FROM op_seasons "
-            "WHERE athlete_id = ? AND season_id = ?",
-            (athlete_id, season_id),
+            "WHERE org_id = ? AND athlete_id = ? AND season_id = ?",
+            (org_id, athlete_id, season_id),
         ).fetchone()
         return dict(row) if row is not None else None

@@ -32,8 +32,21 @@ class SqliteAuditStore:
             self._conn.execute("PRAGMA journal_mode=WAL")
         self._conn.executescript(_DDL)
         self._conn.commit()
+        self._migrate_org_id()
 
-    def commit_kdo(self, kdo: KDO) -> str:
+    def _migrate_org_id(self) -> None:
+        """Idempotent: add org_id columns if they don't exist."""
+        for stmt in [
+            "ALTER TABLE kdo_log ADD COLUMN org_id TEXT NOT NULL DEFAULT 'default'",
+            "ALTER TABLE override_ledger ADD COLUMN org_id TEXT NOT NULL DEFAULT 'default'",
+        ]:
+            try:
+                self._conn.execute(stmt)
+            except sqlite3.OperationalError:
+                pass
+        self._conn.commit()
+
+    def commit_kdo(self, kdo: KDO, org_id: str = "default") -> str:
         """Freeze the KDO (if not already), persist it, and append override ledger entries.
 
         Append-only: a duplicate decision_hash is silently ignored and no override
@@ -45,14 +58,15 @@ class SqliteAuditStore:
 
         cur = self._conn.execute(
             "INSERT OR IGNORE INTO kdo_log "
-            "(decision_hash, timestamp_normalized, module_id, object_id, kdo_json) "
-            "VALUES (?, ?, ?, ?, ?)",
+            "(decision_hash, timestamp_normalized, module_id, object_id, kdo_json, org_id) "
+            "VALUES (?, ?, ?, ?, ?, ?)",
             (
                 decision_hash,
                 kdo.timestamp_normalized,
                 kdo.module_id,
                 kdo.object_id,
                 json.dumps(kdo.__dict__),
+                org_id,
             ),
         )
 
@@ -63,14 +77,16 @@ class SqliteAuditStore:
                     if v.get("overrideUsed"):
                         self._conn.execute(
                             "INSERT OR IGNORE INTO override_ledger "
-                            "(lineage_key, module_id, violation_code, reason_code, timestamp_normalized) "
-                            "VALUES (?, ?, ?, ?, ?)",
+                            "(lineage_key, module_id, violation_code, reason_code, "
+                            "timestamp_normalized, org_id) "
+                            "VALUES (?, ?, ?, ?, ?, ?)",
                             (
                                 lineage_key,
                                 kdo.module_id,
                                 v["code"],
                                 v.get("overrideReasonCode") or "",
                                 kdo.timestamp_normalized,
+                                org_id,
                             ),
                         )
 
@@ -84,15 +100,16 @@ class SqliteAuditStore:
         ).fetchone()
         return json.loads(row[0]) if row is not None else None
 
-    def get_override_history(self, lineage_key: str, module_id: str, window_days: int = 28) -> dict:
+    def get_override_history(self, lineage_key: str, module_id: str, window_days: int = 28, org_id: str = "default") -> dict:
         """Return rolling-window override counts in InMemoryDependencyProvider-compatible shape."""
         cutoff = (datetime.now(timezone.utc) - timedelta(days=window_days)).isoformat()
         rows = self._conn.execute(
             "SELECT violation_code, reason_code, COUNT(*) "
             "FROM override_ledger "
             "WHERE lineage_key = ? AND module_id = ? AND timestamp_normalized >= ? "
+            "AND org_id = ? "
             "GROUP BY violation_code, reason_code",
-            (lineage_key, module_id, cutoff),
+            (lineage_key, module_id, cutoff, org_id),
         ).fetchall()
 
         by_reason: dict[str, int] = {}
@@ -104,8 +121,11 @@ class SqliteAuditStore:
 
         return {"byReasonCode": by_reason, "byViolationCode": by_violation}
 
-    def get_metrics(self) -> dict:
+    def get_metrics(self, org_id: str | None = None) -> dict:
         """Return aggregate counts from kdo_log.
+
+        If org_id is not None, return counts scoped to that org.
+        If org_id is None, return global counts (existing behavior).
 
         Returns:
             {
@@ -114,19 +134,39 @@ class SqliteAuditStore:
                 "by_publish_state": {finalPublishState: count, ...},
             }
         """
-        total_row = self._conn.execute("SELECT COUNT(*) FROM kdo_log").fetchone()
-        kdo_total = total_row[0] if total_row else 0
+        if org_id is not None:
+            total_row = self._conn.execute(
+                "SELECT COUNT(*) FROM kdo_log WHERE org_id = ?", (org_id,)
+            ).fetchone()
+            kdo_total = total_row[0] if total_row else 0
 
-        by_module: dict[str, int] = {}
-        for row in self._conn.execute(
-            "SELECT module_id, COUNT(*) FROM kdo_log GROUP BY module_id"
-        ).fetchall():
-            by_module[row[0]] = row[1]
+            by_module: dict[str, int] = {}
+            for row in self._conn.execute(
+                "SELECT module_id, COUNT(*) FROM kdo_log WHERE org_id = ? GROUP BY module_id",
+                (org_id,),
+            ).fetchall():
+                by_module[row[0]] = row[1]
 
-        by_publish_state: dict[str, int] = {}
-        for row in self._conn.execute("SELECT kdo_json FROM kdo_log").fetchall():
-            state = json.loads(row[0])["resolution"]["finalPublishState"]
-            by_publish_state[state] = by_publish_state.get(state, 0) + 1
+            by_publish_state: dict[str, int] = {}
+            for row in self._conn.execute(
+                "SELECT kdo_json FROM kdo_log WHERE org_id = ?", (org_id,)
+            ).fetchall():
+                state = json.loads(row[0])["resolution"]["finalPublishState"]
+                by_publish_state[state] = by_publish_state.get(state, 0) + 1
+        else:
+            total_row = self._conn.execute("SELECT COUNT(*) FROM kdo_log").fetchone()
+            kdo_total = total_row[0] if total_row else 0
+
+            by_module = {}
+            for row in self._conn.execute(
+                "SELECT module_id, COUNT(*) FROM kdo_log GROUP BY module_id"
+            ).fetchall():
+                by_module[row[0]] = row[1]
+
+            by_publish_state = {}
+            for row in self._conn.execute("SELECT kdo_json FROM kdo_log").fetchall():
+                state = json.loads(row[0])["resolution"]["finalPublishState"]
+                by_publish_state[state] = by_publish_state.get(state, 0) + 1
 
         return {
             "kdo_total": kdo_total,

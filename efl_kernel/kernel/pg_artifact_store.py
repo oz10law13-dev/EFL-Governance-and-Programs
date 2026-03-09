@@ -35,6 +35,7 @@ class PgArtifactStore:
         module_id: str,
         object_id: str,
         content: dict,
+        org_id: str = "default",
     ) -> dict:
         """Create a new immutable artifact version in DRAFT state."""
         content_hash = canonicalize_and_hash(content)
@@ -43,10 +44,10 @@ class PgArtifactStore:
         self._conn.execute(
             "INSERT INTO artifact_versions "
             "(version_id, artifact_id, module_id, object_id, content_json, "
-            "content_hash, lifecycle, created_at, updated_at) "
-            "VALUES (%s, %s, %s, %s, %s, %s, 'DRAFT', %s, %s)",
+            "content_hash, lifecycle, created_at, updated_at, org_id) "
+            "VALUES (%s, %s, %s, %s, %s, %s, 'DRAFT', %s, %s, %s)",
             (version_id, artifact_id, module_id, object_id,
-             Jsonb(content), content_hash, now, now),
+             Jsonb(content), content_hash, now, now, org_id),
         )
         self._conn.commit()
         return self._conn.execute(
@@ -99,7 +100,7 @@ class PgArtifactStore:
             "SELECT * FROM review_records WHERE review_id = %s", (review_id,)
         ).fetchone()
 
-    def promote_to_live(self, version_id: str, get_kdo_fn) -> dict:
+    def promote_to_live(self, version_id: str, get_kdo_fn, org_id: str = "default") -> dict:
         """Promote a DRAFT artifact version to LIVE.
 
         Enforces INV-1 through INV-4. get_kdo_fn is injected to avoid
@@ -110,6 +111,9 @@ class PgArtifactStore:
         ).fetchone()
         if version is None:
             raise ValueError(f"artifact version {version_id!r} not found")
+
+        if version.get("org_id", "default") != org_id:
+            raise ValueError("org_id mismatch")
 
         if version["lifecycle"] == "LIVE":
             return version
@@ -162,13 +166,15 @@ class PgArtifactStore:
             "SELECT * FROM artifact_versions WHERE version_id = %s", (version_id,)
         ).fetchone()
 
-    def retire(self, version_id: str) -> dict:
+    def retire(self, version_id: str, org_id: str = "default") -> dict:
         """Retire an artifact version (DRAFT or LIVE → RETIRED)."""
         version = self._conn.execute(
             "SELECT * FROM artifact_versions WHERE version_id = %s", (version_id,)
         ).fetchone()
         if version is None:
             raise ValueError(f"artifact version {version_id!r} not found")
+        if version.get("org_id", "default") != org_id:
+            raise ValueError("org_id mismatch")
         if version["lifecycle"] == "RETIRED":
             raise ValueError(f"artifact version {version_id!r} is already RETIRED")
         now = _now()
@@ -188,27 +194,27 @@ class PgArtifactStore:
             "SELECT * FROM artifact_versions WHERE version_id = %s", (version_id,)
         ).fetchone()
 
-    def get_live_versions(self, artifact_id: str) -> list[dict]:
+    def get_live_versions(self, artifact_id: str, org_id: str = "default") -> list[dict]:
         """Return all LIVE versions for artifact_id, ordered by created_at DESC."""
         return self._conn.execute(
             "SELECT * FROM artifact_versions "
-            "WHERE artifact_id = %s AND lifecycle = 'LIVE' "
+            "WHERE artifact_id = %s AND lifecycle = 'LIVE' AND org_id = %s "
             "ORDER BY created_at DESC",
-            (artifact_id,),
+            (artifact_id, org_id),
         ).fetchall()
 
-    def get_versions(self, artifact_id: str) -> list[dict]:
+    def get_versions(self, artifact_id: str, org_id: str = "default") -> list[dict]:
         """Return all versions for artifact_id, ordered by created_at DESC."""
         return self._conn.execute(
             "SELECT * FROM artifact_versions "
-            "WHERE artifact_id = %s ORDER BY created_at DESC",
-            (artifact_id,),
+            "WHERE artifact_id = %s AND org_id = %s ORDER BY created_at DESC",
+            (artifact_id, org_id),
         ).fetchall()
 
-    def get_versions_by_artifact_id(self, artifact_id: str) -> list[dict]:
+    def get_versions_by_artifact_id(self, artifact_id: str, org_id: str = "default") -> list[dict]:
         """Return all versions for artifact_id, ordered by created_at DESC. Never raises."""
         return self._conn.execute(
             "SELECT * FROM artifact_versions "
-            "WHERE artifact_id = %s ORDER BY created_at DESC",
-            (artifact_id,),
+            "WHERE artifact_id = %s AND org_id = %s ORDER BY created_at DESC",
+            (artifact_id, org_id),
         ).fetchall()
