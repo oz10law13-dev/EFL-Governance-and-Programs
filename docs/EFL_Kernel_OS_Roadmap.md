@@ -2,8 +2,8 @@
 **Document:** EFL_Kernel_OS_Roadmap.md  
 **Status:** LIVING DOCUMENT  
 **Date:** 2026-03-08  
-**Suite at time of writing:** 420 passed, 1 skipped
-**Last completed phase:** Phase 18 (commit 843e3a6)
+**Suite at time of writing:** 426 passed, 19 skipped
+**Last completed phase:** Phase 19 (commit 4d35947)
 
 ---
 
@@ -92,7 +92,7 @@ The full chain — whitelist → stateless check → governed eval → KDO commi
 
 | # | Phase | Item | Impact | Effort |
 |---|---|---|---|---|
-| 2.1 | **16** | **SQLite → PostgreSQL** — single file, single writer, no horizontal scale. Can't run multiple uvicorn workers against the same db. Can't serve real concurrent users. | Can't deploy to production with any meaningful load | High — new provider implementation, connection pooling, DDL migration, async driver |
+| 2.1 | **19** | ✅ **COMPLETE** — `PgAuditStore`, `PgOperationalStore`, `PgArtifactStore`, `PgDependencyProvider` added. `create_app` selects PG via `EFL_DATABASE_URL` / `database_url` param. SQLite path fully preserved via shims. psycopg3 sync API. 24 tests (18 PG-gated). | — | — |
 | 2.2 | **16** | ✅ **COMPLETE** — `APIKeyMiddleware` added to `service.py`. Reads `EFL_API_KEY` at request time. No-op when unset. `/health` exempt. 401 on missing/wrong key. | — | — |
 | 2.3 | **18** | **No formal schema migration versioning** — `_migrate_schema()` uses idempotent `ALTER TABLE` patches. Works for additive changes, breaks for column renames, type changes, or drops on a running system with real data. | Can't safely deploy schema changes to production | Medium — versioned migration runner (Alembic or custom numbered scripts) |
 | 2.4 | **17** | ✅ **COMPLETE** — `AuditStore` routes to `EFL_AUDIT_DB_PATH`; `OperationalStore` + `ArtifactStore` route to `EFL_OP_DB_PATH`; backward compat preserved via `resolved_audit` fallback. | — | — |
@@ -147,7 +147,7 @@ The full chain — whitelist → stateless check → governed eval → KDO commi
 
 | Phase | Title | Weeks | Dependency |
 |---|---|---|---|
-| 19 | PostgreSQL migration | 3–4 | 17 |
+| ~~19~~ | ~~PostgreSQL migration~~ | ~~3–4~~ | ✅ COMPLETE |
 | 20 | Schema migration versioning (Alembic or custom) | 1 | 19 |
 | 21 | Backup/restore strategy + WAL configuration | 1 | 19 |
 
