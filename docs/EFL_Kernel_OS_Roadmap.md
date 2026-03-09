@@ -2,8 +2,8 @@
 **Document:** EFL_Kernel_OS_Roadmap.md  
 **Status:** LIVING DOCUMENT  
 **Date:** 2026-03-09
-**Suite at time of writing:** 507 passed, 24 skipped
-**Last completed phase:** Phase 23 (commit d50cb8f)
+**Suite at time of writing:** 524 passed, 25 skipped
+**Last completed phase:** Phase 24 (commit b8caf22)
 
 ---
 
@@ -56,6 +56,7 @@
 | `POST /author/physique` | Complete — Phase 13B |
 | `POST /athletes`, `GET /athletes/{id}`, `POST /sessions`, `POST /seasons`, `GET /seasons/{athlete_id}/{season_id}` | Complete — Phase 14 |
 | `GET /kdo/{decision_hash}` audit query | Complete — Phase 15 |
+| `POST /intake/session` (record + evaluate) | Complete — Phase 24 |
 
 ### Layer 4 — Authoring Loop ✅ SUBSTANTIALLY COMPLETE
 
@@ -105,7 +106,7 @@ The full chain — whitelist → stateless check → governed eval → KDO commi
 
 | # | Phase | Item | Impact | Effort |
 |---|---|---|---|---|
-| 3.1 | **21** | **No real session intake path** — session data enters only via seed fixtures or direct API evaluation calls. No governed intake workflow for real training data (athlete submits session → system records it → evaluation can reference it). | Coaches can't submit real session data through a normal workflow | Medium — intake API with validation layer separate from evaluation |
+| 3.1 | **24** | ✅ **COMPLETE** — `POST /intake/session` delivers governed intake: validates athlete exists, records session in op_sessions, builds conformant SESSION evaluation payload internally, evaluates via org-scoped provider, commits KDO. Training history accumulates through rolling windows. 18 tests (17 + 1 PG-gated). | — | — |
 | 3.2 | **23** | ✅ **COMPLETE** — Review queue API: `GET /review-queue`, `GET /review-queue/stats`, `GET /review-queue/{id}`, `POST .../approve`, `POST .../reject`. `get_pending_reviews` + `get_review_detail` on both artifact stores. Cross-DB KDO lookup via `get_kdo_fn` injection. 21 tests. | — | — |
 | 3.3 | **15** | ✅ **COMPLETE** — Structured logging added to `_evaluate_and_commit` (logger `efl_kernel.service`, INFO after each KDO commit). `GET /metrics` endpoint added to `service.py`. `AuditStore.get_metrics()` returns `kdo_total`, `by_module`, `by_publish_state`. | — | — |
 | 3.4 | **15** | ✅ **COMPLETE** — `GET /kdo/{decision_hash}` route added to `service.py`. Returns full KDO dict from `audit_store.get_kdo(decision_hash)`. 404 if not found. | — | — |
@@ -158,7 +159,7 @@ The full chain — whitelist → stateless check → governed eval → KDO commi
 |---|---|---|---|
 | ~~22~~ | ~~Tenancy (org_id isolation)~~ | ~~2–3~~ | ✅ COMPLETE |
 | ~~23~~ | ~~Review queue surface (API + minimal UI)~~ | ~~2–3~~ | ✅ COMPLETE |
-| 24 | Session intake workflow | 2 | 22 |
+| ~~24~~ | ~~Session intake workflow~~ | ~~2~~ | ✅ COMPLETE |
 | 25 | Governed spec bump CLI tool | 1 | None |
 | 26 | Version negotiation / deprecation window | 1–2 | 25 |
 
