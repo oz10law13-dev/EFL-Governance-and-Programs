@@ -197,7 +197,7 @@ def test_cli_physique_clean_payload(tmp_path, capsys):
 
 
 def test_cli_physique_clearance_violation(tmp_path, capsys):
-    """PHYSIQUE CLI: ECA-PHY-0027 (e4_requires_clearance=True) + athlete e4_clearance=0 → PHYSIQUE.CLEARANCEMISSING."""
+    """PHYSIQUE CLI: ECA-PHY-0135 (e4_requires_clearance=True) + athlete e4_clearance=0 → PHYSIQUE.CLEARANCEMISSING."""
     from efl_kernel.kernel.operational_store import OperationalStore
 
     db_path = str(tmp_path / "test_physique_clearance.db")
@@ -236,7 +236,7 @@ def test_cli_physique_clearance_violation(tmp_path, capsys):
             },
         ],
         "physique_session": {
-            "exercises": [{"exercise_id": "ECA-PHY-0027", "tempo": "3:0:1:0"}]
+            "exercises": [{"exercise_id": "ECA-PHY-0135", "tempo": "3:0:1:0"}]
         },
     }
     payload_file = tmp_path / "physique_clearance_payload.json"

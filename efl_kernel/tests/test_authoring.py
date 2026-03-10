@@ -315,7 +315,7 @@ def test_author_physique_illegalquarantined_stays_draft(svc):
     r = client.post("/author/physique", json=_physique_author_payload(
         artifact_id="ART-PHY-AUTH-QUAR-01",
         object_id="OBJ-PHY-AUTH-QUAR-01",
-        exercises=[{"exercise_id": "ECA-PHY-0027", "tempo": "3:0:1:0"}],
+        exercises=[{"exercise_id": "ECA-PHY-0135", "tempo": "3:0:1:0"}],
         athlete_id="ATH-PHY-AUTH-QUAR",
         session_id="S-PHY-AUTH-QUAR-01",
     ))

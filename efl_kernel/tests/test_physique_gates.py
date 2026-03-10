@@ -45,9 +45,9 @@ def _squat(tempo: str) -> dict:
 
 
 def _lateral_raise(tempo: str) -> dict:
-    # ECA-PHY-0015 Dumbbell Lateral Raise: ACCESSORY_ISOLATION, eccentric_max=4,
+    # ECA-PHY-0093 Dumbbell Lateral Raise: ACCESSORY_ISOLATION, eccentric_max=4,
     # ib_max=3, it_max=1, explosive_concentric_allowed=False
-    return {"exercise_id": "ECA-PHY-0015", "tempo": tempo}
+    return {"exercise_id": "ECA-PHY-0093", "tempo": tempo}
 
 
 def _codes(kdo) -> list[str]:
@@ -177,8 +177,8 @@ def test_physique_zero_violations_legalready():
 # --- Carry exercise skips ECICT tempo validation ---
 
 def test_carry_exercise_skips_tempo_validation():
-    # ECA-PHY-0025 Farmer Carry: movement_family="Carry" → N/A_DISTANCE → no DCC tempo checks
-    carry = {"exercise_id": "ECA-PHY-0025", "tempo": "bad_tempo_not_ecict"}
+    # ECA-PHY-0124 Farmer Carry: movement_family="Carry" → N/A_DISTANCE → no DCC tempo checks
+    carry = {"exercise_id": "ECA-PHY-0124", "tempo": "bad_tempo_not_ecict"}
     kdo = _runner().evaluate(_physique_input([carry]), "PHYSIQUE")
     assert "DCC_TEMPO_FORMAT_INVALID" not in _codes(kdo)
     assert kdo.resolution["finalPublishState"] == "LEGALREADY"

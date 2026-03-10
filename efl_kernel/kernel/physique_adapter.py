@@ -7,7 +7,7 @@ import json
 from pathlib import Path
 
 _PHYSIQUE_DIR = Path(__file__).resolve().parent.parent.parent / "Physique"
-_WHITELIST = json.loads((_PHYSIQUE_DIR / "efl_whitelist_v1_0_4.json").read_text(encoding="utf-8"))
+_WHITELIST = json.loads((_PHYSIQUE_DIR / "efl_whitelist_v1_0_5.json").read_text(encoding="utf-8"))
 try:
     _TEMPO_GOV = json.loads(
         (_PHYSIQUE_DIR / "efl_tempo_governance_v1_1_2_ENFORCEMENT_CLEAN.json").read_text(encoding="utf-8")

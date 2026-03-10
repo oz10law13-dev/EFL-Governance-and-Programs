@@ -25,7 +25,7 @@ def test_get_exercises_returns_all(client):
     resp = client.get("/exercises")
     assert resp.status_code == 200
     data = resp.json()
-    assert len(data) == 30
+    assert len(data) == 200
 
 
 def test_get_exercises_includes_normalized_fields(client):
@@ -141,11 +141,11 @@ def test_list_filter_volume_class(client):
 
 
 def test_check_exercise_returns_sfi_contribution(client):
-    # ECA-PHY-0007 Walking Lunge: unilateral, H2, node=3, set_count=4 → sfi=6.0
+    # ECA-PHY-0025 Bulgarian Split Squat: unilateral, H2, node=2, set_count=4 → sfi=2.0
     resp = client.post("/check/exercise", json={
-        "canonical_id": "ECA-PHY-0007",
-        "node": 3,
+        "canonical_id": "ECA-PHY-0025",
+        "node": 2,
         "set_count": 4,
     })
     assert resp.status_code == 200
-    assert resp.json()["sfi_contribution"] == pytest.approx(6.0)
+    assert resp.json()["sfi_contribution"] == pytest.approx(2.0)

@@ -55,7 +55,7 @@ def test_f3_alias_resolution_squat():
 
 
 def test_f3_alias_resolution_hinge():
-    """F3: ECA-HINGE-001 resolves to ECA-PHY-0004 via alias table."""
+    """F3: ECA-HINGE-001 resolves to ECA-PHY-0014 via alias table."""
     from efl_kernel.kernel.physique_adapter import run_physique_adapter
 
     payload = {
@@ -65,12 +65,12 @@ def test_f3_alias_resolution_hinge():
     }
     r = run_physique_adapter(payload)
     assert r.halt_codes == [], f"Unexpected halt: {r.halt_codes}"
-    assert r.normalized_exercises[0]["exercise_id"] == "ECA-PHY-0004"
+    assert r.normalized_exercises[0]["exercise_id"] == "ECA-PHY-0014"
     assert "ECA-HINGE-001" in r.adapter_trace.get("alias_resolutions", [])
 
 
 def test_f3_alias_resolution_isolate_011():
-    """F3: ECA-ISOLATE-011 resolves to ECA-PHY-0016 (D5: included)."""
+    """F3: ECA-ISOLATE-011 resolves to ECA-PHY-0085 (D5: included)."""
     from efl_kernel.kernel.physique_adapter import run_physique_adapter
 
     payload = {
@@ -80,7 +80,7 @@ def test_f3_alias_resolution_isolate_011():
     }
     r = run_physique_adapter(payload)
     assert r.halt_codes == []
-    assert r.normalized_exercises[0]["exercise_id"] == "ECA-PHY-0016"
+    assert r.normalized_exercises[0]["exercise_id"] == "ECA-PHY-0085"
 
 
 def test_f3_press003_not_in_alias_table():
@@ -120,12 +120,12 @@ def test_trace_e4_flagged_recorded():
 
     payload = {
         "evaluationContext": {"athleteID": "x"},
-        "physique_session": {"exercises": [{"exercise_id": "ECA-PHY-0027", "tempo": "3:0:1:0"}]},
+        "physique_session": {"exercises": [{"exercise_id": "ECA-PHY-0135", "tempo": "3:0:1:0"}]},
         "day_slots": [],
     }
     r = run_physique_adapter(payload)
     assert r.halt_codes == []
-    assert "ECA-PHY-0027" in r.adapter_trace.get("e4_injections_true", [])
+    assert "ECA-PHY-0135" in r.adapter_trace.get("e4_injections_true", [])
 
 
 def test_trace_horiz_vert_event_recorded_for_incline():

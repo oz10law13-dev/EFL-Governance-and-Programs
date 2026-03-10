@@ -128,7 +128,7 @@ def test_declared_keys_with_e4_exercise_fires_clearance_violation():
         athlete_profile={"a1": {"e4_clearance": False}}
     )
     payload = _declared_payload(exercises=[
-        {"exercise_id": "ECA-PHY-0027", "tempo": "3:0:1:0"}
+        {"exercise_id": "ECA-PHY-0135", "tempo": "3:0:1:0"}
     ])
     kdo = KernelRunner(provider).evaluate(payload, "PHYSIQUE")
     codes = [v["code"] for v in kdo.violations]
@@ -141,7 +141,7 @@ def test_transitional_keys_with_e4_exercise_fires_clearance_violation():
         athlete_profile={"a1": {"e4_clearance": False}}
     )
     payload = _transitional_payload(exercises=[
-        {"exercise_id": "ECA-PHY-0027", "tempo": "3:0:1:0"}
+        {"exercise_id": "ECA-PHY-0135", "tempo": "3:0:1:0"}
     ])
     kdo = KernelRunner(provider).evaluate(payload, "PHYSIQUE")
     codes = [v["code"] for v in kdo.violations]
@@ -159,7 +159,7 @@ def test_both_keys_present_transitional_wins():
         "evaluation_context": {"athleteID": "SHOULD_NOT_BE_USED"},
         "windowContext": _base_windows(),
         "physique_session": {"exercises": []},  # transitional: empty → no clearance violation
-        "session": {"exercises": [{"exercise_id": "ECA-PHY-0027", "tempo": "3:0:1:0"}]},
+        "session": {"exercises": [{"exercise_id": "ECA-PHY-0135", "tempo": "3:0:1:0"}]},
     }
     kdo = _runner().evaluate(payload, "PHYSIQUE")
     codes = [v["code"] for v in kdo.violations]

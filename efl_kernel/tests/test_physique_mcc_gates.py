@@ -259,7 +259,7 @@ def test_b2_day_d_intent_violation_fires_high_h_node():
 
 
 def test_b2_day_d_intent_violation_suppresses():
-    # Low-stress exercise on DAY_D — ECA-PHY-0021 has "D" in day_role_allowed
+    # Low-stress exercise on DAY_D — synthetic H1/band1 exercise, no intent violation
     ex = _ex(eid="ECA-PHY-0021", band=1, h_node="H1")
     v = _run(_ctx(), [_slot("DAY_D", exercises=[ex])])
     assert "MCC_DAY_D_INTENT_VIOLATION" not in _codes(v)

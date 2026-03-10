@@ -19,7 +19,7 @@ def cat():
 # ------------------------------------------------------------------ #
 
 def test_catalog_loads_all_exercises(cat):
-    assert len(cat.list_exercises()) == 30
+    assert len(cat.list_exercises()) == 200
 
 
 def test_catalog_normalizes_day_roles_from_csv(cat):
@@ -29,14 +29,14 @@ def test_catalog_normalizes_day_roles_from_csv(cat):
 
 
 def test_catalog_normalizes_day_roles_single(cat):
-    # ECA-PHY-0004 Deadlift: day_role_allowed="A" → ["A"]
-    ex = cat.get_exercise("ECA-PHY-0004")
+    # ECA-PHY-0014 Deadlift: day_role_allowed="A" → ["A"]
+    ex = cat.get_exercise("ECA-PHY-0014")
     assert ex["day_roles"] == ["A"]
 
 
 def test_catalog_normalizes_unilateral_true(cat):
-    # ECA-PHY-0006 Bulgarian Split Squat: uni_bi="Unilateral"
-    ex = cat.get_exercise("ECA-PHY-0006")
+    # ECA-PHY-0025 Bulgarian Split Squat: uni_bi="Unilateral"
+    ex = cat.get_exercise("ECA-PHY-0025")
     assert ex["unilateral"] is True
 
 
@@ -51,11 +51,11 @@ def test_catalog_normalizes_unilateral_false(cat):
 # ------------------------------------------------------------------ #
 
 def test_list_exercises_no_filter_returns_all(cat):
-    assert len(cat.list_exercises()) == 30
+    assert len(cat.list_exercises()) == 200
 
 
 def test_list_exercises_empty_filter_returns_all(cat):
-    assert len(cat.list_exercises({})) == 30
+    assert len(cat.list_exercises({})) == 200
 
 
 def test_list_exercises_filter_by_h_node(cat):
@@ -69,9 +69,9 @@ def test_list_exercises_filter_by_day_role_membership(cat):
     results = cat.list_exercises({"day_role": "A"})
     assert len(results) > 0
     assert all("A" in ex["day_roles"] for ex in results)
-    # ECA-PHY-0005 Leg Press is B,C only — must not appear
+    # ECA-PHY-0015 Leg Press is B,C only — must not appear
     ids = {ex["canonical_id"] for ex in results}
-    assert "ECA-PHY-0005" not in ids
+    assert "ECA-PHY-0015" not in ids
 
 
 def test_list_exercises_filter_by_movement_family(cat):
@@ -85,9 +85,9 @@ def test_list_exercises_filter_by_node_max(cat):
     results = cat.list_exercises({"node_max": 3})
     assert len(results) > 0
     assert all(ex["node_max"] >= 3 for ex in results)
-    # ECA-PHY-0004 Deadlift has node_max=1 → must not appear
+    # ECA-PHY-0014 Deadlift has node_max=1 → must not appear
     ids = {ex["canonical_id"] for ex in results}
-    assert "ECA-PHY-0004" not in ids
+    assert "ECA-PHY-0014" not in ids
 
 
 def test_list_exercises_combined_filter(cat):
@@ -163,15 +163,15 @@ def test_check_exercise_band_limit_exceeded(cat):
 
 
 def test_check_exercise_node_limit_exceeded(cat):
-    # ECA-PHY-0004 Deadlift: node_max=1; node=2 → violation
-    result = cat.check_exercise({"canonical_id": "ECA-PHY-0004", "node": 2})
+    # ECA-PHY-0014 Deadlift: node_max=1; node=2 → violation
+    result = cat.check_exercise({"canonical_id": "ECA-PHY-0014", "node": 2})
     codes = [v["code"] for v in result["violations"]]
     assert "NODE_LIMIT_EXCEEDED" in codes
 
 
 def test_check_exercise_day_role_not_permitted(cat):
-    # ECA-PHY-0004 Deadlift: day_roles=["A"]; day_role="B" → violation
-    result = cat.check_exercise({"canonical_id": "ECA-PHY-0004", "day_role": "B"})
+    # ECA-PHY-0014 Deadlift: day_roles=["A"]; day_role="B" → violation
+    result = cat.check_exercise({"canonical_id": "ECA-PHY-0014", "day_role": "B"})
     codes = [v["code"] for v in result["violations"]]
     assert "DAY_ROLE_NOT_PERMITTED" in codes
 
@@ -190,15 +190,15 @@ def test_check_exercise_eccentric_violation(cat):
 
 
 def test_check_exercise_isometric_top_violation(cat):
-    # ECA-PHY-0015 Dumbbell Lateral Raise: isometric_top_max=1; IT=2 → violation
-    result = cat.check_exercise({"canonical_id": "ECA-PHY-0015", "tempo": "3:0:2:0"})
+    # ECA-PHY-0093 Dumbbell Lateral Raise: isometric_top_max=1; IT=2 → violation
+    result = cat.check_exercise({"canonical_id": "ECA-PHY-0093", "tempo": "3:0:2:0"})
     codes = [v["code"] for v in result["violations"]]
     assert "ISOMETRIC_TOP_VIOLATION" in codes
 
 
 def test_check_exercise_explosive_concentric_not_permitted(cat):
-    # ECA-PHY-0015 Dumbbell Lateral Raise: explosive_concentric_allowed=false
-    result = cat.check_exercise({"canonical_id": "ECA-PHY-0015", "tempo": "3:0:1:X"})
+    # ECA-PHY-0093 Dumbbell Lateral Raise: explosive_concentric_allowed=false
+    result = cat.check_exercise({"canonical_id": "ECA-PHY-0093", "tempo": "3:0:1:X"})
     codes = [v["code"] for v in result["violations"]]
     assert "EXPLOSIVE_CONCENTRIC_NOT_PERMITTED" in codes
 
@@ -225,9 +225,9 @@ def test_list_exercises_filter_by_band_max(cat):
     results = cat.list_exercises({"band_max": 2})
     assert len(results) > 0
     assert all(ex["band_max"] >= 2 for ex in results)
-    # ECA-PHY-0021 Face Pull (band_max=1) must not appear
+    # ECA-PHY-0130 Face Pull (band_max=1) must not appear
     ids = {ex["canonical_id"] for ex in results}
-    assert "ECA-PHY-0021" not in ids
+    assert "ECA-PHY-0130" not in ids
 
 
 def test_list_exercises_filter_by_volume_class(cat):
@@ -252,7 +252,7 @@ def test_check_exercise_sfi_zero_when_bilateral_h1_node1(cat):
 
 
 def test_check_exercise_sfi_node3_and_unilateral(cat):
-    # ECA-PHY-0007 Walking Lunge: unilateral=True, H2 (h_rank=2<3), node=3, set_count=4
-    # sfi = (4×1.0 for node3) + (4×0.5 for unilateral) = 4 + 2 = 6.0
-    result = cat.check_exercise({"canonical_id": "ECA-PHY-0007", "node": 3, "set_count": 4})
-    assert result["sfi_contribution"] == pytest.approx(6.0)
+    # ECA-PHY-0025 Bulgarian Split Squat: unilateral=True, H2 (h_rank=2<3), node=2, set_count=4
+    # sfi = (4×0.5 for unilateral) = 2.0  (node=2 not 3, so no node3 contribution)
+    result = cat.check_exercise({"canonical_id": "ECA-PHY-0025", "node": 2, "set_count": 4})
+    assert result["sfi_contribution"] == pytest.approx(2.0)

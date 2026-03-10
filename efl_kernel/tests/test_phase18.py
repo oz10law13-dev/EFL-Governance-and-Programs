@@ -130,7 +130,7 @@ def test_pipeline_rejected_returns_violations(svc):
     client, app = svc
     # Seed athlete with e4_clearance=0.
     # movement_families=["Technique Modifier"] + day_role="B" targets only
-    # ECA-PHY-0027/0028/0029 which require E4 clearance.
+    # ECA-PHY-0135/0136/0137 which require E4 clearance.
     # With e4_clearance=0, PHYSIQUE.CLEARANCEMISSING fires → ILLEGALQUARANTINED.
     app.state.op_store.upsert_athlete({
         "athlete_id": "ATH-P18-QUAR",

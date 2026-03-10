@@ -169,6 +169,7 @@
     "class_based_minimums": {
       "PRIMARY_COMPOUND": 1,
       "ASSISTANCE_COMPOUND": 1,
+      "ACCESSORY_COMPOUND": 2,
       "ACCESSORY_ISOLATION": 0,
       "BALLISTIC_EXPLOSIVE": 0
     },

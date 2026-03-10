@@ -121,7 +121,7 @@ def test_physique_clearance_gate_fires_on_missing_clearance():
         "evaluationContext": {"athleteID": "ath-no-clearance", "sessionID": "ps-1"},
         "physique_session": {
             "exercises": [
-                {"exercise_id": "ECA-PHY-0027", "band": 2, "node": 2, "tempo": "3:0:1:0"},
+                {"exercise_id": "ECA-PHY-0135", "band": 2, "node": 2, "tempo": "3:0:1:0"},
             ]
         },
     }
@@ -137,7 +137,7 @@ def test_physique_clearance_gate_fires_on_missing_clearance():
     clearance_v = next(v for v in violations if v["code"] == "PHYSIQUE.CLEARANCEMISSING")
     assert clearance_v["severity"] == "HARDFAIL"
     assert clearance_v["overridePossible"] is False
-    assert clearance_v["details"]["exercise_id"] == "ECA-PHY-0027"
+    assert clearance_v["details"]["exercise_id"] == "ECA-PHY-0135"
 
 
 def test_physique_clearance_gate_suppressed_when_cleared():
@@ -149,7 +149,7 @@ def test_physique_clearance_gate_suppressed_when_cleared():
         "evaluationContext": {"athleteID": "ath-cleared", "sessionID": "ps-2"},
         "physique_session": {
             "exercises": [
-                {"exercise_id": "ECA-PHY-0027", "band": 2, "node": 2, "tempo": "3:0:1:0"},
+                {"exercise_id": "ECA-PHY-0135", "band": 2, "node": 2, "tempo": "3:0:1:0"},
             ]
         },
     }
@@ -174,7 +174,7 @@ def test_physique_clearance_gate_fires_for_slot_exercise():
         "physique_session": {"exercises": []},
         "context": {"athlete_id": "ath-slot"},
         "day_slots": [{"day_role": "DAY_B", "exercises": [
-            {"eca_id": "ECA-PHY-0027", "role": "WORK", "band": 2, "node": 2, "set_count": 3},
+            {"eca_id": "ECA-PHY-0135", "role": "WORK", "band": 2, "node": 2, "set_count": 3},
         ]}],
     }
 
@@ -212,12 +212,12 @@ def test_inv_mcc_001_slot_context_copresence():
 
 
 def test_isometric_exercise_gets_n_a_duration_tempo_mode():
-    """ECA-PHY-0023 (Plank, pattern_plane=Isometric) must get tempo_mode=N/A_DURATION (F6 fix)."""
+    """ECA-PHY-0114 (Plank, pattern_plane=Isometric) must get tempo_mode=N/A_DURATION (F6 fix)."""
     from efl_kernel.kernel.physique_adapter import run_physique_adapter
 
     payload = {
         "evaluationContext": {"athleteID": "x"},
-        "physique_session": {"exercises": [{"exercise_id": "ECA-PHY-0023", "tempo": ""}]},
+        "physique_session": {"exercises": [{"exercise_id": "ECA-PHY-0114", "tempo": ""}]},
         "day_slots": [],
     }
     r = run_physique_adapter(payload)
